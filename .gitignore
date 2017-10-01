@@ -19,7 +19,6 @@ test-results
 test-tmp
 *.class
 .vertx
-vertx-starter
 *.pyc
 .metadata/*
 .recommenders/*
