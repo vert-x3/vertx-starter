@@ -1,0 +1,21 @@
+{
+    "web": {
+        "http.port": 8080,
+        "project.request": {
+            "version": "3.4.1",
+            "format": "zip",
+            "language": "java",
+            "build": "maven",
+            "groupId": "io.vertx",
+            "artifactId": "sample",
+            "dependencies": [
+                "vertx-core",
+                "vertx-unit"
+            ]
+        },
+        "dependencies.path": "./dependencies.json"
+    },
+    "generator": {
+        "temp.dir": "."
+    }
+}

@@ -1,0 +1,34 @@
+plugins {
+id 'java'
+id 'application'
+id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+repositories {
+jcenter()
+maven {
+url "https://oss.sonatype.org/content/repositories/snapshots"
+}
+}
+
+version = '{{version}}'
+sourceCompatibility = '1.8'
+
+dependencies {
+{{#each dependencies as |dependency|}}
+compile "io.vertx:{{dependency}}:$version"
+{{/each}}
+}
+
+mainClassName = 'io.vertx.example.HelloWorldEmbedded'
+
+shadowJar {
+classifier = 'fat'
+mergeServiceFiles {
+include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+}
+}
+
+task wrapper(type: Wrapper) {
+gradleVersion = '3.4.1'
+}
