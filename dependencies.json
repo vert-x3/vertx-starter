@@ -1,0 +1,311 @@
+{
+    "content": [
+        {
+            "category": "Core",
+            "description": "Vert.x core contains fairly low level functionality including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and it's used by many of the other components of Vert.x",
+            "items": [
+                {
+                    "artifactId": "vertx-core",
+                    "name": "Vert.x Core"
+                }
+            ]
+        },
+        {
+            "category": "Web",
+            "description": "Vert.x-Web is a tool-kit for writing sophisticated modern web applications and HTTP microservices.",
+            "items": [
+                {
+                    "artifactId": "vertx-web",
+                    "name": "Vert.x Web"
+                }
+            ]
+        },
+        {
+            "category": "Web Client",
+            "description": "Vert.x Web Client is an easy to use advanced HTTP client.",
+            "items": [
+                {
+                    "artifactId": "vertx-web-client",
+                    "name": "Vert.x Web Client"
+                }
+            ]
+        },
+        {
+            "category": "Data Access",
+            "description": "Vert.x provides a few different asynchronous clients for accessing various data stores from your application. You don't have to use these clients - you could use clients direct from the vendor if you prefer (e.g. MongoDB provide their own cool async and reactive clients), but these provide a simple async API which is available in various languages.",
+            "items": [
+                {
+                    "artifactId": "vertx-mongo-client",
+                    "name": "MongoDB client"
+                },
+                {
+                    "artifactId": "vertx-jdbc-client",
+                    "name": "JDBC client"
+                },
+                {
+                    "artifactId": "vertx-sql-common",
+                    "name": "SQL common"
+                },
+                {
+                    "artifactId": "vertx-redis-client",
+                    "name": "Redis client"
+                },
+                {
+                    "artifactId": "vertx-mysql-postgresql-client",
+                    "name": "MySQL / PostgreSQL client"
+                }
+            ]
+        },
+        {
+            "category": "Integration",
+            "items": [
+                {
+                    "artifactId": "vertx-mail-client",
+                    "name": "Mail Client",
+                    "description": "Vert.x provides a simple SMTP mail client so you can send emails from your applications."
+                },
+                {
+                    "artifactId": "vertx-stomp",
+                    "name": "STOMP Client &amp; Server",
+                    "description": "Vert.x provides an implementation of the STOMP protocol."
+                },
+                {
+                    "artifactId": "none",
+                    "name": "JCA Adaptor",
+                    "description": "Vert.x provides a Java Connector Architecture (JCA) adaptor which allows it to interoperate with any JavaEE application server."
+                },
+                {
+                    "artifactId": "vertx-rabbitmq-client",
+                    "name": "RabbitMQ Client",
+                    "description": "A client to interact with RabbitMQ."
+                },
+                {
+                    "artifactId": "vertx-kafka-client",
+                    "name": "Kafka Client",
+                    "description": "A client to interact with Apache Kafka."
+                },
+                {
+                    "artifactId": "vertx-consul-client",
+                    "name": "Consul Client",
+                    "flag": "Technical Preview",
+                    "description": "A client to interact with Consul."
+                },
+                {
+                    "artifactId": "vertx-amqp-bridge",
+                    "name": "AMQP Bridge",
+                    "description": "A bridge for interacting with an AMQP 1.0 broker or router."
+                }
+            ]
+        },
+        {
+            "category": "Event Bus Bridge",
+            "description": "Vert.x offers various bridges to extend the Event Bus beyond the JVM",
+            "items": [
+                {
+                    "artifactId": "vertx-tcp-eventbus-bridge",
+                    "name": "TCP Eventbus Bridge",
+                    "description": "An eventbus bridge that lets you interact with Vert.x from any application thanks to a TCP socket."
+                },
+                {
+                    "artifactId": "vertx-camel-bridge",
+                    "name": "Camel Bridge",
+                    "description": "An eventbus bridge that lets you interact with Apache Camel endpoints and routes"
+                }
+            ]
+        },
+        {
+            "category": "Authentication and Authorisation",
+            "description": "Vert.x provides simple APIs for auth in your applications. We also provide a few out of the box implementations.",
+            "items": [
+                {
+                    "artifactId": "vertx-auth-common",
+                    "name": "Auth common",
+                    "description": "The Common Auth APIs"
+                },
+                {
+                    "artifactId": "vertx-auth-jdbc",
+                    "name": "JDBC auth",
+                    "description": "Auth implementation backed by JDBC"
+                },
+                {
+                    "artifactId": "vertx-auth-jwt",
+                    "name": "JWT auth",
+                    "description": "Auth implementation using JSON web tokens (JWT)"
+                },
+                {
+                    "artifactId": "vertx-auth-shiro",
+                    "name": "Shiro auth",
+                    "description": "Auth implementation using Apache Shiro"
+                },
+                {
+                    "artifactId": "vertx-auth-mongo",
+                    "name": "MongoDB auth",
+                    "description": "Auth implementation using MongoDB"
+                },
+                {
+                    "artifactId": "vertx-auth-oauth2",
+                    "name": "OAuth 2",
+                    "description": "Auth implementation for OAuth2"
+                },
+                {
+                    "artifactId": "",
+                    "name": ".htdigest Auth",
+                    "description": ".htdigest file to query user information"
+                }
+            ]
+        },
+        {
+            "category": "Reactive",
+            "description": "Vert.x provides a couple of components to make your applications more reactive.",
+            "items": [
+                {
+                    "artifactId": "",
+                    "name": "Vert.x Rx",
+                    "description": "Don't like callback-style APIs? Vert.x provides <em>Rx-ified</em> (using RxJava) versions for most of its APIs so you can use those if you prefer. RxJava is a great choice when you want to perform complex operations on multiple asynchronous streams of data."
+                },
+                {
+                    "artifactId": "vertx-reactive-streams",
+                    "name": "Reactive streams",
+                    "description": "Vert.x supports reactive streams so your applications can interoperate with other reactive systems such as Akka or Project Reactor."
+                },
+                {
+                    "artifactId": "",
+                    "name": "Vert.x Sync",
+                    "description": "Vertx-sync allows you to deploy verticles that run using fibers. Fibers are very lightweight threads that can be blocked without blocking a kernel thread. This enables you to write your verticle code in a familiar synchronous style."
+                }
+            ]
+        },
+        {
+            "category": "Microservices",
+            "description": "Vert.x offers various component to build microservice-based applications.",
+            "items": [
+                {
+                    "artifactId": "vertx-service-discovery",
+                    "name": "Vert.x Service Discovery",
+                    "description": "This component lets you publish, lookup and bind to any type of services."
+                },
+                {
+                    "artifactId": "vertx-circuit-breaker",
+                    "name": "Vert.x Circuit Breaker",
+                    "description": "This component provides an implementation of the circuit breaker pattern for Vert.x"
+                },
+                {
+                    "artifactId": "vertx-config",
+                    "name": "Vert.x Config",
+                    "description": "This component provides an extensible way to configure Vert.x applications."
+                }
+            ]
+        },
+        {
+            "category": "IoT",
+            "items": [
+                {
+                    "artifactId": "",
+                    "name": "MQTT Server",
+                    "description": "Vert.x MQTT Server is able to handle connections, communication and messages exchange with remote MQTT clients. Its API provides a bunch of events related to protocol messages received by clients and exposes allow to send messages to them.",
+                    "flag": "Technical Preview"
+                }
+            ]
+        },
+        {
+            "category": "DevOps",
+            "description": "Vert.x offers various component to keep your Vert.x application on track when running in production",
+            "items": [
+                {
+                    "artifactId": "vertx-dropwizard-metrics",
+                    "name": "Metrics using Dropwizard",
+                    "description": "This component captures metrics from Vert.x core components and exposes them using Dropwizard."
+                },
+                {
+                    "artifactId": "vertx-hawkular-metrics",
+                    "name": "Metrics using Hawkular",
+                    "description": "This component captures metrics from Vert.x core components and send them to Hawkular."
+                },
+                {
+                    "artifactId": "vertx-health-check",
+                    "name": "Vert.x Health Check",
+                    "description": "This component provides a simple way to expose health checks."
+                },
+                {
+                    "artifactId": "",
+                    "name": "Shell",
+                    "description": "This component lets you interact with your Vert.x application using a CLI interface."
+                },
+                {
+                    "artifactId": "",
+                    "name": "Docker",
+                    "description": "These docker images, available from the DockerHub, let you run Vert.x applications in Docker containers."
+                },
+                {
+                    "artifactId": "",
+                    "name": "Stack Manager",
+                    "description": "The stack manager (provided in the Vert.x distros) lets you add and remove artifactIds from your stack."
+                }
+            ]
+        },
+        {
+            "category": "Testing",
+            "description": "Vert.x-Unit is an unit testing tool-kit especially design to work well with asynchronous code.",
+            "items": [
+                {
+                    "name": "Vert.x Unit",
+                    "artifactId": "vertx-unit"
+                }
+            ]
+        },
+        {
+            "category": "Clustering",
+            "description": "Vert.x supports clustering and HA out of the box. Cluster group management is implemented in cluster managers which are pluggable. The default cluster manager uses Hazelcast.",
+            "items": [
+                {
+                    "name": "Hazelcast",
+                    "description": "Cluster manager implementation that uses Hazelcast. This is the default."
+                },
+                {
+                    "name": "Infinispan",
+                    "description": "Cluster manager implementation that uses Infinispan.",
+                    "flag": "Technical Preview"
+                },
+                {
+                    "name": "Apache Ignite",
+                    "description": "Cluster manager implementation that uses Apache Ignite."
+                },
+                {
+                    "name": "Apache Zookeper",
+                    "description": "Cluster manager implementation that uses Apache Zookeeper.",
+                    "flag": "Technical Preview"
+                }
+            ]
+        },
+        {
+            "category": "Services",
+            "description": "Vert.x services are a simple and effective way to encapsulate reusable functionality for use elsewhere. Services are deployed using a service identifier which decouples the user from details of the implementation.",
+            "items": [
+                {
+                    "name": "Service Proxies",
+                    "description": "Proxies allow remote event bus services to be called as if they were local."
+                },
+                {
+                    "name": "SockJS Service Proxies",
+                    "description": "Allow event bus services to be called from JavaScript (browser or Node.js)."
+                },
+                {
+                    "name": "gRPC",
+                    "description": "Implement gRPC Clients and Servers for Vert.x."
+                },
+                {
+                    "name": "Service Factories",
+                    "description": "How to package and deploy Vert.x independent <em>services<em>.</em></em>"
+                },
+                {
+                    "name": "Maven Service Factory",
+                    "description": "This lets you dynamically install and deploy services from Maven at run-time."
+                },
+                {
+                    "name": "HTTP Service Factory",
+                    "description": "This lets you dynamically install and deploy services from an HTTP server (for example Bintray at run-time."
+                }
+            ]
+        }
+    ]
+}

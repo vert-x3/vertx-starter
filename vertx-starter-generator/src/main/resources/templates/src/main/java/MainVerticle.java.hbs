@@ -1,0 +1,18 @@
+package {{groupId}}.{{artifactId}};
+
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+
+import static io.vertx.core.Future.future;
+
+public class MainVerticle extends AbstractVerticle {
+
+    private final Logger log = LoggerFactory.getLogger(MainVerticle.class);
+
+    @Override
+    public void start(Future<Void> startFuture) throws Exception {
+        log.info(MainVerticle.class.getSimpleName() + "is running");
+        startFuture.complete();
+    }
+}
