@@ -70,8 +70,12 @@ function VertxStarterController($document, $window, hotkeys, Version, Dependency
 
     vm.versions= [];
     vm.dependencies =  [];
-    vm.languages =  ['Java','Javascript','Groovy','Ruby','Ceylon','Kotlin','Scala'];
-    vm.buildTools = ['Maven','Gradle'];
+// Not used right now
+//    vm.languages =  ['Java','Javascript','Groovy','Ruby','Ceylon','Kotlin','Scala'];
+//    vm.buildTools = ['Maven','Gradle'];
+    vm.languages =  ['Java'];
+    vm.buildTools = ['Maven'];
+
     vm.project = {
         version: null,
         language: 'Java',
