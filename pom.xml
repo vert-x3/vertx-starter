@@ -12,6 +12,7 @@
     <modules>
         <module>vertx-starter-generator</module>
         <module>vertx-starter-web</module>
+        <module>vertx-starter-analytics</module>
         <module>vertx-starter-main</module>
     </modules>
 

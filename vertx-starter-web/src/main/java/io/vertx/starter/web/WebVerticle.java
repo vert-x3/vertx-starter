@@ -89,6 +89,6 @@ public class WebVerticle extends AbstractVerticle {
 
     private void forge(Router router, JsonObject projectRequest) {
         StarterResource starterResource = new StarterResource(vertx.eventBus(), projectRequest);
-        router.get("/starter*").handler(starterResource::forge);
+        router.get("/starter*").handler(starterResource::create);
     }
 }

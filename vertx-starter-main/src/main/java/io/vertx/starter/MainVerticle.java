@@ -21,6 +21,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.starter.analytics.AnalyticsVerticle;
 import io.vertx.starter.generator.GeneratorVerticle;
 import io.vertx.starter.web.WebVerticle;
 
@@ -39,6 +40,12 @@ public class MainVerticle extends AbstractVerticle {
             new DeploymentOptions().setConfig(config().getJsonObject("generator")),
             generatorFuture
         );
+        Future<String> analyticsFuture = future();
+        vertx.deployVerticle(
+          AnalyticsVerticle.class.getName(),
+          new DeploymentOptions().setConfig(config().getJsonObject("analytics")),
+          generatorFuture
+        );
         Future<String> webFuture = future();
         vertx.deployVerticle(
             WebVerticle.class.getName(),
@@ -46,7 +53,7 @@ public class MainVerticle extends AbstractVerticle {
             webFuture
         );
 
-        CompositeFuture.all(asList(generatorFuture, webFuture)).setHandler(ar -> {
+        CompositeFuture.all(asList(generatorFuture, analyticsFuture, webFuture)).setHandler(ar -> {
             if (ar.failed()) {
                 log.error("Vertx starter failed to start: {}", ar.cause().getMessage());
                 ar.cause().printStackTrace();

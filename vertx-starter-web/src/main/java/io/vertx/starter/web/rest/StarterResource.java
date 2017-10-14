@@ -106,12 +106,12 @@ public class StarterResource {
     }
 
 
-    public void forge(RoutingContext rc) {
-        log.debug("REST request to starter a starter Project");
+    public void create(RoutingContext rc) {
+        log.debug("REST request to create Project: {}", rc.request());
         JsonObject projectRequest = buildProjectRequest(rc.request());
-        eventBus.send("starter.starter", projectRequest, ar -> {
+        eventBus.send("project.requested", projectRequest, ar -> {
             if (ar.failed()) {
-                log.error("Impossible to starter project " + ar.cause().getMessage());
+                log.error("Failed to create project: {}" + ar.cause().getMessage());
                 error(rc, ar.cause());
             } else {
                 JsonObject metadata = (JsonObject) ar.result().body();
@@ -126,7 +126,8 @@ public class StarterResource {
                         if (onFileSent.failed()) {
                             log.error("Error: {}", onFileSent.cause().getMessage());
                         }
-                        eventBus.publish("starter.clean", metadata);
+                        log.info("Project created:  {}", metadata);
+                        eventBus.publish("project.created", metadata);
                     });
             }
         });
