@@ -44,10 +44,10 @@ public class GeneratorVerticle extends AbstractVerticle {
         ProjectGeneratorService generator = new ProjectGeneratorService(vertx, new TemplateService(loader));
         ArchiveService archive = new ArchiveService(vertx);
 
-        vertx.eventBus().<JsonObject>consumer("starter.starter").handler(starter::starter);
-        vertx.eventBus().<JsonObject>consumer("starter.clean").handler(starter::clean);
+        vertx.eventBus().<JsonObject>consumer("project.requested").handler(starter::starter);
         vertx.eventBus().<JsonObject>consumer("generate").handler(generator::generate);
         vertx.eventBus().<JsonObject>consumer("archive").handler(archive::archive);
+        vertx.eventBus().<JsonObject>consumer("project.created").handler(starter::clean);
 
         log.info("\n----------------------------------------------------------\n\t" +
                 "{} is running!\n" +
