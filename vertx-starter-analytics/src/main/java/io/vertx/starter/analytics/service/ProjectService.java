@@ -30,7 +30,7 @@ public class ProjectService {
 
   private JsonObject toProject(JsonObject projectRequest) {
     return new JsonObject()
-      .put("version", projectRequest.getString("artifactId"))
+      .put("version", projectRequest.getString("version"))
       .put("language", projectRequest.getString("language"))
       .put("build", projectRequest.getString("build"))
       .put("groupId", projectRequest.getString("groupId"))
