@@ -23,6 +23,7 @@ public class VersionService {
 
     public static final JsonArray VERSIONS = new JsonArray()
         .add("3.5.0")
+        .add("3.4.2")
         .add("3.4.1")
         .add("3.4.0");
 

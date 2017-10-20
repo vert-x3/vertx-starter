@@ -20,7 +20,7 @@ Have a look to `vertx-starter-main/conf/default-conf.json`
         "http.port": 9090,
         "prefix": "api",
         "project.request": {
-            "version": "3.4.1",
+            "version": "3.5.0",
             "format": "zip",
             "language": "java",
             "build": "maven",
@@ -60,7 +60,7 @@ All the web ui inputs are mapped to the following attributes
 Full example:
 ```
 $ http://<api_url>/starter.zip \
--d version=3.4.1 \
+-d version=3.5.0 \
 -d language=java \
 -d groupId=io.vertx \ 
 -d artifactId=sample \
