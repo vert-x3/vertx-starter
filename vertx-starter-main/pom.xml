@@ -13,12 +13,14 @@
 
     <properties>
         <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
+        <vertx.version>3.5.0</vertx.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
+            <version>${vertx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -15,17 +15,19 @@
   <properties>
     <zt-zip.version>1.11</zt-zip.version>
     <handlebars.version>4.0.6</handlebars.version>
+    <vertx.version>3.5.0</vertx.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
+      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-mongo-client</artifactId>
-      <version>3.4.2</version>
+      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
