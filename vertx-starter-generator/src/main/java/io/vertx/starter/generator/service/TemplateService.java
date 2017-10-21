@@ -43,7 +43,7 @@ public class TemplateService {
         try {
             future.complete(handlebars.compile(template).apply(context));
         } catch (IOException e) {
-            log.error("Impossible to render template {}: ", template, e.getMessage());
+            log.error("Impossible to render template {}: ", template, e);
             future.fail(e.getCause());
         }
         return future;
