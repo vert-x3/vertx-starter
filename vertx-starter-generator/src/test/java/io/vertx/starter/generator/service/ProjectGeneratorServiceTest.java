@@ -1,8 +1,8 @@
 package io.vertx.starter.generator.service;
 
 import com.github.jknack.handlebars.io.FileTemplateLoader;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
+import io.vertx.core.CompositeFuture;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RunWith(VertxUnitRunner.class)
@@ -50,10 +51,6 @@ public class ProjectGeneratorServiceTest {
         vertx.close(context.asyncAssertSuccess());
     }
 
-    public void generateAndTest(JsonObject project, Handler<AsyncResult<Void>> onGenerationDone) {
-        projectGeneratorService.generate(project).setHandler(onGenerationDone);
-    }
-
     private TestProjectBuilder basicTestProject() {
         return new TestProjectBuilder(TEST_BASE_DIR)
             .groupId(DEFAULT_GROUP_ID)
@@ -61,21 +58,40 @@ public class ProjectGeneratorServiceTest {
             .version(DEFAULT_VERSION);
     }
 
+    public Future<Void> generateAndTest(TestContext context, JsonObject project, Stream<ProjectFile> projectFiles) {
+        return projectGeneratorService.generate(project).setHandler(ar -> {
+            assertProjectFilesExists(context, projectFiles);
+        });
+    }
+
+    public Future assertProjectFilesExists(TestContext context, Stream<ProjectFile> projectFiles) {
+        return CompositeFuture.all(
+            projectFiles
+                .map(projectFile -> assertProjectFileExists(context, TEST_BASE_DIR + "/" + projectFile.destination()))
+                .collect(Collectors.toList()));
+    }
+
+    private Future<Void> assertProjectFileExists(TestContext context, String filename) {
+        Future future = Future.future();
+        vertx.fileSystem().exists(filename, it -> {
+            context.assertTrue(it.result());
+            future.complete();
+        });
+        return future;
+    }
+
     @Test
-    public void testMavenJavaProject(TestContext context) {
+    public void shouldGenerateMavenJavaProjectFiles(TestContext context) {
         final Async async = context.async();
-        JsonObject std = basicTestProject().java().maven().build();
+        JsonObject project = basicTestProject().java().maven().build();
         Stream<ProjectFile> projectFiles = Stream.concat(
             BASIC_PROJECT_FILES.files(),
             new MavenJavaProjectFiles(DEFAULT_GROUP_ID, DEFAULT_ARTIFACT_ID).files()
         );
-        generateAndTest(std, onGenerationDone -> {
-            projectFiles.forEach(projectFile -> {
-                vertx.fileSystem().exists(TEST_BASE_DIR + projectFile.destination(), it -> {
-                    context.assertTrue(it.result());
-                });
-            });
+
+        generateAndTest(context, project, projectFiles).setHandler(onTestDone -> {
             async.complete();
         });
     }
+
 }

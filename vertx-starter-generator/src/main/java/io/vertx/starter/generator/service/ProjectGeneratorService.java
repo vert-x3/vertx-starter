@@ -74,6 +74,7 @@ public class ProjectGeneratorService {
                 .map(projectFile -> renderAndWrite(baseDir, projectFile, project))
                 .collect(Collectors.toList())
         ).setHandler(ar -> {
+
             if (ar.failed()) {
                 log.error("Impossible to generate project {} : {}", project, ar.cause().getMessage());
 
@@ -85,13 +86,13 @@ public class ProjectGeneratorService {
         return future;
     }
 
-    private Future<Void> renderAndWrite(String baseDir, ProjectFile projectFile, JsonObject values) {
+    private Future<String> renderAndWrite(String baseDir, ProjectFile projectFile, JsonObject values) {
         return templateService
             .render(projectFile.template(), values)
             .compose(content -> writeFile(baseDir + "/" + projectFile.destination(), content));
     }
 
-    private Future<Void> writeFile(String filename, String content) {
+    private Future<String> writeFile(String filename, String content) {
         requireNonNull(filename);
         requireNonNull(content);
         Future future = Future.future();
@@ -106,7 +107,7 @@ public class ProjectGeneratorService {
                 future.fail(onFileWritten.cause());
             } else {
                 log.info("File {} written", filename);
-                future.complete();
+                future.complete(filename);
             }
         });
         return future;
