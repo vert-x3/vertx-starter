@@ -44,7 +44,7 @@ public class MainVerticle extends AbstractVerticle {
         vertx.deployVerticle(
           AnalyticsVerticle.class.getName(),
           new DeploymentOptions().setConfig(config().getJsonObject("analytics")),
-          generatorFuture
+          analyticsFuture
         );
         Future<String> webFuture = future();
         vertx.deployVerticle(
