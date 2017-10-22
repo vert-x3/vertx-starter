@@ -1,6 +1,6 @@
 {
   "web": {
-    "http.port": 8080,
+    "http.port": 7070,
     "project.request": {
       "version": "3.5.0",
       "format": "zip",
