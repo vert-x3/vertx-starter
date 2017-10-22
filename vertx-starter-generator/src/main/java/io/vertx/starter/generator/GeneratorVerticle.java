@@ -41,7 +41,7 @@ public class GeneratorVerticle extends AbstractVerticle {
     public void start(Future<Void> startFuture) throws Exception {
         TemplateLoader loader = new ClassPathTemplateLoader(TEMPLATE_DIR);
         StarterService starter = new StarterService(vertx, tempDir());
-        ProjectGeneratorService generator = new ProjectGeneratorService(vertx, new TemplateService(loader));
+        ProjectGeneratorService generator = new ProjectGeneratorService(vertx, new TemplateService(vertx, loader));
         ArchiveService archive = new ArchiveService(vertx);
 
         vertx.eventBus().<JsonObject>consumer("project.requested").handler(starter::starter);
