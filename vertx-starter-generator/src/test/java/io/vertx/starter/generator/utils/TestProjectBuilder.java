@@ -39,6 +39,10 @@ public class TestProjectBuilder {
         return buildTool("maven");
     }
 
+    public TestProjectBuilder gradle() {
+        return buildTool("gradle");
+    }
+
     public TestProjectBuilder version(String version) {
         this.version = version;
         return this;

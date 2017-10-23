@@ -48,7 +48,6 @@ public abstract class BaseProjectTest {
     }
 
     public void assertFileExists(TestContext context, String filename) {
-
         vertx.fileSystem().exists(TEST_BASE_DIR + filename, it -> {
             if (it.succeeded()) {
                 context.assertTrue(it.result());
