@@ -51,8 +51,15 @@ public class ProjectGeneratorService {
             projectGenerator = new MavenJavaProject(templateService, project);
         }
         if (build.equalsIgnoreCase("gradle") && language.equalsIgnoreCase("java")) {
-            projectGenerator = new GradleJavaProject(templateService, project);
+            projectGenerator = new MavenJavaProject(templateService, project);
         }
+        if (build.equalsIgnoreCase("maven") && language.equalsIgnoreCase("kotlin")) {
+            projectGenerator = new MavenKotlinProject(templateService, project);
+        }
+        if (build.equalsIgnoreCase("gradle") && language.equalsIgnoreCase("kotlin")) {
+            projectGenerator = new MavenKotlinProject(templateService, project);
+        }
+
         return projectGenerator;
     }
 

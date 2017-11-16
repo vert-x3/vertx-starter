@@ -1,0 +1,25 @@
+package {{groupId}}.{{artifactId}}
+
+import io.vertx.core.AbstractVerticle
+
+fun main(args: Array<String>) {
+    val vertx = Vertx.vertx()
+    vertx.deployVerticle(MainVerticle())
+}
+
+public class MainVerticle : AbstractVerticle() {
+    
+    override fun start() {
+        val httpPort = System.getenv("PORT")?.toInt() ?: 8080
+        vertx.createHttpServer(HttpServerOptions(port = httpPort))
+        .requestHandler { router.accept(it) }
+        .listen { ar ->
+            when {
+                ar.failed() -> println("😡 Houston?")
+                ar.succeeded() -> {
+                    println("😃 🌍 HTTP server started on $httpPort")
+                }
+            }
+        }
+    }      
+}
