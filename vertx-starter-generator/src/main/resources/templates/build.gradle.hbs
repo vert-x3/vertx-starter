@@ -4,18 +4,22 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 
+ext {
+  vertxVersion = '{{version}}'
+}
+
 repositories {
   mavenLocal()
   jcenter()
   maven { url "https://plugins.gradle.org/m2/" }
 }
 
-version = '{{version}}'
+version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 dependencies {
 {{#each dependencies as |dependency|}}
-compile "io.vertx:{{dependency}}:$version"
+compile "io.vertx:{{dependency}}:$vertxVersion"
 {{/each}}
 }
 
