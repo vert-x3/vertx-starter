@@ -27,22 +27,22 @@ import static io.vertx.starter.web.util.RestUtil.respondJson;
 
 public class DependencyResource {
 
-    private static final Logger log = LoggerFactory.getLogger(DependencyResource.class);
+  private static final Logger log = LoggerFactory.getLogger(DependencyResource.class);
 
-    private EventBus eventBus;
+  private EventBus eventBus;
 
-    public DependencyResource(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
+  public DependencyResource(EventBus eventBus) {
+    this.eventBus = eventBus;
+  }
 
-    public void findAll(RoutingContext rc) {
-        log.debug("REST request to get all Versions");
-        this.eventBus.send("dependency.query", new JsonObject(), ar -> {
-            if (ar.succeeded()) {
-                respondJson(rc, (JsonArray) ar.result().body());
-            } else {
-                error(rc, ar.cause());
-            }
-        });
-    }
+  public void findAll(RoutingContext rc) {
+    log.debug("REST request to get all Versions");
+    this.eventBus.send("dependency.query", new JsonObject(), ar -> {
+      if (ar.succeeded()) {
+        respondJson(rc, (JsonArray) ar.result().body());
+      } else {
+        error(rc, ar.cause());
+      }
+    });
+  }
 }

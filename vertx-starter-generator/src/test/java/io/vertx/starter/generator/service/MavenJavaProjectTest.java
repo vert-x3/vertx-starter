@@ -13,21 +13,21 @@ import static io.vertx.starter.generator.service.ProjectUtils.packageDir;
 @RunWith(VertxUnitRunner.class)
 public class MavenJavaProjectTest extends BaseProjectTest {
 
-    private JsonObject MAVEN_PROJECT = basicTestProject().maven().java().build();
+  private JsonObject MAVEN_PROJECT = basicTestProject().maven().java().build();
 
-    private String javaDir() {
-        return SRC_MAIN_SOURCES_DIR + packageDir(DEFAULT_GROUP_ID, DEFAULT_ARTIFACT_ID);
-    }
+  private String javaDir() {
+    return SRC_MAIN_SOURCES_DIR + packageDir(DEFAULT_GROUP_ID, DEFAULT_ARTIFACT_ID);
+  }
 
-    @Test
-    public void shouldGenerateMavenJavaProjectFiles(TestContext context) {
-        final Async async = context.async();
-        MavenJavaProject mavenJavaProject = new MavenJavaProject(templateService, MAVEN_PROJECT);
+  @Test
+  public void shouldGenerateMavenJavaProjectFiles(TestContext context) {
+    final Async async = context.async();
+    MavenJavaProject mavenJavaProject = new MavenJavaProject(templateService, MAVEN_PROJECT);
 
-        mavenJavaProject.run(onTestDone -> {
-            assertFileExists(context, javaDir(), "MainVerticle.java");
-            async.complete();
-        });
-    }
+    mavenJavaProject.run(onTestDone -> {
+      assertFileExists(context, javaDir(), "MainVerticle.java");
+      async.complete();
+    });
+  }
 
 }

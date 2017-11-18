@@ -23,37 +23,37 @@ import io.vertx.core.logging.LoggerFactory;
 
 public class ProjectGeneratorService {
 
-    private final Logger log = LoggerFactory.getLogger(ProjectGeneratorService.class);
+  private final Logger log = LoggerFactory.getLogger(ProjectGeneratorService.class);
 
-    private Vertx vertx;
-    private TemplateService templateService;
+  private Vertx vertx;
+  private TemplateService templateService;
 
-    public ProjectGeneratorService(Vertx vertx, TemplateService templateService) {
-        this.vertx = vertx;
-        this.templateService = templateService;
+  public ProjectGeneratorService(Vertx vertx, TemplateService templateService) {
+    this.vertx = vertx;
+    this.templateService = templateService;
+  }
+
+  public void generate(Message<JsonObject> message) {
+    getGenerator(message.body()).run(onGenerationDone -> {
+      if (onGenerationDone.failed()) {
+        message.fail(500, onGenerationDone.cause().getMessage());
+      } else {
+        message.reply(null);
+      }
+    });
+  }
+
+  private ProjectGenerator getGenerator(JsonObject project) {
+    String build = project.getString("build");
+    String language = project.getString("language");
+    ProjectGenerator projectGenerator = null;
+    if (build.equalsIgnoreCase("maven") && language.equalsIgnoreCase("java")) {
+      projectGenerator = new MavenJavaProject(templateService, project);
     }
-
-    public void generate(Message<JsonObject> message) {
-        getGenerator(message.body()).run(onGenerationDone -> {
-            if (onGenerationDone.failed()) {
-                message.fail(500, onGenerationDone.cause().getMessage());
-            } else {
-                message.reply(null);
-            }
-        });
+    if (build.equalsIgnoreCase("gradle") && language.equalsIgnoreCase("java")) {
+      projectGenerator = new GradleJavaProject(templateService, project);
     }
-
-    private ProjectGenerator getGenerator(JsonObject project) {
-        String build = project.getString("build");
-        String language = project.getString("language");
-        ProjectGenerator projectGenerator = null;
-        if (build.equalsIgnoreCase("maven") && language.equalsIgnoreCase("java")) {
-            projectGenerator = new MavenJavaProject(templateService, project);
-        }
-        if (build.equalsIgnoreCase("gradle") && language.equalsIgnoreCase("java")) {
-            projectGenerator = new GradleJavaProject(templateService, project);
-        }
-        return projectGenerator;
-    }
+    return projectGenerator;
+  }
 
 }
