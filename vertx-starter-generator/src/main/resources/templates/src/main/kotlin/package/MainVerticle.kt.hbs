@@ -4,11 +4,6 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.Vertx
 import io.vertx.kotlin.core.http.HttpServerOptions
 
-fun main(args: Array<String>) {
-  val vertx = Vertx.vertx()
-  vertx.deployVerticle(MainVerticle())
-}
-
 public class MainVerticle : AbstractVerticle() {
 
   override fun start() {
