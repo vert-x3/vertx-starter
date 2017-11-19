@@ -13,6 +13,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="vertx-starter" target="1.8" />
       <module name="vertx-starter-analytics" target="1.8" />
       <module name="vertx-starter-generator" target="1.8" />
       <module name="vertx-starter-main" target="1.8" />

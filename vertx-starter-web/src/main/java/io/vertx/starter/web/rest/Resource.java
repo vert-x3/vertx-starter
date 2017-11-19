@@ -19,5 +19,5 @@ import io.vertx.ext.web.Router;
 
 public interface Resource {
 
-    Router registerRoutes(Router router);
+  Router registerRoutes(Router router);
 }

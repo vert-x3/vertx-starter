@@ -29,30 +29,29 @@ import io.vertx.starter.generator.service.TemplateService;
 
 public class GeneratorVerticle extends AbstractVerticle {
 
-    private final Logger log = LoggerFactory.getLogger(GeneratorVerticle.class);
+  public static final String TEMPLATE_DIR = "/templates";
+  private final Logger log = LoggerFactory.getLogger(GeneratorVerticle.class);
 
-    public static final String TEMPLATE_DIR = "/templates";
+  String tempDir() {
+    return config().getString("temp.dir", System.getProperty("java.io.tmpdir"));
+  }
 
-    String tempDir() {
-        return config().getString("temp.dir", System.getProperty("java.io.tmpdir"));
-    }
+  @Override
+  public void start(Future<Void> startFuture) throws Exception {
+    TemplateLoader loader = new ClassPathTemplateLoader(TEMPLATE_DIR);
+    StarterService starter = new StarterService(vertx, tempDir());
+    ProjectGeneratorService generator = new ProjectGeneratorService(vertx, new TemplateService(vertx, loader));
+    ArchiveService archive = new ArchiveService(vertx);
 
-    @Override
-    public void start(Future<Void> startFuture) throws Exception {
-        TemplateLoader loader = new ClassPathTemplateLoader(TEMPLATE_DIR);
-        StarterService starter = new StarterService(vertx, tempDir());
-        ProjectGeneratorService generator = new ProjectGeneratorService(vertx, new TemplateService(vertx, loader));
-        ArchiveService archive = new ArchiveService(vertx);
+    vertx.eventBus().<JsonObject>consumer("project.requested").handler(starter::starter);
+    vertx.eventBus().<JsonObject>consumer("generate").handler(generator::generate);
+    vertx.eventBus().<JsonObject>consumer("archive").handler(archive::archive);
+    vertx.eventBus().<JsonObject>consumer("project.created").handler(starter::clean);
 
-        vertx.eventBus().<JsonObject>consumer("project.requested").handler(starter::starter);
-        vertx.eventBus().<JsonObject>consumer("generate").handler(generator::generate);
-        vertx.eventBus().<JsonObject>consumer("archive").handler(archive::archive);
-        vertx.eventBus().<JsonObject>consumer("project.created").handler(starter::clean);
-
-        log.info("\n----------------------------------------------------------\n\t" +
-                "{} is running!\n" +
-                "----------------------------------------------------------",
-            GeneratorVerticle.class.getSimpleName());
-        startFuture.complete();
-    }
+    log.info("\n----------------------------------------------------------\n\t" +
+        "{} is running!\n" +
+        "----------------------------------------------------------",
+      GeneratorVerticle.class.getSimpleName());
+    startFuture.complete();
+  }
 }

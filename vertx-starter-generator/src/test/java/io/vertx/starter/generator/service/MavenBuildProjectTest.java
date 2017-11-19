@@ -10,21 +10,21 @@ import org.junit.runner.RunWith;
 @RunWith(VertxUnitRunner.class)
 public class MavenBuildProjectTest extends BaseProjectTest {
 
-    private JsonObject MAVEN_PROJECT = basicTestProject().maven().java().build();
+  private JsonObject MAVEN_PROJECT = basicTestProject().maven().java().build();
 
-    @Test
-    public void shouldGenerateMavenBuildProjectFiles(TestContext context) {
-        final Async async = context.async();
-        MavenBuildProject mavenBuildProject = new MavenBuildProject(templateService, MAVEN_PROJECT);
+  @Test
+  public void shouldGenerateMavenBuildProjectFiles(TestContext context) {
+    final Async async = context.async();
+    MavenBuildProject mavenBuildProject = new MavenBuildProject(templateService, MAVEN_PROJECT);
 
-        mavenBuildProject.run(onTestDone -> {
-            assertFileExists(context, "pom.xml");
-            assertFileExists(context, "mvnw");
-            assertFileExists(context, "mvnw.bat");
-            assertFileExists(context, "maven/wrapper/maven-wrapper.jar");
-            assertFileExists(context, "maven/wrapper/maven-wrapper.properties");
-            async.complete();
-        });
-    }
+    mavenBuildProject.run(onTestDone -> {
+      assertFileExists(context, "pom.xml");
+      assertFileExists(context, "mvnw");
+      assertFileExists(context, "mvnw.bat");
+      assertFileExists(context, "maven/wrapper/maven-wrapper.jar");
+      assertFileExists(context, "maven/wrapper/maven-wrapper.properties");
+      async.complete();
+    });
+  }
 
 }
