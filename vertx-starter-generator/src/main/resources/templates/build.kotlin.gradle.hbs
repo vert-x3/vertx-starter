@@ -1,0 +1,54 @@
+plugins {
+  id 'java'
+  id 'application'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+apply plugin: 'kotlin'
+
+
+repositories {
+  mavenLocal()
+  jcenter()
+  maven { url "https://plugins.gradle.org/m2/" }
+}
+
+version = '{{version}}'
+sourceCompatibility = '1.8'
+kotlin_version = '1.1.60'
+
+dependencies {
+  {{#each dependencies as |dependency|}}
+  compile "io.vertx:{{dependency}}:$version"
+  {{/each}}
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+  compile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+}
+
+mainClassName = 'io.vertx.core.Launcher'
+def mainVerticleName = '{{groupId}}.{{artifactId}}.MainVerticle'
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+
+shadowJar {
+  classifier = 'fat'
+  manifest {
+    attributes 'Main-Verticle': mainVerticleName
+  }
+  mergeServiceFiles {
+    include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+  }
+}
+
+run {
+  args = ['run', mainClassName, "--launcher-class=io.vertx.core.Launcher"]
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.0.0'
+}

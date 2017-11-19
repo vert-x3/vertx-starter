@@ -9,11 +9,11 @@ public class MavenKotlinProject extends BasicProject {
   public static final String SRC_TEST_SOURCES_DIR = "src/test/kotlin/";
   public static final String SRC_TEST_RESOURCES_DIR = "src/test/resources/";
 
-  private MavenBuildProject mavenBuildProject;
+  private MavenBuildKotlinProject mavenBuildKotlinProject;
 
   public MavenKotlinProject(TemplateService templateService, JsonObject project) {
     super(templateService, project);
-    mavenBuildProject = new MavenBuildProject(templateService, project);
+    mavenBuildKotlinProject = new MavenBuildKotlinProject(templateService, project);
   }
 
   private String packageDir() {
@@ -23,7 +23,7 @@ public class MavenKotlinProject extends BasicProject {
   @Override
   public void generate() {
     super.generate();
-    mavenBuildProject.generate();
+    mavenBuildKotlinProject.generate();
     render(SRC_MAIN_SOURCES_DIR + "package/MainVerticle.kt", packageDir() + "MainVerticle.kt");
   }
 }

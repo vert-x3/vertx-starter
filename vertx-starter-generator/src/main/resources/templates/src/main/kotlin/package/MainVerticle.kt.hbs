@@ -1,6 +1,8 @@
 package {{groupId}}.{{artifactId}}
 
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.Vertx
+import io.vertx.kotlin.core.http.HttpServerOptions
 
 fun main(args: Array<String>) {
   val vertx = Vertx.vertx()
@@ -12,7 +14,11 @@ public class MainVerticle : AbstractVerticle() {
   override fun start() {
     val httpPort = System.getenv("PORT")?.toInt() ?: 8080
     vertx.createHttpServer(HttpServerOptions(port = httpPort))
-      .requestHandler { router.accept(it) }
+      .requestHandler { request ->
+        request.response()
+          .putHeader("content-type", "text/plain; charset=utf-8")
+          .end("👋 Hello 🌍❗")
+      }
       .listen { ar ->
         when {
           ar.failed() -> println("😡 Houston?")
