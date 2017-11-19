@@ -9,6 +9,7 @@
   <parent>
     <groupId>io.vertx</groupId>
     <artifactId>vertx-starter</artifactId>
+    <relativePath>../pom.xml</relativePath>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
