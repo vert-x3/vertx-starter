@@ -18,16 +18,16 @@ package io.vertx.starter.web;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.starter.web.rest.DependencyResource;
-import io.vertx.starter.web.rest.StarterResource;
+import io.vertx.starter.web.rest.ProjectResource;
 import io.vertx.starter.web.rest.VersionResource;
 import io.vertx.starter.web.service.DependencyService;
+import io.vertx.starter.web.service.ProjectService;
 import io.vertx.starter.web.service.VersionService;
 
 public class WebVerticle extends AbstractVerticle {
@@ -35,16 +35,26 @@ public class WebVerticle extends AbstractVerticle {
     private final Logger log = LoggerFactory.getLogger(WebVerticle.class);
     public static final int DEFAULT_HTTP_PORT = 8080;
 
+    private VersionResource versionResource;
+    private DependencyResource dependencyResource;
+    private ProjectResource projectResource;
+
     @Override
     public void start(Future<Void> startFuture) throws Exception {
-        int port = config().getInteger("http.port", DEFAULT_HTTP_PORT);
+        versionResource = new VersionResource(new VersionService());
+        dependencyResource = new DependencyResource(new DependencyService(config().getString("dependencies.path")));
+        projectResource = new ProjectResource(config().getJsonObject("project.request"), new ProjectService(vertx.eventBus()));
+
         Router router = Router.router(vertx);
         cors(router);
-        //TODO data should come from a DB, not a file or hardcoded values
-        dependencies(router, config().getString("dependencies.path"));
-        versions(router);
-        forge(router, config().getJsonObject("project.request"));
+        router
+            .mountSubRouter("/api", starterRouter())
+            .mountSubRouter("/api", versionsRouter())
+            .mountSubRouter("/api", dependenciesRouter())
+            .mountSubRouter("/api", versionsRouter());
         router.route().handler(StaticHandler.create());
+
+        int port = config().getInteger("http.port", DEFAULT_HTTP_PORT);
         vertx
             .createHttpServer()
             .requestHandler(router::accept)
@@ -72,23 +82,22 @@ public class WebVerticle extends AbstractVerticle {
         );
     }
 
-    private void dependencies(Router router, String dependenciesPath) {
-        DependencyResource dependencyResource = new DependencyResource(vertx.eventBus());
+    private Router dependenciesRouter() {
+        Router router = Router.router(vertx);
         router.get("/dependencies").handler(dependencyResource::findAll);
-        DependencyService dependencyService = new DependencyService(dependenciesPath);
-        vertx.eventBus().consumer("dependency.query", dependencyService::findAll);
+        return router;
     }
 
-    private void versions(Router router) {
-        VersionResource versionResource = new VersionResource(vertx.eventBus());
+    private Router versionsRouter() {
+        Router router = Router.router(vertx);
         router.get("/versions").handler(versionResource::findAll);
-        VersionService versionService = new VersionService();
-        vertx.eventBus().consumer("version.query", versionService::findAll);
-
+        return router;
     }
 
-    private void forge(Router router, JsonObject projectRequest) {
-        StarterResource starterResource = new StarterResource(vertx.eventBus(), projectRequest);
-        router.get("/starter*").handler(starterResource::create);
+    private Router starterRouter() {
+        Router router = Router.router(vertx);
+        router.get("/starter*").handler(projectResource::create);
+        return router;
     }
+
 }
