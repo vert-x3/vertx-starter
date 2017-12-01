@@ -1,6 +1,5 @@
 package io.vertx.starter.generator.service;
 
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 public class MavenJavaProject extends BasicProject {

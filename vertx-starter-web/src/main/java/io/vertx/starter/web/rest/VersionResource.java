@@ -27,20 +27,20 @@ public class VersionResource {
 
   private final Logger log = LoggerFactory.getLogger(VersionResource.class);
 
-    private final VersionService versionService;
+  private final VersionService versionService;
 
-    public VersionResource(VersionService versionService) {
-        this.versionService = versionService;
-    }
+  public VersionResource(VersionService versionService) {
+    this.versionService = versionService;
+  }
 
-    public void findAll(RoutingContext rc) {
-        log.debug("REST request to get all Versions");
-        versionService.findAll(reply -> {
-            if (reply.succeeded()) {
-                respondJson(rc, reply.result());
-            } else {
-                error(rc, reply.cause());
-            }
-        });
-    }
+  public void findAll(RoutingContext rc) {
+    log.debug("REST request to get all Versions");
+    versionService.findAll(reply -> {
+      if (reply.succeeded()) {
+        respondJson(rc, reply.result());
+      } else {
+        error(rc, reply.cause());
+      }
+    });
+  }
 }

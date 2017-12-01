@@ -23,8 +23,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.starter.generator.service.ArchiveService;
-import io.vertx.starter.generator.service.StarterService;
 import io.vertx.starter.generator.service.ProjectGeneratorService;
+import io.vertx.starter.generator.service.StarterService;
 import io.vertx.starter.generator.service.TemplateService;
 
 public class GeneratorVerticle extends AbstractVerticle {
