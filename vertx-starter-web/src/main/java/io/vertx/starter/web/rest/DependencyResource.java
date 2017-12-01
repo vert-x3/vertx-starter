@@ -15,12 +15,10 @@
  */
 package io.vertx.starter.web.rest;
 
-import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.starter.web.service.DependencyService;
 
 import static io.vertx.starter.web.util.RestUtil.error;
 import static io.vertx.starter.web.util.RestUtil.respondJson;
@@ -29,20 +27,20 @@ public class DependencyResource {
 
   private static final Logger log = LoggerFactory.getLogger(DependencyResource.class);
 
-  private EventBus eventBus;
+    private final DependencyService dependencyService;
 
-  public DependencyResource(EventBus eventBus) {
-    this.eventBus = eventBus;
-  }
+    public DependencyResource(DependencyService dependencyService) {
+        this.dependencyService = dependencyService;
+    }
 
-  public void findAll(RoutingContext rc) {
-    log.debug("REST request to get all Versions");
-    this.eventBus.send("dependency.query", new JsonObject(), ar -> {
-      if (ar.succeeded()) {
-        respondJson(rc, (JsonArray) ar.result().body());
-      } else {
-        error(rc, ar.cause());
-      }
-    });
-  }
+    public void findAll(RoutingContext rc) {
+        log.debug("REST request to get all Versions");
+        dependencyService.findAll(reply -> {
+            if (reply.succeeded()) {
+                respondJson(rc, reply.result());
+            } else {
+                error(rc, reply.cause());
+            }
+        });
+    }
 }

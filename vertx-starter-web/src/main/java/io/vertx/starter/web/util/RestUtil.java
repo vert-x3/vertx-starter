@@ -24,9 +24,9 @@ import static java.net.HttpURLConnection.HTTP_OK;
 
 public final class RestUtil {
 
-  public static void error(RoutingContext rc, Throwable cause) {
-    rc.response().setStatusCode(HTTP_INTERNAL_ERROR).end(cause.getMessage());
-  }
+    public static void error(RoutingContext rc, Throwable cause) {
+        rc.response().setStatusCode(HTTP_INTERNAL_ERROR).end(new JsonObject().put("status", HTTP_INTERNAL_ERROR).put("message", cause.getMessage()).toString());
+    }
 
   private static void respond(RoutingContext rc, String contentType, String chunk) {
     rc
