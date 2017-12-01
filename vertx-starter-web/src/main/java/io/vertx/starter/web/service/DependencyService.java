@@ -15,7 +15,9 @@
  */
 package io.vertx.starter.web.service;
 
-import io.vertx.core.eventbus.Message;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -43,14 +45,13 @@ public class DependencyService {
     } catch (IOException e) {
       log.error("Impossible to load dependencies at path {}: {}", dependenciesPath, e.getMessage());
     }
-  }
 
-  public void findAll(Message<JsonObject> message) {
-    JsonObject query = message.body();
-    if (dependencies != null) {
-      message.reply(dependencies);
-    } else {
-      message.fail(500, "Impossible to retrieve dependencies");
+    public void findAll(Handler<AsyncResult<JsonArray>> reply) {
+        if (dependencies != null) {
+            reply.handle(Future.succeededFuture(dependencies));
+        } else {
+            reply.handle(Future.failedFuture("Impossible to retrieve dependencies"));
+        }
     }
-  }
+
 }
