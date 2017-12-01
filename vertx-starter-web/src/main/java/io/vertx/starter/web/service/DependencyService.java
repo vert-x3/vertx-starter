@@ -46,12 +46,12 @@ public class DependencyService {
       log.error("Impossible to load dependencies at path {}: {}", dependenciesPath, e.getMessage());
     }
 
-    public void findAll(Handler<AsyncResult<JsonArray>> reply) {
-        if (dependencies != null) {
-            reply.handle(Future.succeededFuture(dependencies));
-        } else {
-            reply.handle(Future.failedFuture("Impossible to retrieve dependencies"));
-        }
+  public void findAll(Handler<AsyncResult<JsonArray>> reply) {
+    if (dependencies != null) {
+      reply.handle(Future.succeededFuture(dependencies));
+    } else {
+      reply.handle(Future.failedFuture("Impossible to retrieve dependencies"));
     }
+  }
 
 }

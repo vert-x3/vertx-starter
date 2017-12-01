@@ -1,6 +1,5 @@
 package io.vertx.starter.generator.service;
 
-import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.TestContext;

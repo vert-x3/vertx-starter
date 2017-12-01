@@ -27,20 +27,20 @@ public class DependencyResource {
 
   private static final Logger log = LoggerFactory.getLogger(DependencyResource.class);
 
-    private final DependencyService dependencyService;
+  private final DependencyService dependencyService;
 
-    public DependencyResource(DependencyService dependencyService) {
-        this.dependencyService = dependencyService;
-    }
+  public DependencyResource(DependencyService dependencyService) {
+    this.dependencyService = dependencyService;
+  }
 
-    public void findAll(RoutingContext rc) {
-        log.debug("REST request to get all Versions");
-        dependencyService.findAll(reply -> {
-            if (reply.succeeded()) {
-                respondJson(rc, reply.result());
-            } else {
-                error(rc, reply.cause());
-            }
-        });
-    }
+  public void findAll(RoutingContext rc) {
+    log.debug("REST request to get all Versions");
+    dependencyService.findAll(reply -> {
+      if (reply.succeeded()) {
+        respondJson(rc, reply.result());
+      } else {
+        error(rc, reply.cause());
+      }
+    });
+  }
 }

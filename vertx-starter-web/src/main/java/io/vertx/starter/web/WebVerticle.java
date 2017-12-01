@@ -35,43 +35,43 @@ public class WebVerticle extends AbstractVerticle {
   public static final int DEFAULT_HTTP_PORT = 8080;
   private final Logger log = LoggerFactory.getLogger(WebVerticle.class);
 
-    private VersionResource versionResource;
-    private DependencyResource dependencyResource;
-    private ProjectResource projectResource;
+  private VersionResource versionResource;
+  private DependencyResource dependencyResource;
+  private ProjectResource projectResource;
 
-    @Override
-    public void start(Future<Void> startFuture) throws Exception {
-        versionResource = new VersionResource(new VersionService());
-        dependencyResource = new DependencyResource(new DependencyService(config().getString("dependencies.path")));
-        projectResource = new ProjectResource(config().getJsonObject("project.request"), new ProjectService(vertx.eventBus()));
+  @Override
+  public void start(Future<Void> startFuture) throws Exception {
+    versionResource = new VersionResource(new VersionService());
+    dependencyResource = new DependencyResource(new DependencyService(config().getString("dependencies.path")));
+    projectResource = new ProjectResource(config().getJsonObject("project.request"), new ProjectService(vertx.eventBus()));
 
-        Router router = Router.router(vertx);
-        cors(router);
-        router
-            .mountSubRouter("/api", starterRouter())
-            .mountSubRouter("/api", versionsRouter())
-            .mountSubRouter("/api", dependenciesRouter())
-            .mountSubRouter("/api", versionsRouter());
-        router.route().handler(StaticHandler.create());
+    Router router = Router.router(vertx);
+    cors(router);
+    router
+      .mountSubRouter("/api", starterRouter())
+      .mountSubRouter("/api", versionsRouter())
+      .mountSubRouter("/api", dependenciesRouter())
+      .mountSubRouter("/api", versionsRouter());
+    router.route().handler(StaticHandler.create());
 
-        int port = config().getInteger("http.port", DEFAULT_HTTP_PORT);
-        vertx
-            .createHttpServer()
-            .requestHandler(router::accept)
-            .listen(port, ar -> {
-                if (ar.failed()) {
-                    log.error("Fail to start {}: {}", WebVerticle.class.getSimpleName(), ar.cause().getMessage());
-                    startFuture.fail(ar.cause());
-                } else {
-                    log.info("\n----------------------------------------------------------\n\t" +
-                            "{} is running! Access URLs:\n\t" +
-                            "Local: \t\thttp://localhost:{}\n" +
-                            "----------------------------------------------------------",
-                        WebVerticle.class.getSimpleName(), port);
-                    startFuture.complete();
-                }
-            });
-    }
+    int port = config().getInteger("http.port", DEFAULT_HTTP_PORT);
+    vertx
+      .createHttpServer()
+      .requestHandler(router::accept)
+      .listen(port, ar -> {
+        if (ar.failed()) {
+          log.error("Fail to start {}: {}", WebVerticle.class.getSimpleName(), ar.cause().getMessage());
+          startFuture.fail(ar.cause());
+        } else {
+          log.info("\n----------------------------------------------------------\n\t" +
+              "{} is running! Access URLs:\n\t" +
+              "Local: \t\thttp://localhost:{}\n" +
+              "----------------------------------------------------------",
+            WebVerticle.class.getSimpleName(), port);
+          startFuture.complete();
+        }
+      });
+  }
 
   private void cors(Router router) {
     router.route().handler(CorsHandler.create("*")
@@ -82,22 +82,22 @@ public class WebVerticle extends AbstractVerticle {
     );
   }
 
-    private Router dependenciesRouter() {
-        Router router = Router.router(vertx);
-        router.get("/dependencies").handler(dependencyResource::findAll);
-        return router;
-    }
+  private Router dependenciesRouter() {
+    Router router = Router.router(vertx);
+    router.get("/dependencies").handler(dependencyResource::findAll);
+    return router;
+  }
 
-    private Router versionsRouter() {
-        Router router = Router.router(vertx);
-        router.get("/versions").handler(versionResource::findAll);
-        return router;
-    }
+  private Router versionsRouter() {
+    Router router = Router.router(vertx);
+    router.get("/versions").handler(versionResource::findAll);
+    return router;
+  }
 
-    private Router starterRouter() {
-        Router router = Router.router(vertx);
-        router.get("/starter*").handler(projectResource::create);
-        return router;
-    }
+  private Router starterRouter() {
+    Router router = Router.router(vertx);
+    router.get("/starter*").handler(projectResource::create);
+    return router;
+  }
 
 }

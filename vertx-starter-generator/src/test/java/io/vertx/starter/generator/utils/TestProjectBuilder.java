@@ -3,7 +3,9 @@ package io.vertx.starter.generator.utils;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
