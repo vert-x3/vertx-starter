@@ -6,7 +6,7 @@
 #   docker run -t -i -p 8080:8080 sample/vertx-java-fat
 ###
 
-FROM java:openjdk-8-jdk
+FROM openjdk:8-alpine
 
 ENV CONF_FILE vertx-starter-main/conf/default-conf.json
 ENV VERTICLE_FILE vertx-starter-main/target/vertx-starter-main-1.0.0-SNAPSHOT-fat.jar
