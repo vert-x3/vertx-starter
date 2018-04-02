@@ -20,7 +20,7 @@ angular
     hotkeysProvider.includeCheatSheet = false;
   }])
   .factory('Version', ['$resource', function ($resource) {
-    var service = $resource('/versions/:version', {}, {
+    var service = $resource('/api/versions/:version', {}, {
       'query': {method: 'GET', isArray: true},
       'get': {
         method: 'GET',
@@ -34,7 +34,7 @@ angular
     return service;
   }])
   .factory('Dependency', ['$resource', function ($resource) {
-    var service = $resource('/dependencies/:dependency', {}, {
+    var service = $resource('/api/dependencies/:dependency', {}, {
       'query': {method: 'GET', isArray: true},
       'get': {
         method: 'GET',
@@ -48,7 +48,7 @@ angular
     return service;
   }])
   .factory('Starter', ['$resource', function ($resource) {
-    var service = $resource('/starter.zip', {}, {
+    var service = $resource('/api/starter.zip', {}, {
       'starter': {
         method: 'GET',
         responseType: 'arraybuffer',

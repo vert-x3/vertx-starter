@@ -45,6 +45,7 @@ public class DependencyService {
     } catch (IOException e) {
       log.error("Impossible to load dependencies at path {}: {}", dependenciesPath, e.getMessage());
     }
+  }
 
   public void findAll(Handler<AsyncResult<JsonArray>> reply) {
     if (dependencies != null) {

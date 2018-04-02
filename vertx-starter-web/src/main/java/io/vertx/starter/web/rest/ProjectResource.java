@@ -12,49 +12,34 @@ import io.vertx.starter.web.service.ProjectService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static io.vertx.starter.web.util.RestUtil.error;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Arrays.asList;
 
 public class ProjectResource {
 
   private static final Logger log = LoggerFactory.getLogger(ProjectResource.class);
+
+  private static final List<String> DEFAULT_DEPENDENCIES = asList("vertx-core", "vertx-unit");
+
+  private static final JsonObject DEFAULT_PROJECT_REQUEST = new JsonObject()
+    .put("format", "zip")
+    .put("language", "java")
+    .put("build", "maven")
+    .put("groupId", "io.vertx")
+    .put("artifactId", "sample")
+    .put("dependencies", new JsonArray(DEFAULT_DEPENDENCIES));
+
   private final ProjectService projectService;
   private final JsonObject defaults;
-
-  {
-    userRequest.put("artifactId", params.get("artifactId"));
-  }
-
-  {
-    Set<String> dependencies = new HashSet<>(DEFAULT_DEPENDENCIES);
-    for (String dependency : params.get("dependencies").split(",")) {
-      dependencies.add(dependency.toLowerCase());
-    }
-    userRequest.put("dependencies", new JsonArray(new ArrayList(dependencies)));
-  }
-
-  public StarterResource(EventBus eventBus, JsonObject defaultProjectRequest) {
-    requireNonNull(eventBus);
-    requireNonNull(defaultProjectRequest);
-    requireNonNull(defaultProjectRequest.getString("version"), "A default Vert.x must be defined");
-    this.eventBus = eventBus;
-    this.defaultProjectRequest = DEFAULT_PROJECT_REQUEST.mergeIn(defaultProjectRequest);
-  }
 
   public ProjectResource(JsonObject defaults, ProjectService projectService) {
     this.defaults = DEFAULT_PROJECT_REQUEST.mergeIn(defaults);
     this.projectService = projectService;
   }
-    if(
-
-  isNotBlank(params.get("artifactId")))
-
-isNotBlank(params.get("dependencies")
-    if(
-
-    mergeIn(userRequest);))
 
   public void create(RoutingContext rc) {
     JsonObject projectRequest = buildProjectRequest(rc.request());
@@ -78,7 +63,6 @@ isNotBlank(params.get("dependencies")
       }
     });
   }
-    return defaultProjectRequest.copy().
 
   private JsonObject buildProjectRequest(HttpServerRequest request) {
     JsonObject userRequest = new JsonObject();
@@ -111,8 +95,6 @@ isNotBlank(params.get("dependencies")
     }
     return this.defaults.copy().mergeIn(userRequest);
   }
-
-}
 
   private String getArchiveFormat(String path) {
     if (path.matches(".*\\.zip$")) {
