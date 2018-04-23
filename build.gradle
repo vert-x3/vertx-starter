@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2017-2018 Daniel Petisme
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+  id 'io.vertx.vertx-plugin' version '0.0.8'
+}
+
+apply plugin: 'idea'
+
+
+repositories {
+  jcenter()
+  mavenCentral()
+  maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+}
+
+group 'io.vertx'
+version '2.0.0-SNAPSHOT'
+description = 'A web application to generate Vert.x projects '
+
+ext {
+  vertx_version = '3.5.3'
+  logback_version = '1.2.3'
+  gradle_tooking_api_version = '4.3'
+  vertx_boot_version = '0.0.2'
+  assertj_core_version = '3.10.0'
+  junit_version = '5.2.0'
+}
+
+dependencies {
+  implementation 'io.vertx:vertx-web'
+  implementation 'io.vertx:vertx-mongo-client'
+  implementation 'io.vertx:vertx-web-client'
+
+  implementation "ch.qos.logback:logback-classic:${logback_version}"
+  implementation "org.gradle:gradle-tooling-api:${gradle_tooking_api_version}"
+  implementation "io.github.jponge:vertx-boot:${vertx_boot_version}"
+
+  testImplementation "org.assertj:assertj-core:${assertj_core_version}"
+  testImplementation 'io.vertx:vertx-junit5'
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+
+  //When present gradle test work but intellij not and vice-versa
+  testRuntime "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+
+}
+
+vertx {
+  vertxVersion = "${vertx_version}"
+  mainVerticle = 'io.github.jponge.vertx.boot.BootVerticle'
+  jvmArgs = ['-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory']
+}
+
+
+test {
+  useJUnitPlatform()
+  failFast = true
+  jvmArgs '-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory'
+
+}
+
+apply from: 'gradle/docker.gradle'
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.8'
+}

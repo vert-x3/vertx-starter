@@ -10,6 +10,6 @@
 .yardoc
 .yardopts
 .vertx
-build
+build/
 target
 out
