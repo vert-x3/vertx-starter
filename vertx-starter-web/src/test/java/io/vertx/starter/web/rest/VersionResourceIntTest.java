@@ -21,7 +21,7 @@ public class VersionResourceIntTest extends AbstractResourceIntTest {
       if (response.succeeded()) {
         assertThat(response.result().statusCode(), is(200));
         JsonArray payload = response.result().body();
-        assertThat(payload.size(), is(4));
+        assertThat(payload.size(), is(7));
         async.complete();
       } else {
         context.fail(response.cause());
