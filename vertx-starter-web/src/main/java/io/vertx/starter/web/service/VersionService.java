@@ -23,6 +23,9 @@ import io.vertx.core.json.JsonArray;
 public class VersionService {
 
   public static final JsonArray VERSIONS = new JsonArray()
+    .add("3.5.3")
+    .add("3.5.2")
+    .add("3.5.1")
     .add("3.5.0")
     .add("3.4.2")
     .add("3.4.1")

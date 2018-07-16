@@ -2,7 +2,7 @@
   "web": {
     "http.port": 7070,
     "project.request": {
-      "version": "3.5.0",
+      "version": "3.5.3",
       "format": "zip",
       "language": "java",
       "build": "maven",
