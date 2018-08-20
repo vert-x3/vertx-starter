@@ -70,7 +70,7 @@
           "description": "Vert.x provides an implementation of the STOMP protocol."
         },
         {
-          "artifactId": "none",
+          "artifactId": "vertx-jca",
           "name": "JCA Adaptor",
           "description": "Vert.x provides a Java Connector Architecture (JCA) adaptor which allows it to interoperate with any JavaEE application server."
         },
@@ -148,7 +148,7 @@
           "description": "Auth implementation for OAuth2"
         },
         {
-          "artifactId": "",
+          "artifactId": "vertx-auth-htdigest",
           "name": ".htdigest Auth",
           "description": ".htdigest file to query user information"
         }
@@ -159,8 +159,13 @@
       "description": "Vert.x provides a couple of components to make your applications more reactive.",
       "items": [
         {
-          "artifactId": "",
-          "name": "Vert.x Rx",
+          "artifactId": "vertx-rx-java",
+          "name": "Vert.x RxJava v1",
+          "description": "Don't like callback-style APIs? Vert.x provides <em>Rx-ified</em> (using RxJava) versions for most of its APIs so you can use those if you prefer. RxJava is a great choice when you want to perform complex operations on multiple asynchronous streams of data."
+        },
+        {
+          "artifactId": "vertx-rx-java2",
+          "name": "Vert.x RxJava v2",
           "description": "Don't like callback-style APIs? Vert.x provides <em>Rx-ified</em> (using RxJava) versions for most of its APIs so you can use those if you prefer. RxJava is a great choice when you want to perform complex operations on multiple asynchronous streams of data."
         },
         {
@@ -169,7 +174,7 @@
           "description": "Vert.x supports reactive streams so your applications can interoperate with other reactive systems such as Akka or Project Reactor."
         },
         {
-          "artifactId": "",
+          "artifactId": "vertx-sync",
           "name": "Vert.x Sync",
           "description": "Vertx-sync allows you to deploy verticles that run using fibers. Fibers are very lightweight threads that can be blocked without blocking a kernel thread. This enables you to write your verticle code in a familiar synchronous style."
         }
@@ -200,9 +205,9 @@
       "category": "IoT",
       "items": [
         {
-          "artifactId": "",
-          "name": "MQTT Server",
-          "description": "Vert.x MQTT Server is able to handle connections, communication and messages exchange with remote MQTT clients. Its API provides a bunch of events related to protocol messages received by clients and exposes allow to send messages to them.",
+          "artifactId": "vertx-mqtt",
+          "name": "MQTT",
+          "description": "Vert.x MQTT (client and server) is able to handle connections, communication and messages exchange with remote MQTT clients. Its API provides a bunch of events related to protocol messages received by clients and exposes allow to send messages to them.",
           "flag": "Technical Preview"
         }
       ]
@@ -227,7 +232,7 @@
           "description": "This component provides a simple way to expose health checks."
         },
         {
-          "artifactId": "",
+          "artifactId": "vertx-shell",
           "name": "Shell",
           "description": "This component lets you interact with your Vert.x application using a CLI interface."
         },
@@ -250,6 +255,10 @@
         {
           "name": "Vert.x Unit",
           "artifactId": "vertx-unit"
+        },
+        {
+          "name": "Vert.x JUnit5",
+          "artifactId": "vertx-junit5"
         }
       ]
     },
@@ -259,19 +268,23 @@
       "items": [
         {
           "name": "Hazelcast",
+          "artifactId": "vertx-hazelcast",
           "description": "Cluster manager implementation that uses Hazelcast. This is the default."
         },
         {
           "name": "Infinispan",
+          "artifactId": "vertx-infinispan",
           "description": "Cluster manager implementation that uses Infinispan.",
           "flag": "Technical Preview"
         },
         {
           "name": "Apache Ignite",
+          "artifactId": "vertx-ignite",
           "description": "Cluster manager implementation that uses Apache Ignite."
         },
         {
           "name": "Apache Zookeper",
+          "artifactId": "vertx-zookeeper",
           "description": "Cluster manager implementation that uses Apache Zookeeper.",
           "flag": "Technical Preview"
         }
@@ -283,26 +296,32 @@
       "items": [
         {
           "name": "Service Proxies",
+          "artifactId": "vertx-service-proxy",
           "description": "Proxies allow remote event bus services to be called as if they were local."
         },
         {
           "name": "SockJS Service Proxies",
+          "artifactId": "vertx-sockjs-service-proxy",
           "description": "Allow event bus services to be called from JavaScript (browser or Node.js)."
         },
         {
           "name": "gRPC",
+          "artifactId": "vertx-grpc",
           "description": "Implement gRPC Clients and Servers for Vert.x."
         },
         {
           "name": "Service Factories",
+          "artifactId": "vertx-service-factory",
           "description": "How to package and deploy Vert.x independent <em>services<em>.</em></em>"
         },
         {
           "name": "Maven Service Factory",
+          "artifactId": "vertx-maven-service-factory",
           "description": "This lets you dynamically install and deploy services from Maven at run-time."
         },
         {
           "name": "HTTP Service Factory",
+          "artifactId": "vertx-http-service-factory",
           "description": "This lets you dynamically install and deploy services from an HTTP server (for example Bintray at run-time."
         }
       ]
