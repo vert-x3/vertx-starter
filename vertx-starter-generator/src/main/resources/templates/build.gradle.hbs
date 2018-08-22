@@ -23,17 +23,20 @@ dependencies {
 {{/each}}
 }
 
-mainClassName = '{{groupId}}.{{artifactId}}.MainVerticle'
+mainClassName = 'io.vertx.core.Launcher'
 
 shadowJar {
   classifier = 'fat'
+  manifest {
+    attributes 'Main-Verticle': '{{groupId}}.{{artifactId}}.MainVerticle'
+  }
   mergeServiceFiles {
     include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
   }
 }
 
 run {
-  args = ['run', mainClassName, "--launcher-class=io.vertx.core.Launcher"]
+  args = ['run', '{{groupId}}.{{artifactId}}.MainVerticle']
 }
 
 task wrapper(type: Wrapper) {
