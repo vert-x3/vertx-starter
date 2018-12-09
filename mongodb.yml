@@ -1,9 +1,0 @@
-version: '2'
-services:
-    vertx-starter-mongodb:
-        container_name: vertx-starter-mongodb
-        image: mongo:3.3.12
-        ports:
-            - "27017:27017"
-        # volumes:
-        #     - $(pwd)/mongodb/:/data/db/
