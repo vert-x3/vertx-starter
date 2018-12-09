@@ -1,26 +1,4 @@
-dist: trusty
-sudo: false
 language: java
+
 jdk:
 - oraclejdk8
-- oraclejdk9
-matrix:
-  allow_failures:
-  - jdk: oraclejdk9
-addons:
-  apt:
-    packages:
-    - oracle-java8-installer
-    - oracle-java9-installer
-cache:
-  directories:
-  - $HOME/.m2
-before_script: java -version
-script: ./mvnw install
-deploy:
-  skip_cleanup: true
-  provider: releases
-  api_key: ${GITHUB_OAUTH_TOKEN}
-  file: ./vertx-starter-main/target/vertx-starter-main-${TRAVIS_TAG}-fat.jar
-  on:
-    tags: true
