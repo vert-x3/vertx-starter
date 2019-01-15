@@ -6,7 +6,7 @@
 
 **Disclaimer**: This is a *WIP* project. Any comment, test or help is welcome!
 
-[Vert.x Starter](http://start.vertx.io) is an open-source web application for creating [Vert.x](https://vertx.io/) applications. 
+[Vert.x Starter](http://start.vertx.io) is an open-source web application for creating [Vert.x](https://vertx.io/) applications.
 
 ## Quickstart
 
@@ -22,7 +22,7 @@ It your a CLI adept, you can use any http client (curl, [httpie](https://httpie.
 
 `http://start.vertx.io/starter.{archiveFormat}`
 
-*Note*: `{archiveFromat}` can be `zip`, `tgz`, `tar.gz`, etc. if the project generator can handle the format, it will use the appropriate compression tool.  
+*Note*: `{archiveFormat}` can be `zip`, `tgz`, `tar.gz`, etc. if the project generator can handle the format, it will use the appropriate compression tool.  
 
 You can provide the following query parameters to customize the project
 * `type`: The type of project (`core`, `openapi`, etc.).
@@ -78,12 +78,12 @@ In order to build it, you will need Java 1.8.
 
 Vert.x starter relies on the [`vertx-boot`](https://github.com/jponge/vertx-boot) launcher.
 The application is configured by [`src/main/resources/application.conf`](./src/main/resources/application.conf).
-Please see the according documentation to know how to override the configuration. 
+Please see the according documentation to know how to override the configuration.
 
 ### Vert.x Project Generator
 The project generation is delegated to the [vertx-project-generator](https://github.com/vert-x3/vertx-project-generator) project.
 You should clone the project and configure the starter to have a complete stack locally.
- 
+
 ## Docker
 
 **WIP**
