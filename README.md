@@ -74,6 +74,11 @@ In order to build it, you will need Java 1.8.
 
 `$ ./gradlew vertxRun`
 
+Note: you need MongoDB.
+You may run it using Docker:
+
+    $ docker run --rm -d mongo -p 27017:27017
+
 ### Configuration
 
 Vert.x starter relies on the [`vertx-boot`](https://github.com/jponge/vertx-boot) launcher.
