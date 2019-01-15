@@ -177,6 +177,11 @@
           "artifactId": "vertx-sync",
           "name": "Vert.x Sync",
           "description": "Vertx-sync allows you to deploy verticles that run using fibers. Fibers are very lightweight threads that can be blocked without blocking a kernel thread. This enables you to write your verticle code in a familiar synchronous style."
+        },
+        {
+          "artifactId": "vertx-lang-kotlin-coroutines",
+          "name": "Vert.x Kotlin coroutines",
+          "description": "Kotlin coroutines for Vert.x, gives you super powers such as async/await or Go-like channels. This enables you to write your verticle code in a familiar sequential style."
         }
       ]
     },

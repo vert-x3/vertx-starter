@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class GeneratorService {
 
@@ -89,6 +90,8 @@ public class GeneratorService {
       // Configure the build
       Path projectBuildDir = projectBuildDir(project);
       BuildLauncher launcher = connection.newBuild();
+      Set<String> vertxDependencies = project.getVertxDependencies();
+      vertxDependencies.addAll(project.getLanguage().getLanguageDependencies());
       List<String> args = Arrays.asList(
         "-Dorg.gradle.project.buildDir=" + projectBuildDir.toString(),
         "-Ptype=" + project.getType(),
@@ -97,7 +100,7 @@ public class GeneratorService {
         "-Planguage=" + project.getLanguage(),
         "-PbuildTool=" + project.getBuildTool(),
         "-PvertxVersion=" + project.getVertxVersion(),
-        "-PvertxDependencies=" + String.join(",", project.getVertxDependencies()),
+        "-PvertxDependencies=" + String.join(",", vertxDependencies),
         "-ParchiveFormat=" + project.getArchiveFormat().getFileExtension()
       );
       launcher.withArguments(args);

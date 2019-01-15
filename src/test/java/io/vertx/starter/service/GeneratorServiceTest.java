@@ -29,9 +29,12 @@ import io.vertx.starter.model.VertxProject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static io.vertx.starter.config.ProjectConstants.*;
@@ -73,10 +76,12 @@ public class GeneratorServiceTest {
     })));
   }
 
-  @Test
+  @ParameterizedTest
+  @EnumSource(Language.class)
   @DisplayName("should passed project properties to Gradle")
-  public void shouldTriggerGradleGeneration(Vertx vertx, VertxTestContext testContext) {
+  public void shouldTriggerGradleGeneration(Language language, Vertx vertx, VertxTestContext testContext) {
     VertxProject project = initProject();
+    project.setLanguage(language);
     String generatorDir = Paths.get(BASE_GENERATOR_DIR, "passing-properties").toString();
     GeneratorService generatorService = new GeneratorService(generatorDir, GENERATOR_OUTPUT_DIR, vertx);
 
@@ -90,8 +95,10 @@ public class GeneratorServiceTest {
         assertThat(generatedProject.getString(LANGUAGE)).isEqualTo(project.getLanguage().toString());
         assertThat(generatedProject.getString(BUILD_TOOL)).isEqualTo(project.getBuildTool().toString());
         assertThat(generatedProject.getString(VERTX_VERSION)).isEqualTo(project.getVertxVersion());
-// Should be parsed as JsonArray and not String
-//          assertThat(generatedProject.getString(VERTX_DEPENDENCIES)).containsAll(project.getVertxDependencies());
+        // Should be parsed as JsonArray and not String
+        Set<String> expectedDependencies = project.getVertxDependencies();
+        expectedDependencies.addAll(language.getLanguageDependencies());
+        assertThat(generatedProject.getString(VERTX_DEPENDENCIES).split(",")).containsAll(expectedDependencies);
         assertThat(generatedProject.getString(ARCHIVE_FORMAT)).isEqualTo(project.getArchiveFormat().getFileExtension());
         testContext.completeNow();
       })));
