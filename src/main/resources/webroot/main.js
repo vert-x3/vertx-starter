@@ -19,7 +19,7 @@ angular
   .value('bowser', bowser)
   .factory('Starter', ['$http', function ($http) {
     var service = {
-      'generate': function(vertxProject) {
+      'generate': function (vertxProject) {
         return $http.get('/starter.' + vertxProject.archiveFormat, {
           responseType: 'blob',
           params: {
@@ -33,29 +33,29 @@ angular
           }
         });
       },
-      'metadata': function() {
+      'metadata': function () {
         return $http.get('/metadata');
       }
     };
 
     return service;
   }])
-  .factory('httpErrorInterceptor', ['$q', function($q) {
+  .factory('httpErrorInterceptor', ['$q', function ($q) {
     return {
-      'responseError': function(rejection) {
+      'responseError': function (rejection) {
         if (rejection.status === 500) {
-            var errorData = rejection.data;
-            var decoder = new TextDecoder("utf-8");
-            rejection.data = JSON.parse(decoder.decode(errorData.data));
+          var errorData = rejection.data;
+          var decoder = new TextDecoder("utf-8");
+          rejection.data = JSON.parse(decoder.decode(errorData.data));
         }
         return $q.reject(rejection);
       }
     }
   }])
-  .filter('capitalize', function() {
-      return function(input) {
-        return (!!input) ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
-      }
+  .filter('capitalize', function () {
+    return function (input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
+    }
   })
   .config(['$httpProvider', 'hotkeysProvider', function ($httpProvider, hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = false;
@@ -64,7 +64,7 @@ angular
   .controller('VertxStarterController', ['$document', '$window', 'hotkeys', 'Starter',
     function VertxStarterController($document, $window, hotkeys, Starter) {
       var vm = this;
-      vm.isGenerating = false
+      vm.isGenerating = false;
       vm.vertxVersions = [];
       vm.vertxDependencies = [];
       vm.languages = [];
@@ -97,7 +97,7 @@ angular
 
       function loadAll() {
         Starter.metadata()
-          .then(function(response) {
+          .then(function (response) {
             var data = response.data;
             vm.vertxVersions = data.vertxVersions.slice(0, 10);
             vm.vertxDependencies = data.vertxDependencies
@@ -110,7 +110,7 @@ angular
             vm.languages = data.languages;
             initProjectWithDefaults(data.defaults);
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error('Impossible to load starter metadata: ' + JSON.stringify(error));
           });
       }
@@ -177,26 +177,25 @@ angular
       }
 
       function generate() {
-        vm.isGenerating = true
+        vm.isGenerating = true;
         Starter
           .generate(vertxProjectRequest())
           .then(function (response) {
-            vm.isGenerating = false
-            var headers = response.headers()
+            vm.isGenerating = false;
+            var headers = response.headers();
             save(response.data, headers['Content-Type']);
           })
-          .catch(function(error) {
-             vm.isGenerating = false
-             addAlert(error.data.message);
+          .catch(function (error) {
+            vm.isGenerating = false;
+            addAlert(error.data.message);
           });
-      };
+      }
 
       function addAlert(message) {
         vm.alerts.push(message);
-      };
+      }
 
       function closeAlert(index) {
         vm.alerts.splice(index, 1);
-      };
-
+      }
     }]);
