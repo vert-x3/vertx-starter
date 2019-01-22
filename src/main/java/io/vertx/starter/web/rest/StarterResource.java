@@ -17,6 +17,7 @@
 package io.vertx.starter.web.rest;
 
 import io.vertx.core.MultiMap;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
@@ -30,7 +31,6 @@ import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.util.RestUtil;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -86,26 +86,18 @@ public class StarterResource {
   public void generateProject(RoutingContext rc) {
     VertxProject project = buildProject(rc.request());
     log.debug("REST request to generate project: {}", project);
-    this.eventBus.send(PROJECT_REQUESTED, JsonObject.mapFrom(project), reply -> {
+    this.eventBus.<Buffer>send(PROJECT_REQUESTED, JsonObject.mapFrom(project), reply -> {
       if (reply.succeeded()) {
-        String archivePath = (String) reply.result().body();
-        File archive = new File(archivePath);
+        Buffer content = reply.result().body();
         String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
-        log.debug("Sending archive: " + archive.getAbsolutePath());
+        log.debug("Sending archive: " + filename);
         rc.response()
           .setStatusCode(HTTP_OK)
           .putHeader("Content-Type", project.getArchiveFormat().getContentType())
           .putHeader("Content-Disposition", "attachment; filename=" + filename)
-          .sendFile(archive.getAbsolutePath(), onFileSent -> {
-            if (onFileSent.succeeded()) {
-              log.debug("Notifying project created");
-              this.eventBus.publish(PROJECT_CREATED, JsonObject.mapFrom(project));
-            } else {
-              log.error("Generated archive {} could not be found", archive);
-              RestUtil.error(rc, "Generated archive could not be found");
-
-            }
-          });
+          .end(content);
+        log.debug("Notifying project created");
+        this.eventBus.publish(PROJECT_CREATED, JsonObject.mapFrom(project));
       } else {
         String errorMessage = reply.cause().getMessage();
         log.error("Failed to create project: {}", project.getId());

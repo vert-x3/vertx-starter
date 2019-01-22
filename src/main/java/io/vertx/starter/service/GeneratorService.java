@@ -16,117 +16,191 @@
 
 package io.vertx.starter.service;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
+import io.vertx.starter.model.ArchiveFormat;
+import io.vertx.starter.model.BuildTool;
+import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
-import org.gradle.tooling.*;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class GeneratorService {
 
   private final Logger log = LoggerFactory.getLogger(GeneratorService.class);
 
   private final Vertx vertx;
-  private final String generatorDir;
-  private final String generatorOutputDir;
-  private final ProjectConnection connection;
+  private final FreeMarkerTemplateEngine templateEngine;
 
-  public GeneratorService(String generatorDir, String generatorOutputDir, Vertx vertx) {
+
+  public GeneratorService(Vertx vertx) {
     this.vertx = vertx;
-    this.generatorDir = generatorDir;
-    this.generatorOutputDir = generatorOutputDir;
-    GradleConnector connector = GradleConnector.newConnector();
-    connector.forProjectDirectory(new File(generatorDir));
-    this.connection = connector.connect();
-    log.info("Gradle connection with project directory: {}", generatorDir );
+    templateEngine = FreeMarkerTemplateEngine.create(vertx);
   }
 
-  private Path projectBuildDir(VertxProject project) {
-    return Paths.get(generatorOutputDir, project.getId()).toAbsolutePath();
-  }
-
-  public void onProjectRequested(Message<JsonObject> message) {
+  public Buffer onProjectRequested(Message<JsonObject> message) throws Exception {
     VertxProject project = message.body().mapTo(VertxProject.class);
+
+    ArchiveOutputStreamFactory factory;
+    ArchiveFormat archiveFormat = project.getArchiveFormat();
+    if (archiveFormat == ArchiveFormat.TGZ) {
+      factory = baos -> new TarArchiveOutputStream(new GzipCompressorOutputStream(baos));
+    } else if (archiveFormat == ArchiveFormat.ZIP) {
+      factory = baos -> new ZipArchiveOutputStream(baos);
+    } else {
+      throw new IllegalArgumentException("Unsupported archive format: " + archiveFormat.getFileExtension());
+    }
+
+    try (TempDir tempDir = TempDir.create();
+         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+         ArchiveOutputStream out = factory.create(baos)) {
+
+      createProject(project, tempDir);
+      generateArchive(tempDir, out);
+
+      out.finish();
+      out.close();
+
+      return Buffer.buffer(baos.toByteArray());
+    }
+  }
+
+  private void createProject(VertxProject project, TempDir tempDir) throws IOException {
     log.debug("Generating project: {}", project);
-    generateProject(project, ar -> {
+
+    Map<String, Object> ctx = new HashMap<>();
+    ctx.put("buildTool", project.getBuildTool().name().toLowerCase());
+    ctx.put("groupId", project.getGroupId());
+    ctx.put("artifactId", project.getArtifactId());
+    ctx.put("language", project.getLanguage());
+    ctx.put("vertxVersion", project.getVertxVersion());
+    Set<String> vertxDependencies = project.getVertxDependencies();
+    vertxDependencies.addAll(project.getLanguage().getLanguageDependencies());
+    ctx.put("vertxDependencies", vertxDependencies);
+
+    Path tempDirPath = tempDir.path();
+    String tempDirPathStr = tempDirPath.toString();
+
+    copy(tempDir, "_editorconfig");
+    copy(tempDir, "_gitignore");
+
+    if (project.getBuildTool() == BuildTool.GRADLE) {
+      copyDir(tempDir, "gradle");
+      render(tempDir, ctx, "build.gradle");
+      render(tempDir, ctx, "settings.gradle");
+    } else if (project.getBuildTool() == BuildTool.MAVEN) {
+      copyDir(tempDir, "maven");
+      render(tempDir, ctx, "pom.xml");
+    } else {
+      throw new RuntimeException("Unsupported build tool: " + project.getBuildTool());
+    }
+
+    if (project.getLanguage() == Language.KOTLIN) {
+      render(tempDir, ctx, "src/main/kotlin/io/vertx/starter/MainVerticle.kt");
+      render(tempDir, ctx, "src/test/kotlin/io/vertx/starter/TestMainVerticle.kt");
+    } else if (project.getLanguage() == Language.JAVA) {
+      render(tempDir, ctx, "src/main/java/io/vertx/starter/MainVerticle.java");
+      render(tempDir, ctx, "src/test/java/io/vertx/starter/TestMainVerticle.java");
+    } else {
+      throw new RuntimeException("Unsupported language: " + project.getLanguage());
+    }
+
+    render(tempDir, ctx, "README.adoc");
+  }
+
+  private void copy(TempDir tempDir, String filename) throws IOException {
+    Path dest = tempDir.path().resolve(filename);
+    Files.createDirectories(dest.getParent());
+    vertx.fileSystem().copyBlocking("files/" + filename, dest.toString());
+  }
+
+  private void copyDir(TempDir tempDir, String dirname) {
+    vertx.fileSystem().copyRecursiveBlocking("files/" + dirname, tempDir.path().toString(), true);
+  }
+
+  private void render(TempDir tempDir, Map<String, Object> ctx, String filename) throws IOException {
+    Path dest = tempDir.path().resolve(filename);
+    Files.createDirectories(dest.getParent());
+    Buffer data = renderBlocking(ctx, "templates/" + filename + ".ftl");
+    vertx.fileSystem().writeFileBlocking(dest.toString(), data);
+  }
+
+  private Buffer renderBlocking(Map<String, Object> context, String templateFileName) {
+    CompletableFuture<Buffer> cf = new CompletableFuture<>();
+    templateEngine.render(context, templateFileName, ar -> {
       if (ar.succeeded()) {
-        log.info("Generation done fo VertxProject: {}", project);
-        message.reply(ar.result());
+        cf.complete(ar.result());
       } else {
-        log.error("Failed to generate project: {}: {}", project, ar.cause().getMessage());
-        message.fail(500, ar.cause().getMessage());
+        cf.completeExceptionally(ar.cause());
+      }
+    });
+    try {
+      return cf.get();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    } catch (ExecutionException e) {
+      throw new RuntimeException(e.getCause());
+    }
+  }
+
+  private void generateArchive(TempDir tempDir, ArchiveOutputStream stream) throws IOException {
+    Files.walk(tempDir.path()).forEach(filePath -> {
+      try {
+        addFile(tempDir.path(), filePath, stream);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
     });
   }
 
-  public void onProjectCreated(Message<JsonObject> message) {
-    VertxProject project = message.body().mapTo(VertxProject.class);
-    Path projectBuildDir = projectBuildDir(project);
-    log.debug("Cleaning project: {}", project);
-    vertx.fileSystem().deleteRecursive(projectBuildDir.toString(), true, ar -> {
-      if (ar.succeeded()) {
-        log.debug("Cleaning done for VertxProject build dir: {}", projectBuildDir);
-      } else {
-        log.error("Impossible to clean {}", projectBuildDir);
+  private void addFile(Path rootPath, Path filePath, ArchiveOutputStream stream) throws IOException {
+    String relativePath = rootPath.relativize(filePath).toString();
+    if (relativePath.length() == 0) return;
+    String entryName = relativePath.charAt(0) == '_' ? '.' + relativePath.substring(1) : relativePath;
+    ArchiveEntry entry = stream.createArchiveEntry(filePath.toFile(), entryName);
+    if (filePath.toFile().isFile() && filePath.toFile().canExecute()) {
+      if (entry instanceof ZipArchiveEntry) {
+        ZipArchiveEntry zipArchiveEntry = (ZipArchiveEntry) entry;
+        zipArchiveEntry.setUnixMode(0744);
+      } else if (entry instanceof TarArchiveEntry) {
+        TarArchiveEntry tarArchiveEntry = (TarArchiveEntry) entry;
+        tarArchiveEntry.setMode(0100744);
       }
-    });
+    }
+    stream.putArchiveEntry(entry);
+    if (filePath.toFile().isFile()) {
+      try (InputStream i = Files.newInputStream(filePath)) {
+        IOUtils.copy(i, stream);
+      }
+    }
+    stream.closeArchiveEntry();
   }
 
-  public void generateProject(VertxProject project, Handler<AsyncResult<String>> handler) {
-    log.info("Generating Project: {}", project);
-    this.vertx.executeBlocking(blockingBuildFuture -> {
-      // Configure the build
-      Path projectBuildDir = projectBuildDir(project);
-      BuildLauncher launcher = connection.newBuild();
-      Set<String> vertxDependencies = project.getVertxDependencies();
-      vertxDependencies.addAll(project.getLanguage().getLanguageDependencies());
-      List<String> args = Arrays.asList(
-        "-Dorg.gradle.project.buildDir=" + projectBuildDir.toString(),
-        "-Ptype=" + project.getType(),
-        "-PgroupId=" + project.getGroupId(),
-        "-PartifactId=" + project.getArtifactId(),
-        "-Planguage=" + project.getLanguage(),
-        "-PbuildTool=" + project.getBuildTool(),
-        "-PvertxVersion=" + project.getVertxVersion(),
-        "-PvertxDependencies=" + String.join(",", vertxDependencies),
-        "-ParchiveFormat=" + project.getArchiveFormat().getFileExtension()
-      );
-      launcher.withArguments(args);
-      launcher.setStandardOutput(System.out);
-      launcher.setStandardError(System.err);
-      // Run the build
-      log.info("Running {}/gradlew {}", this.generatorDir, this.generatorDir, String.join(" ", args));
-      launcher.run(new ResultHandler<Void>() {
-        @Override
-        public void onComplete(Void aVoid) {
-          String archivePath = projectBuildDir.resolve(project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension()).toAbsolutePath().toString();
-          blockingBuildFuture.complete(archivePath);
-        }
-
-        @Override
-        public void onFailure(GradleConnectionException e) {
-          blockingBuildFuture.fail(e);
-        }
-      });
-    }, (AsyncResult<String> res) -> {
-      if (res.succeeded()) {
-        handler.handle(Future.succeededFuture(res.result()));
-      } else {
-        log.error("Failed to generate VertxProject {}", res.cause().getMessage());
-        handler.handle(Future.failedFuture(res.cause()));
-      }
-    });
+  @FunctionalInterface
+  private interface ArchiveOutputStreamFactory {
+    ArchiveOutputStream create(ByteArrayOutputStream baos) throws IOException;
   }
 }

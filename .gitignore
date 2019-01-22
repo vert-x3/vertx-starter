@@ -13,3 +13,4 @@
 build/
 target
 out
+logback-test.xml

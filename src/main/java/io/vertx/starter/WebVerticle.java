@@ -53,7 +53,7 @@ public class WebVerticle extends AbstractVerticle {
     int port = config().getInteger(HTTP_PORT, DEFAULT_HTTP_PORT);
     vertx
       .createHttpServer()
-      .requestHandler(router::accept)
+      .requestHandler(router)
       .listen(port, ar -> {
         if (ar.failed()) {
           log.error("Fail to start {}: {}", WebVerticle.class.getSimpleName(), ar.cause().getMessage());
