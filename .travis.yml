@@ -2,9 +2,4 @@ language: java
 branches:
   only:
     - master
-jobs:
-  include:
-    - stage: test
-      name: "OracleJDK 8"
-      jdk: oraclejdk8
-      script: mvn -q clean verify -B
+jdk: oraclejdk8
