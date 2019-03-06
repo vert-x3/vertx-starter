@@ -23,9 +23,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.file.FileSystem;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.client.WebClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StarterMetadataService {
 
@@ -33,8 +33,7 @@ public class StarterMetadataService {
 
   private static final String DEPENDENCIES_PATH = "dependencies.json";
   public static final String VERSION_PROVIDER_API_URL = "https://api.bintray.com/packages/bintray/jcenter/io.vertx:vertx-core";
-  public static final JsonArray DEFAULT_VERSIONS = new JsonArray()
-    .add("3.6.2");
+  public static final JsonArray DEFAULT_VERSIONS = new JsonArray().add("3.6.2");
 
   private final WebClient webClient;
   private JsonArray dependencies;

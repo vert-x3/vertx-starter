@@ -21,8 +21,6 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.starter.model.ArchiveFormat;
 import io.vertx.starter.model.BuildTool;
@@ -30,6 +28,8 @@ import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.util.RestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Optional;

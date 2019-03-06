@@ -19,10 +19,10 @@ package io.vertx.starter;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.service.GeneratorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GeneratorVerticle extends AbstractVerticle {
 
