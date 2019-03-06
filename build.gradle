@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id 'io.vertx.vertx-plugin' version '0.0.8'
+  id 'io.vertx.vertx-plugin' version '0.3.1'
 }
 
 apply plugin: 'idea'
@@ -32,9 +32,9 @@ version '2.0.0-SNAPSHOT'
 description = 'A web application to generate Vert.x projects '
 
 ext {
-  vertx_version = '3.6.2'
+  vertx_version = '3.6.3'
   logback_version = '1.2.3'
-  vertx_boot_version = '0.0.2'
+  vertx_boot_version = '1.0.0'
   assertj_core_version = '3.10.0'
   junit_version = '5.3.0'
 }
@@ -74,7 +74,3 @@ test {
 }
 
 apply from: 'gradle/docker.gradle'
-
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.8'
-}
