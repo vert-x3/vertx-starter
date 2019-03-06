@@ -1,4 +1,4 @@
-package io.vertx.starter;
+package ${packageName};
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.Timeout;

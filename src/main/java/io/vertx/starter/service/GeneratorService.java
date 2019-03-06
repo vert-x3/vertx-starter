@@ -46,17 +46,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 public class GeneratorService {
 
-  private final Logger log = LoggerFactory.getLogger(GeneratorService.class);
+  private static final Logger log = LoggerFactory.getLogger(GeneratorService.class);
+
+  private static final Pattern ID_REGEX = Pattern.compile("[A-Za-z0-9_\\-.]+");
+  private static final Pattern DOT_REGEX = Pattern.compile("\\.");
 
   private final Vertx vertx;
+  private final Set<String> keywords;
   private final FreeMarkerTemplateEngine templateEngine;
 
 
-  public GeneratorService(Vertx vertx) {
+  public GeneratorService(Vertx vertx, Set<String> keywords) {
     this.vertx = vertx;
+    this.keywords = keywords;
     templateEngine = FreeMarkerTemplateEngine.create(vertx);
   }
 
@@ -92,12 +101,23 @@ public class GeneratorService {
 
     Map<String, Object> ctx = new HashMap<>();
     ctx.put("buildTool", project.getBuildTool().name().toLowerCase());
-    ctx.put("groupId", project.getGroupId());
-    ctx.put("artifactId", project.getArtifactId());
-    ctx.put("language", project.getLanguage());
+    String groupId = project.getGroupId();
+    ctx.put("groupId", groupId);
+    if (!ID_REGEX.matcher(groupId).matches()) {
+      throw new IllegalArgumentException("Invalid groupId");
+    }
+    String artifactId = project.getArtifactId();
+    if (!ID_REGEX.matcher(artifactId).matches()) {
+      throw new IllegalArgumentException("Invalid artifactId");
+    }
+    ctx.put("artifactId", artifactId);
+    String packageName = packageName(project);
+    ctx.put("packageName", packageName);
+    Language language = project.getLanguage();
+    ctx.put("language", language);
     ctx.put("vertxVersion", project.getVertxVersion());
     Set<String> vertxDependencies = project.getVertxDependencies();
-    vertxDependencies.addAll(project.getLanguage().getLanguageDependencies());
+    vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
 
     Path tempDirPath = tempDir.path();
@@ -108,26 +128,32 @@ public class GeneratorService {
 
     if (project.getBuildTool() == BuildTool.GRADLE) {
       copyDir(tempDir, "gradle");
-      render(tempDir, ctx, "build.gradle");
-      render(tempDir, ctx, "settings.gradle");
+      render(tempDir, ctx, ".", "build.gradle");
+      render(tempDir, ctx, ".", "settings.gradle");
     } else if (project.getBuildTool() == BuildTool.MAVEN) {
       copyDir(tempDir, "maven");
-      render(tempDir, ctx, "pom.xml");
+      render(tempDir, ctx, ".", "pom.xml");
     } else {
       throw new RuntimeException("Unsupported build tool: " + project.getBuildTool());
     }
 
-    if (project.getLanguage() == Language.KOTLIN) {
-      render(tempDir, ctx, "src/main/kotlin/io/vertx/starter/MainVerticle.kt");
-      render(tempDir, ctx, "src/test/kotlin/io/vertx/starter/TestMainVerticle.kt");
-    } else if (project.getLanguage() == Language.JAVA) {
-      render(tempDir, ctx, "src/main/java/io/vertx/starter/MainVerticle.java");
-      render(tempDir, ctx, "src/test/java/io/vertx/starter/TestMainVerticle.java");
-    } else {
-      throw new RuntimeException("Unsupported language: " + project.getLanguage());
-    }
+    String packageDir = packageName.replace('.', '/');
+    String srcDir = "src/main/" + language.getName();
+    render(tempDir, ctx, srcDir, "MainVerticle" + language.getExtension(), srcDir + "/" + packageDir);
+    String testSrcDir = "src/test/" + language.getName();
+    render(tempDir, ctx, testSrcDir, "TestMainVerticle" + language.getExtension(), testSrcDir + "/" + packageDir);
 
-    render(tempDir, ctx, "README.adoc");
+    render(tempDir, ctx, ".", "README.adoc");
+  }
+
+  private String packageName(VertxProject project) {
+    String groupId = project.getGroupId();
+    String artifactId = project.getArtifactId();
+    return Stream.concat(DOT_REGEX.splitAsStream(groupId), DOT_REGEX.splitAsStream(artifactId))
+      .map(s -> s.replace("-", "_"))
+      .map(s -> keywords.contains(s) ? s + "_" : s)
+      .map(s -> Character.isJavaIdentifierStart(s.codePointAt(0)) ? s : "_" + s)
+      .collect(joining("."));
   }
 
   private void copy(TempDir tempDir, String filename) throws IOException {
@@ -140,11 +166,15 @@ public class GeneratorService {
     vertx.fileSystem().copyRecursiveBlocking("files/" + dirname, tempDir.path().toString(), true);
   }
 
-  private void render(TempDir tempDir, Map<String, Object> ctx, String filename) throws IOException {
-    Path dest = tempDir.path().resolve(filename);
-    Files.createDirectories(dest.getParent());
-    Buffer data = renderBlocking(ctx, "templates/" + filename + ".ftl");
-    vertx.fileSystem().writeFileBlocking(dest.toString(), data);
+  private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename) throws IOException {
+    render(tempDir, ctx, sourceDir, filename, sourceDir);
+  }
+
+  private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename, String destDir) throws IOException {
+    Path dest = tempDir.path().resolve(destDir);
+    Files.createDirectories(dest);
+    Buffer data = renderBlocking(ctx, "templates/" + sourceDir + "/" + filename + ".ftl");
+    vertx.fileSystem().writeFileBlocking(dest.resolve(filename).toString(), data);
   }
 
   private Buffer renderBlocking(Map<String, Object> context, String templateFileName) {
