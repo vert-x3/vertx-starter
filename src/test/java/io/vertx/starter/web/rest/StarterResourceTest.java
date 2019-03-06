@@ -93,7 +93,9 @@ public class StarterResourceTest {
     vertx.eventBus().<JsonObject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
       VertxProject project = message.body().mapTo(VertxProject.class);
       assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id");
-      message.reply("src/test/resources/web/starter.zip");
+      vertx.fileSystem().readFile("web/starter.zip", testContext.succeeding(buffer -> {
+        message.reply(buffer);
+      }));
     });
     webClient.get("/starter.dummy")
       .send(testContext.succeeding(response -> testContext.verify(() -> {
@@ -108,7 +110,7 @@ public class StarterResourceTest {
     vertx.eventBus().<JsonObject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
       VertxProject project = message.body().mapTo(VertxProject.class);
       assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id");
-      message.reply("/not/exist.zip");
+      message.fail(-1, "Failure");
     });
     webClient.get("/starter.zip")
       .send(testContext.succeeding(response -> testContext.verify(() -> {

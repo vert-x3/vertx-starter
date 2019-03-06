@@ -24,7 +24,7 @@ public enum ArchiveFormat {
   ZIP("zip", "application/zip"),
 
   @JsonProperty("tgz")
-  TGZ("tar.gz", "application/zip");
+  TGZ("tar.gz", "application/gzip");
 
   private final String fileExtension;
   private final String contentType;
