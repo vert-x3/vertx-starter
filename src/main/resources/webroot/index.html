@@ -179,26 +179,25 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="form-group row">
-        <label for="groupId" class="col-sm-4 col-form-label">Version</label>
+        <label for="version" class="col-sm-4 col-form-label">Version</label>
         <div class="col-sm-8">
-          <select class="form-control"
-                  ng-model="vm.vertxProject.vertxVersion">
+          <select class="form-control" id="version" ng-model="vm.vertxProject.vertxVersion">
             <option ng-repeat="vertxVersion in vm.vertxVersions">{{ vertxVersion }}</option>
           </select>
         </div>
       </div>
       <div class="form-group row">
-        <label for="groupId" class="col-sm-4 col-form-label">Language</label>
+        <label for="language" class="col-sm-4 col-form-label">Language</label>
         <div class="col-sm-8">
-          <select class="form-control" ng-model="vm.vertxProject.language">
+          <select class="form-control" id="language" ng-model="vm.vertxProject.language">
             <option ng-repeat="language in vm.languages" value="{{language}}">{{ language | capitalize }}</option>
           </select>
         </div>
       </div>
       <div class="form-group row">
-        <label for="groupId" class="col-sm-4 col-form-label">Build</label>
+        <label for="buildTool" class="col-sm-4 col-form-label">Build</label>
         <div class="col-sm-8">
-          <select class="form-control" ng-model="vm.vertxProject.buildTool">
+          <select class="form-control" id="buildTool" ng-model="vm.vertxProject.buildTool">
             <option ng-repeat="buildTool in vm.buildTools" value="{{buildTool}}">{{ buildTool | capitalize }}</option>
           </select>
         </div>
