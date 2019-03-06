@@ -1,4 +1,4 @@
-package io.vertx.starter;
+package ${packageName};
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
