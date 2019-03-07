@@ -33,64 +33,72 @@ public class VertxProject {
     return id;
   }
 
-  public void setId(String id) {
+  public VertxProject setId(String id) {
     this.id = id;
+    return this;
   }
 
   public String getGroupId() {
     return groupId;
   }
 
-  public void setGroupId(String groupId) {
+  public VertxProject setGroupId(String groupId) {
     this.groupId = groupId;
+    return this;
   }
 
   public String getArtifactId() {
     return artifactId;
   }
 
-  public void setArtifactId(String artifactId) {
+  public VertxProject setArtifactId(String artifactId) {
     this.artifactId = artifactId;
+    return this;
   }
 
   public Language getLanguage() {
     return language;
   }
 
-  public void setLanguage(Language language) {
+  public VertxProject setLanguage(Language language) {
     this.language = language;
+    return this;
   }
 
   public BuildTool getBuildTool() {
     return buildTool;
   }
 
-  public void setBuildTool(BuildTool buildTool) {
+  public VertxProject setBuildTool(BuildTool buildTool) {
     this.buildTool = buildTool;
+    return this;
   }
 
   public String getVertxVersion() {
     return vertxVersion;
   }
 
-  public void setVertxVersion(String vertxVersion) {
+  public VertxProject setVertxVersion(String vertxVersion) {
     this.vertxVersion = vertxVersion;
+    return this;
   }
 
   public Set<String> getVertxDependencies() {
     return vertxDependencies;
   }
 
-  public void setVertxDependencies(Set<String> vertxDependencies) {
+  public VertxProject setVertxDependencies(Set<String> vertxDependencies) {
     this.vertxDependencies = vertxDependencies;
+    return this;
   }
 
   public ArchiveFormat getArchiveFormat() {
     return archiveFormat;
   }
 
-  public void setArchiveFormat(ArchiveFormat archiveFormat) {
+  public VertxProject setArchiveFormat(ArchiveFormat archiveFormat) {
     this.archiveFormat = archiveFormat;
+    return this;
   }
 
   @Override
