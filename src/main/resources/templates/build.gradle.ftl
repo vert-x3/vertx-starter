@@ -4,7 +4,7 @@
  * This is a general purpose Gradle build.
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
  */
-<#if  language == "kotlin">
+<#if language == "kotlin">
 buildscript {
   ext {
     kotlinVersion = '1.2.60'
@@ -22,17 +22,17 @@ buildscript {
 plugins {
   id 'java'
   id 'application'
-  id 'com.github.johnrengelman.shadow' version '2.0.4'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
 }
-<#if  language == "kotlin">
+<#if language == "kotlin">
 apply plugin: 'kotlin'
 </#if>
 ext {
-<#if  language == "kotlin">
+<#if language == "kotlin">
   kotlinVersion = '1.2.60'
 </#if>
   vertxVersion = '${vertxVersion}'
-  junitJupiterEngineVersion = '5.2.0'
+  junitJupiterEngineVersion = '5.4.0'
 }
 
 repositories {
@@ -40,31 +40,34 @@ repositories {
   jcenter()
 }
 
+application {
+  mainClassName = 'io.vertx.core.Launcher'
+}
+
 group = '${groupId}'
 version = '1.0.0-SNAPSHOT'
 
 sourceCompatibility = '1.8'
-mainClassName = 'io.vertx.core.Launcher'
 
 def mainVerticleName = '${groupId}.${artifactId}.MainVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
 
 dependencies {
-<#if  language == "kotlin">
+<#if language == "kotlin">
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 </#if>
-
   implementation "io.vertx:vertx-core:$vertxVersion"
 <#list vertxDependencies as dependency>
   implementation "io.vertx:${dependency}:$vertxVersion"
 </#list>
 
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"
-  testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterEngineVersion"
 }
 
-<#if  language == "kotlin">
+<#if language == "kotlin">
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
   kotlinOptions {
     jvmTarget = "1.8"
@@ -91,8 +94,4 @@ test {
 
 run {
   args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.6'
 }

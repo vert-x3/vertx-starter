@@ -13,10 +13,10 @@ class MainVerticle : AbstractVerticle() {
           .putHeader("content-type", "text/plain")
           .end("Hello from Vert.x!")
       }
-      .listen(8080) { http ->
+      .listen(8888) { http ->
         if (http.succeeded()) {
           startFuture.complete()
-          println("HTTP server started on port 8080")
+          println("HTTP server started on port 8888")
         } else {
           startFuture.fail(http.cause());
         }

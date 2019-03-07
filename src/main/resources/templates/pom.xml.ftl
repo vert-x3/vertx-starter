@@ -17,13 +17,11 @@
 
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
     <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
-    <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
     <exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
 
     <vertx.version>${vertxVersion}</vertx.version>
-    <junit-jupiter.version>5.2.0</junit-jupiter.version>
-    <junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
-    <junit-platform-launcher.version>1.2.0</junit-platform-launcher.version>
+    <junit-jupiter.version>5.4.0</junit-jupiter.version>
 
     <main.verticle>${groupId}.${artifactId}.MainVerticle</main.verticle>
   </properties>
@@ -78,10 +76,18 @@
     </dependency>
 
     <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
 <#noparse>
-      <version>${junit-platform-launcher.version}</version>
+      <version>${junit-jupiter.version}</version>
+</#noparse>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+<#noparse>
+      <version>${junit-jupiter.version}</version>
 </#noparse>
       <scope>test</scope>
     </dependency>
@@ -216,22 +222,6 @@
 <#noparse>
         <version>${maven-surefire-plugin.version}</version>
 </#noparse>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-<#noparse>
-            <version>${junit-platform-surefire-provider.version}</version>
-</#noparse>
-          </dependency>
-          <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-<#noparse>
-            <version>${junit-jupiter.version}</version>
-</#noparse>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

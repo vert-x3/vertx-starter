@@ -20,11 +20,11 @@ class TestMainVerticle {
   }
 
   @Test
-  @DisplayName("Should start a Web Server on port 8080")
+  @DisplayName("Should start a Web Server on port 8888")
   @Timeout(value = 10, timeUnit = TimeUnit.SECONDS)
   @Throws(Throwable::class)
   fun start_http_server(vertx: Vertx, testContext: VertxTestContext) {
-    vertx.createHttpClient().getNow(8080, "localhost", "/") { response ->
+    vertx.createHttpClient().getNow(8888, "localhost", "/") { response ->
       testContext.verify {
         assertTrue(response.statusCode() == 200)
         response.handler { body ->
