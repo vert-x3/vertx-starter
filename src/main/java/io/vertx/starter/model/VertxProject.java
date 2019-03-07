@@ -21,7 +21,6 @@ import java.util.Set;
 public class VertxProject {
 
   private String id;
-  private String type;
   private String groupId;
   private String artifactId;
   private Language language;
@@ -36,14 +35,6 @@ public class VertxProject {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
   }
 
   public String getGroupId() {
@@ -106,7 +97,6 @@ public class VertxProject {
   public String toString() {
     return "Project{" +
       "id='" + id + '\'' +
-      ", type='" + type + '\'' +
       ", groupId='" + groupId + '\'' +
       ", artifactId='" + artifactId + '\'' +
       ", language=" + language +

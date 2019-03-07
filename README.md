@@ -26,7 +26,6 @@ http://start.vertx.io/starter.{archiveFormat}
 
 You can provide the following query parameters to customize the project
 
-- `type`: The type of project (`core`, `openapi`, etc.).
 - Basic information for the generated project `groupId`, `artifactId`
 - `language`: `java` or `kotlin`
 - `buildTool`: `maven` or `gradle` build tool
@@ -37,7 +36,7 @@ Full example:
 
 ```
 curl -X GET \
-  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&type=core&vertxDependencies=&vertxVersion=3.6.3' \
+  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=3.6.3' \
   -o starter.zip
 ```
 
@@ -45,7 +44,6 @@ The HTTPie equivalent:
 
 ```
 $ http http://start.vertx.io/starter.zip \
-type==core \
 groupId==io.vertx \
 artitfactId==starter \
 language==java \

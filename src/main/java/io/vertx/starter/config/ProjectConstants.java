@@ -16,9 +16,10 @@
 
 package io.vertx.starter.config;
 
+/**
+ * @author Daniel Petisme
+ */
 public interface ProjectConstants {
-
-  String TYPE = "type";
   String GROUP_ID = "groupId";
   String ARTIFACT_ID = "artifactId";
   String LANGUAGE = "language";

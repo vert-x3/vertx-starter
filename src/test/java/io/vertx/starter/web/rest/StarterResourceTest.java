@@ -55,7 +55,6 @@ public class StarterResourceTest {
 
   private static VertxProject defaultProject() {
     VertxProject defaultProject = new VertxProject();
-    defaultProject.setType("AAAAA");
     defaultProject.setGroupId("AA.BB.CC");
     defaultProject.setArtifactId("DD");
     defaultProject.setLanguage(Language.JAVA);

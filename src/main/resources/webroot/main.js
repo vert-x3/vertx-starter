@@ -23,7 +23,6 @@ angular
         return $http.get('/starter.' + vertxProject.archiveFormat, {
           responseType: 'blob',
           params: {
-            type: vertxProject.type,
             groupId: vertxProject.groupId,
             artifactId: vertxProject.artifactId,
             language: vertxProject.language,
@@ -116,7 +115,6 @@ angular
       }
 
       function initProjectWithDefaults(defaults) {
-        vm.vertxProject.type = defaults.type;
         vm.vertxProject.model = defaults.model;
         vm.vertxProject.groupId = defaults.groupId;
         vm.vertxProject.artifactId = defaults.artifactId;

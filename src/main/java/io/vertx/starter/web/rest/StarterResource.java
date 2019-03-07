@@ -112,9 +112,6 @@ public class StarterResource {
     project.setId(projectId);
 
     MultiMap params = request.params();
-    if (isNotBlank(params.get(TYPE))) {
-      project.setType(params.get(TYPE));
-    }
     if (isNotBlank(params.get(GROUP_ID))) {
       project.setGroupId(params.get(GROUP_ID));
     }
