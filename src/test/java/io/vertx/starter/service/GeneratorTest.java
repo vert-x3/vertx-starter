@@ -28,6 +28,7 @@ import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
 import io.vertx.core.json.JsonObject;
+import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
@@ -51,6 +52,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
 import static io.vertx.starter.model.BuildTool.GRADLE;
@@ -63,6 +65,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Thomas Segismont
  */
 @ExtendWith(VertxExtension.class)
+@Timeout(value = 1, timeUnit = TimeUnit.MINUTES)
 class GeneratorTest {
 
   private MessageProducer<JsonObject> producer;
