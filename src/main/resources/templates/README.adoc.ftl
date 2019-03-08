@@ -33,7 +33,7 @@ To package your application:
 To run your application:
 <#if buildTool == "maven">
 ```
-./mvnw clean exec:java
+./mvnw clean compile exec:java
 ```
 </#if>
 <#if buildTool == 'gradle'>

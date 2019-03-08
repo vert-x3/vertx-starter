@@ -28,6 +28,7 @@ import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.parsetools.RecordParser;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -40,6 +41,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,6 +51,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -70,12 +73,18 @@ class GeneratorTest {
 
   private MessageProducer<JsonObject> producer;
   private Path workdir;
+  private List<Runnable> cleanupTasks = new ArrayList<>();
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
     producer = vertx.eventBus().publisher(Topics.PROJECT_REQUESTED);
     workdir = Files.createTempDirectory(GeneratorTest.class.getSimpleName());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
+  }
+
+  @AfterEach
+  void afterEach() {
+    cleanupTasks.forEach(Runnable::run);
   }
 
   private VertxProject defaultProject() {
@@ -146,7 +155,7 @@ class GeneratorTest {
                   testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
                 }
 
-                testContext.completeNow();
+                runDevMode(vertx, buildTool, testContext.succeeding(devModeRan -> testContext.completeNow()));
               });
             }));
           }
@@ -214,6 +223,7 @@ class GeneratorTest {
       return;
     }
     Process process = Process.create(vertx, command, args, processOptions);
+    cleanupTasks.add(() -> process.kill(true));
     Buffer buffer = Buffer.buffer();
     process.stdout().handler(buffer::appendBuffer);
     process.stderr().handler(buffer::appendBuffer);
@@ -224,6 +234,35 @@ class GeneratorTest {
         handler.handle(Future.failedFuture(String.format("Failed to build project%n%s", buffer.toString())));
       }
     });
+    process.start();
+  }
+
+  private void runDevMode(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
+    ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
+    String command;
+    List<String> args;
+    if (buildTool == MAVEN) {
+      command = "./mvnw";
+      args = Arrays.asList("clean", "compile", "exec:java");
+    } else if (buildTool == GRADLE) {
+      command = "./gradlew";
+      args = Arrays.asList("clean", "run");
+    } else {
+      handler.handle(Future.failedFuture(unsupported(buildTool)));
+      return;
+    }
+    Process process = Process.create(vertx, command, args, processOptions);
+    cleanupTasks.add(() -> process.kill(true));
+    Future<Void> future = Future.<Void>future().setHandler(handler);
+    RecordParser parser = RecordParser.newDelimited("\n")
+      .exceptionHandler(future::fail)
+      .handler(buffer -> {
+        String line = buffer.toString().trim();
+        if (line.contains("HTTP server started on port 8888")) {
+          future.complete();
+        }
+      });
+    process.stdout().exceptionHandler(future::fail).handler(parser);
     process.start();
   }
 
