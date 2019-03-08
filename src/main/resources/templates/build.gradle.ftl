@@ -12,10 +12,7 @@ group = '${groupId}'
 version = '1.0.0-SNAPSHOT'
 
 repositories {
-  mavenLocal()
-<#if language == "kotlin">
-  jcenter()
-</#if>
+  mavenCentral()
 }
 
 ext {

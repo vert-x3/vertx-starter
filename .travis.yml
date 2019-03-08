@@ -3,7 +3,8 @@ branches:
   only:
     - master
 jdk: oraclejdk8
-script: ./gradlew check -i
+install: ./gradlew assemble
+script: ./gradlew check
 notifications:
   email:
     recipients:
