@@ -13,6 +13,9 @@ version = '1.0.0-SNAPSHOT'
 
 repositories {
   mavenCentral()
+<#if language == "kotlin">
+  jcenter()
+</#if>
 }
 
 ext {
