@@ -115,16 +115,17 @@ class GeneratorTest {
           verifyBaseFiles();
 
           BuildTool buildTool = project.getBuildTool();
+          Language language = project.getLanguage();
           if (buildTool == MAVEN) {
             verifyMavenFiles();
           } else if (buildTool == GRADLE) {
-            verifyGradleFiles();
+            verifyGradleFiles(language);
           } else {
             testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
             return;
           }
 
-          verifySourceFiles(project.getLanguage());
+          verifySourceFiles(language);
 
           if (Utils.isWindows()) {
             // For now, we won't test on Windows, it's tested on Travis anyway
@@ -134,15 +135,12 @@ class GeneratorTest {
             buildProject(vertx, buildTool, testContext.succeeding(projectBuilt -> {
               testContext.verify(() -> {
 
-                // FIXME currently tests are not executed if lang is Kotlin
-                if (project.getLanguage() == JAVA) {
-                  if (buildTool == MAVEN) {
-                    verifyMavenOutputFiles();
-                  } else if (buildTool == GRADLE) {
-                    verifyGradleOutputFiles();
-                  } else {
-                    testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
-                  }
+                if (buildTool == MAVEN) {
+                  verifyMavenOutputFiles();
+                } else if (buildTool == GRADLE) {
+                  verifyGradleOutputFiles();
+                } else {
+                  testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
                 }
 
                 testContext.completeNow();
@@ -174,9 +172,12 @@ class GeneratorTest {
     assertThat(workdir.resolve("target/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
   }
 
-  private void verifyGradleFiles() {
+  private void verifyGradleFiles(Language language) {
     assertThat(workdir.resolve("build.gradle")).isRegularFile();
     assertThat(workdir.resolve("settings.gradle")).isRegularFile();
+    if (language == KOTLIN) {
+      assertThat(workdir.resolve("gradle.properties")).isRegularFile();
+    }
     assertThat(workdir.resolve("gradlew")).isRegularFile().isExecutable();
     assertThat(workdir.resolve("gradlew.bat")).isRegularFile();
     assertThat(workdir.resolve("gradle/wrapper/gradle-wrapper.properties")).isRegularFile();
@@ -184,11 +185,6 @@ class GeneratorTest {
   }
 
   private void verifyGradleOutputFiles() {
-    try {
-      Files.walk(workdir).map(Path::toFile).filter(File::isFile).forEach(file -> System.out.println("file = " + file));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
     assertThat(workdir.resolve("build/test-results/test/TEST-com.example.demo.TestMainVerticle.xml")).isRegularFile();
     assertThat(workdir.resolve("build/libs/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
   }

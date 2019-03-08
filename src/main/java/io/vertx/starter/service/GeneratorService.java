@@ -22,7 +22,6 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
-import io.vertx.starter.model.BuildTool;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -49,6 +48,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static io.vertx.starter.model.BuildTool.GRADLE;
+import static io.vertx.starter.model.BuildTool.MAVEN;
+import static io.vertx.starter.model.Language.KOTLIN;
 import static java.util.stream.Collectors.joining;
 
 public class GeneratorService {
@@ -114,7 +116,7 @@ public class GeneratorService {
     String packageName = packageName(project);
     ctx.put("packageName", packageName);
     Language language = project.getLanguage();
-    ctx.put("language", language);
+    ctx.put("language", language.name().toLowerCase());
     ctx.put("vertxVersion", project.getVertxVersion());
     Set<String> vertxDependencies = project.getVertxDependencies();
     vertxDependencies.addAll(language.getLanguageDependencies());
@@ -123,15 +125,25 @@ public class GeneratorService {
     Path tempDirPath = tempDir.path();
     String tempDirPathStr = tempDirPath.toString();
 
-    copy(tempDir, "_editorconfig");
-    copy(tempDir, "_gitignore");
+    copy(tempDir, "files", "_editorconfig");
+    copy(tempDir, "files", "_gitignore");
 
-    if (project.getBuildTool() == BuildTool.GRADLE) {
-      copyDir(tempDir, "gradle");
+    if (project.getBuildTool() == GRADLE) {
+      copy(tempDir, "files/gradle", "gradlew");
+      copy(tempDir, "files/gradle", "gradlew.bat");
+      if (project.getLanguage() == KOTLIN) {
+        copy(tempDir, "files/gradle", "gradle.properties");
+      }
+      copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jar");
+      copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.properties");
       render(tempDir, ctx, ".", "build.gradle");
       render(tempDir, ctx, ".", "settings.gradle");
-    } else if (project.getBuildTool() == BuildTool.MAVEN) {
-      copyDir(tempDir, "maven");
+    } else if (project.getBuildTool() == MAVEN) {
+      copy(tempDir, "files/maven", "mvnw");
+      copy(tempDir, "files/maven", "mvnw.cmd");
+      copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.jar");
+      copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.properties");
+      copy(tempDir, "files/maven", "_mvn/wrapper/MavenWrapperDownloader.java");
       render(tempDir, ctx, ".", "pom.xml");
     } else {
       throw new RuntimeException("Unsupported build tool: " + project.getBuildTool());
@@ -156,14 +168,10 @@ public class GeneratorService {
       .collect(joining("."));
   }
 
-  private void copy(TempDir tempDir, String filename) throws IOException {
+  private void copy(TempDir tempDir, String base, String filename) throws IOException {
     Path dest = tempDir.path().resolve(filename);
     Files.createDirectories(dest.getParent());
-    vertx.fileSystem().copyBlocking("files/" + filename, dest.toString());
-  }
-
-  private void copyDir(TempDir tempDir, String dirname) {
-    vertx.fileSystem().copyRecursiveBlocking("files/" + dirname, tempDir.path().toString(), true);
+    vertx.fileSystem().copyBlocking(base + "/" + filename, dest.toString());
   }
 
   private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename) throws IOException {
