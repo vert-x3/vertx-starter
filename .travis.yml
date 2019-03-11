@@ -2,12 +2,17 @@ language: java
 branches:
   only:
     - master
+    - prod
 jdk: oraclejdk8
 jobs:
   include:
     - stage: test
       install: ./gradlew assemble
       script: ./gradlew check -i --version #temporarily disabling tests for fast turnaround
+    - stage: deploy
+      if: type = push AND branch = prod
+      install: ./gradlew assemble
+      script: bash .travis.deploy.bash
 notifications:
   email:
     recipients:
