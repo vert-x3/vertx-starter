@@ -28,7 +28,7 @@ repositories {
 }
 
 group 'io.vertx'
-version '2.0.0-SNAPSHOT'
+version '2.0.0'
 description = 'A web application to generate Vert.x projects '
 
 ext {
