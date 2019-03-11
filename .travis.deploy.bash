@@ -16,10 +16,10 @@ REMOTE_HOSTNAME="start.vertx.io"
 REMOTE_TEMP="/tmp/vertx"
 
 echo "Sending JAR to ${REMOTE_USER}@${REMOTE_HOSTNAME}..."
-ssh "${REMOTE_USER}"@"${REMOTE_HOSTNAME}" rm -rf "${REMOTE_TEMP}" && mkdir -p "${REMOTE_TEMP}"
+ssh "${REMOTE_USER}"@"${REMOTE_HOSTNAME}" rm -rf "${REMOTE_TEMP}"
 scp "${STARTER_JAR}" "${REMOTE_USER}"@"${REMOTE_HOSTNAME}":"${REMOTE_TEMP}"
 echo "JAR sent"
 
 echo "Deploying with ${REMOTE_USER}@${REMOTE_HOSTNAME}..."
-echo "TODO"
-#ssh "${REMOTE_USER}"@"${REMOTE_HOSTNAME}" "sudo -t bash -s" < ./scripts/deploy.sh
+ssh "${REMOTE_USER}"@"${REMOTE_HOSTNAME}" "sudo -t bash -s" < ./scripts/deploy.sh
+echo "Starter deployed!"
