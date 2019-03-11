@@ -16,6 +16,7 @@
 
 package io.vertx.starter.web.util;
 
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -30,7 +31,9 @@ public final class RestUtil {
   }
 
   public static void error(RoutingContext rc, String message) {
-    rc.response().setStatusCode(HTTP_INTERNAL_ERROR).end(new JsonObject().put("status", HTTP_INTERNAL_ERROR).put("message", message).toString());
+    rc.response().setStatusCode(HTTP_INTERNAL_ERROR)
+      .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+      .end(new JsonObject().put("status", HTTP_INTERNAL_ERROR).put("message", message).toBuffer());
   }
 
   private static void respond(RoutingContext rc, String contentType, String chunk) {

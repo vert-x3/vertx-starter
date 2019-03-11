@@ -39,29 +39,16 @@ angular
 
     return service;
   }])
-  .factory('httpErrorInterceptor', ['$q', function ($q) {
-    return {
-      'responseError': function (rejection) {
-        if (rejection.status === 500) {
-          var errorData = rejection.data;
-          var decoder = new TextDecoder("utf-8");
-          rejection.data = JSON.parse(decoder.decode(errorData.data));
-        }
-        return $q.reject(rejection);
-      }
-    }
-  }])
   .filter('capitalize', function () {
     return function (input) {
       return (!!input) ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
     }
   })
-  .config(['$httpProvider', 'hotkeysProvider', function ($httpProvider, hotkeysProvider) {
+  .config(['hotkeysProvider', function (hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = false;
-    $httpProvider.interceptors.push('httpErrorInterceptor');
   }])
-  .controller('VertxStarterController', ['$document', '$window', 'hotkeys', 'Starter',
-    function VertxStarterController($document, $window, hotkeys, Starter) {
+  .controller('VertxStarterController', ['$scope', '$document', '$window', 'hotkeys', 'Starter',
+    function VertxStarterController($scope, $document, $window, hotkeys, Starter) {
       var vm = this;
       vm.isGenerating = false;
       vm.vertxVersions = [];
@@ -157,7 +144,6 @@ angular
       function save(data, contentType) {
         if (vm.isFileSaverSupported) {
           var archive = new Blob([data], {type: contentType});
-          console.log(archive.size);
           saveAs(archive, vm.vertxProject.artifactId + '.' + vm.vertxProject.archiveFormat);
         }
       }
@@ -170,7 +156,6 @@ angular
           return dependency.artifactId;
         });
         vertxProject.vertxDependencies = artifacts.join();
-        console.log(JSON.stringify(vertxProject));
         return vertxProject;
       }
 
@@ -185,7 +170,14 @@ angular
           })
           .catch(function (error) {
             vm.isGenerating = false;
-            addAlert(error.data.message);
+            var reader = new FileReader();
+            reader.addEventListener("loadend", function () {
+              var message = JSON.parse(reader.result).message;
+              $scope.$apply(function () {
+                $scope.vm.addAlert(message);
+              });
+            });
+            reader.readAsText(error.data, "utf8");
           });
       }
 

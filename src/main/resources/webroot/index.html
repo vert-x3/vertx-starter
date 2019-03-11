@@ -244,11 +244,10 @@
     </div>
   </div>
   <div class="row">
-    <div uib-alert ng-repeat="alert in vm.alerts" class="alert-danger" close="vm.closeAlert($index)">
-      {{alert}}
+    <div uib-alert ng-repeat="alert in vm.alerts track by $index" class="alert-danger" close="vm.closeAlert($index)">
       <p>
-        <a ng-href="https://github.com/vert-x3/vertx-starter/issues/new?title={{alert}}&body={{vm.vertxProject}}">Report
-          the problem.</a>
+        {{alert}}. Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a> an
+        issue.
       </p>
     </div>
     <div class="col-sm-12">
@@ -336,7 +335,6 @@
     </div>
   </div>
 </footer>
-</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"
         integrity="sha256-3SrLjPeRPa1ofM280r+OMcUjJZKLWJHr6SRtRu3dRb0=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-resource/1.6.1/angular-resource.min.js"

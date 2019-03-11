@@ -1,14 +1,12 @@
-### Version
-
-* vert.x starter:
-
 ### Context
 
-I encountered an exception which looks suspicious while ...
+The starter failed to create my project with following settings...
 
-### Do you have a reproducer?
+or
 
-* Link to github project/gist
+The generated project fails to build...
+
+...etc
 
 ### Steps to reproduce
 
