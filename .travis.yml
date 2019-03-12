@@ -1,4 +1,6 @@
 language: java
+addons:
+  ssh_known_hosts: start.vertx.io
 branches:
   only:
     - master
@@ -7,12 +9,21 @@ jdk: oraclejdk8
 jobs:
   include:
     - stage: test
-      install: ./gradlew assemble
-      script: ./gradlew check -i
+      install:
+        - ./gradlew assemble
+      script:
+        - ./gradlew check -i
     - stage: deploy
       if: type = push AND branch = prod
-      install: ./gradlew assemble
-      script: bash .travis.deploy.bash
+      before_install:
+        - openssl aes-256-cbc -K $encrypted_08b377984515_key -iv $encrypted_08b377984515_iv -in deploy_rsa.enc -out deploy_rsa -d
+        - eval "$(ssh-agent -s)"
+        - chmod 600 deploy_rsa
+        - ssh-add deploy_rsa
+      install:
+        - ./gradlew assemble
+      script:
+        - bash .travis.deploy.bash
 notifications:
   email:
     recipients:
