@@ -8,7 +8,7 @@ jobs:
   include:
     - stage: test
       install: ./gradlew assemble
-      script: ./gradlew check -i --version #temporarily disabling tests for fast turnaround
+      script: ./gradlew check -i
     - stage: deploy
       if: type = push AND branch = prod
       install: ./gradlew assemble
