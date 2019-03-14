@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +53,7 @@ import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.Language.KOTLIN;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 public class GeneratorService {
 
@@ -59,6 +61,19 @@ public class GeneratorService {
 
   private static final Pattern ID_REGEX = Pattern.compile("[A-Za-z0-9_\\-.]+");
   private static final Pattern DOT_REGEX = Pattern.compile("\\.");
+
+  private static final Set<String> EXECUTABLES;
+
+  static {
+    Set<String> executables = Stream.<String>builder()
+      .add(".mvn/wrapper/maven-wrapper.jar")
+      .add(".mvn/wrapper/maven-wrapper.properties")
+      .add("mvnw")
+      .add("gradlew")
+      .build()
+      .collect(toSet());
+    EXECUTABLES = Collections.unmodifiableSet(executables);
+  }
 
   private final Vertx vertx;
   private final Set<String> keywords;
@@ -219,7 +234,7 @@ public class GeneratorService {
     if (relativePath.length() == 0) return;
     String entryName = jarFileWorkAround(leadingDot(relativePath));
     ArchiveEntry entry = stream.createArchiveEntry(filePath.toFile(), entryName);
-    if (filePath.toFile().isFile() && filePath.toFile().canExecute()) {
+    if (EXECUTABLES.contains(entryName)) {
       if (entry instanceof ZipArchiveEntry) {
         ZipArchiveEntry zipArchiveEntry = (ZipArchiveEntry) entry;
         zipArchiveEntry.setUnixMode(0744);
