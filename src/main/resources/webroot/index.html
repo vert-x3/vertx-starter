@@ -207,17 +207,17 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="groupId" class="col-sm-4 col-form-label">GroupId</label>
+        <label for="groupId" class="col-sm-4 col-form-label">Group Id</label>
         <div class="col-sm-8">
           <input class="form-control" type="text" id="groupId" ng-model="vm.vertxProject.groupId"
-                 placeholder="Your  project Group Id">
+                 placeholder="Your project group id">
         </div>
       </div>
       <div class="form-group row">
-        <label for="artifactId" class="col-sm-4 col-form-label">ArtifactId</label>
+        <label for="artifactId" class="col-sm-4 col-form-label">Artifact Id</label>
         <div class="col-sm-8">
           <input class="form-control" type="text" id="artifactId" ng-model="vm.vertxProject.artifactId"
-                 placeholder="Your project Artifact Id">
+                 placeholder="Your project artifact id">
         </div>
       </div>
       <div class="form-group row">
@@ -232,7 +232,23 @@
       </div>
     </div>
   </div>
-
+  <div class="row">
+    <div class="col-sm-12">
+      <p class="text-center">
+        <span>Advanced options <a ng-click="vm.toggleAdvanced()"><i ng-class="vm.advancedCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-up'"></i></a></span>
+      </p>
+    </div>
+  </div>
+  <div uib-collapse="vm.advancedCollapsed">
+    <hr>
+    <div class="form-group row">
+      <label for="packageName" class="col-sm-4 col-form-label">Package</label>
+      <div class="col-sm-8">
+        <input class="form-control" type="text" id="packageName" ng-model="vm.vertxProject.packageName"
+               placeholder="Your project package name">
+      </div>
+    </div>
+  </div>
   <div class="row" ng-if="vm.vertxProject.vertxDependencies.length != 0">
     <div class="col-sm-12">
       <div class="form-group">
@@ -346,8 +362,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-touch.min.js"
 
         integrity="sha256-KueV4js581pLp3tYKpdkjEI5NA/XFL7sNnhoPBmfdOE=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"
-        integrity="sha256-tyfWW2LtJQNI+l3F0h6xDV/ij6Mfn8lwSKHWOsmEgXM=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.min.js"
         integrity="sha256-6vbKDGwy9JmzGKxxeypGzCjyOmACDtgheaOQT6ZVafA=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"

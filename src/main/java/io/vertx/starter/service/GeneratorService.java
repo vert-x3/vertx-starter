@@ -174,6 +174,10 @@ public class GeneratorService {
   }
 
   private String packageName(VertxProject project) {
+    String packageName = project.getPackageName();
+    if (packageName != null && !packageName.trim().isEmpty()) {
+      return packageName;
+    }
     String groupId = project.getGroupId();
     String artifactId = project.getArtifactId();
     return Stream.concat(DOT_REGEX.splitAsStream(groupId), DOT_REGEX.splitAsStream(artifactId))
