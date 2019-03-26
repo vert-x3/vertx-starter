@@ -51,6 +51,8 @@ angular
   .controller('VertxStarterController', ['$scope', '$document', '$window', 'hotkeys', 'Starter',
     function VertxStarterController($scope, $document, $window, hotkeys, Starter) {
       var vm = this;
+      vm.idRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
+      vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.isGenerating = false;
       vm.vertxVersions = [];
       vm.vertxDependencies = [];
@@ -75,7 +77,9 @@ angular
         combo: ['command+enter', 'alt+enter'],
         callback: function (event, hotkey) {
           event.preventDefault();
-          generate();
+          if ($scope.form.$valid) {
+            generate();
+          }
         }
       });
       vm.hotkey = (bowser.mac) ? '\u2318 + \u23CE' : 'alt + \u23CE';
