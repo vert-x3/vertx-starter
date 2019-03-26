@@ -31,6 +31,7 @@ version = "2.0.3"
 description = "A web application to generate Vert.x projects"
 
 val vertxVersion = "3.6.3"
+val junitJupiterVersion = "5.4.1"
 val testContainersVersion = "1.11.1"
 
 dependencies {
@@ -48,7 +49,8 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
   testImplementation("com.julienviet:childprocess-vertx-ext:1.3.0")
 
-  testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
   testImplementation("org.testcontainers:junit-jupiter:${testContainersVersion}")
 }
 

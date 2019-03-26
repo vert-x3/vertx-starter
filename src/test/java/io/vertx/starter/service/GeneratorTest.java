@@ -43,8 +43,9 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
 import static io.vertx.starter.model.BuildTool.GRADLE;
@@ -84,7 +86,7 @@ class GeneratorTest {
     cleanupTasks.forEach(Runnable::run);
   }
 
-  private VertxProject defaultProject() {
+  static VertxProject defaultProject() {
     return new VertxProject()
       .setId("demo")
       .setGroupId("com.example")
@@ -96,32 +98,19 @@ class GeneratorTest {
       .setArchiveFormat(TGZ);
   }
 
-  @Test
-  void java_with_maven_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject());
+  static Stream<VertxProject> testProjects() {
+    return Stream.<VertxProject>builder()
+      .add(defaultProject())
+      .add(defaultProject().setBuildTool(GRADLE))
+      .add(defaultProject().setLanguage(KOTLIN))
+      .add(defaultProject().setLanguage(KOTLIN).setBuildTool(GRADLE))
+      .add(defaultProject().setPackageName("com.mycompany.project.special"))
+      .build();
   }
 
-  @Test
-  void java_with_gradle_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setBuildTool(GRADLE));
-  }
-
-  @Test
-  void kotlin_with_maven_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setLanguage(KOTLIN));
-  }
-
-  @Test
-  void kotlin_with_gradle_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setLanguage(KOTLIN).setBuildTool(GRADLE));
-  }
-
-  @Test
-  void custom_package_name(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setPackageName("com.mycompany.project.special"));
-  }
-
-  private void testProject(Vertx vertx, VertxTestContext testContext, VertxProject project) {
+  @ParameterizedTest
+  @MethodSource("testProjects")
+  void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
     producer.<Buffer>send(JsonObject.mapFrom(project), testContext.succeeding(msg -> {
       unpack(vertx, testContext, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
