@@ -35,6 +35,7 @@ import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.BuildTool;
+import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -62,6 +63,7 @@ import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.Language.JAVA;
 import static io.vertx.starter.model.Language.KOTLIN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 /**
  * @author Thomas Segismont
@@ -95,7 +97,14 @@ class GeneratorTest {
       .setBuildTool(MAVEN)
       .setVertxVersion("3.6.3")
       .setVertxDependencies(Collections.singleton("vertx-web"))
-      .setArchiveFormat(TGZ);
+      .setArchiveFormat(TGZ)
+      .setJdkVersion(JdkVersion.JDK_1_8);
+  }
+
+  @ParameterizedTest
+  @MethodSource("testProjects")
+  void testProjectJdk8(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    testProject(project, vertx, testContext);
   }
 
   static Stream<VertxProject> testProjects() {
@@ -109,8 +118,17 @@ class GeneratorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("testProjects")
-  void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+  @MethodSource("testProjectsJdk11")
+  void testProjectJdk11(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(System.getProperty("java.specification.version")).isEqualTo("11");
+    testProject(project, vertx, testContext);
+  }
+
+  static Stream<VertxProject> testProjectsJdk11() {
+    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
+  }
+
+  private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
     producer.<Buffer>send(JsonObject.mapFrom(project), testContext.succeeding(msg -> {
       unpack(vertx, testContext, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {

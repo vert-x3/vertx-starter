@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
@@ -52,6 +53,11 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
   testImplementation("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
   testImplementation("org.testcontainers:junit-jupiter:${testContainersVersion}")
+}
+
+java {
+  sourceCompatibility = VERSION_1_8
+  targetCompatibility = VERSION_1_8
 }
 
 vertx {
