@@ -148,8 +148,9 @@
       box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
     }
 
-
-
+    .btn-advanced:active, .btn-advanced:focus {
+      outline: none;
+    }
   </style>
 </head>
 <body ng-app="app">
@@ -235,7 +236,9 @@
     <div class="row">
       <div class="col-sm-12">
         <p class="text-center">
-          <span>Advanced options <a ng-click="vm.toggleAdvanced()"><i ng-class="vm.advancedCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-up'"></i></a></span>
+          <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleAdvanced()">
+            Advanced options <i ng-class="vm.advancedCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i>
+          </button>
         </p>
       </div>
     </div>
@@ -248,6 +251,7 @@
                  placeholder="Your project package name" ng-pattern="vm.packageNameRegexp">
         </div>
       </div>
+      <hr>
     </div>
     <div class="row" ng-if="vm.vertxProject.vertxDependencies.length != 0">
       <div class="col-sm-12">
