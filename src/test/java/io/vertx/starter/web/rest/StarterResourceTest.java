@@ -75,7 +75,7 @@ public class StarterResourceTest {
       new WebVerticle(),
       new DeploymentOptions().setConfig(config),
       testContext.succeeding(id -> {
-        vertx.eventBus().<JsonObject>consumer(Topics.PROJECT_REQUESTED).unregister();
+        vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_REQUESTED).unregister();
         this.webClient = WebClient.create(vertx, new WebClientOptions().setDefaultPort(HTTP_PORT));
         testContext.completeNow();
       })
@@ -85,12 +85,14 @@ public class StarterResourceTest {
   @Test
   @DisplayName("should create project with default values when details not provided")
   public void shouldCreateProjectWithDefaultValuesWhenDetailsNotProvided(Vertx vertx, VertxTestContext testContext) {
-    vertx.eventBus().<JsonObject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
-      VertxProject project = message.body().mapTo(VertxProject.class);
-      assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id");
-      vertx.fileSystem().readFile("web/starter.zip", testContext.succeeding(buffer -> {
-        message.reply(buffer);
-      }));
+    vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
+      VertxProject project = message.body();
+      testContext.verify(() -> {
+        assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id", "operatingSystem", "createdOn");
+        vertx.fileSystem().readFile("web/starter.zip", testContext.succeeding(buffer -> {
+          message.reply(buffer);
+        }));
+      });
     });
     webClient.get("/starter.dummy")
       .send(testContext.succeeding(response -> testContext.verify(() -> {
@@ -102,10 +104,12 @@ public class StarterResourceTest {
   @Test
   @DisplayName("should return HTTP 500 when the generated archive is invalid")
   public void shouldReturnFailureWhenGeneratedArchiveIsInvalid(Vertx vertx, VertxTestContext testContext) {
-    vertx.eventBus().<JsonObject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
-      VertxProject project = message.body().mapTo(VertxProject.class);
-      assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id");
-      message.fail(-1, "Failure");
+    vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
+      VertxProject project = message.body();
+      testContext.verify(() -> {
+        assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id", "operatingSystem", "createdOn");
+        message.fail(-1, "Failure");
+      });
     });
     webClient.get("/starter.zip")
       .send(testContext.succeeding(response -> testContext.verify(() -> {

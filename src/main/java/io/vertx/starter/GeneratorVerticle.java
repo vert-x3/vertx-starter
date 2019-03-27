@@ -20,7 +20,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.core.json.JsonObject;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.GeneratorService;
@@ -52,7 +51,7 @@ public class GeneratorVerticle extends AbstractVerticle {
 
         generatorService = new GeneratorService(vertx, keywords);
 
-        MessageConsumer<JsonObject> consumer = vertx.eventBus().consumer(Topics.PROJECT_REQUESTED);
+        MessageConsumer<VertxProject> consumer = vertx.eventBus().consumer(Topics.PROJECT_REQUESTED);
         consumer.handler(this::onProjectRequested).completionHandler(ar -> {
           if (ar.succeeded()) {
 
@@ -76,11 +75,11 @@ public class GeneratorVerticle extends AbstractVerticle {
     });
   }
 
-  private void onProjectRequested(Message<JsonObject> msg) {
-    VertxProject vertxProject = msg.body().mapTo(VertxProject.class);
+  private void onProjectRequested(Message<VertxProject> msg) {
+    VertxProject project = msg.body();
     vertx.executeBlocking(fut -> {
       try {
-        fut.complete(generatorService.onProjectRequested(vertxProject));
+        fut.complete(generatorService.onProjectRequested(project));
       } catch (Exception e) {
         fut.fail(e);
       }
@@ -88,7 +87,7 @@ public class GeneratorVerticle extends AbstractVerticle {
       if (ar.succeeded()) {
         msg.reply(ar.result());
       } else {
-        log.error("Failed to generate project " + vertxProject.getId(), ar.cause());
+        log.error("Failed to generate project " + project.getId(), ar.cause());
         msg.fail(-1, ar.cause().getMessage());
       }
     });

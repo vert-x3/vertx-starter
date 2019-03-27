@@ -27,12 +27,12 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
+import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.BuildTool;
 import io.vertx.starter.model.JdkVersion;
@@ -72,12 +72,13 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 @Timeout(value = 1, timeUnit = TimeUnit.MINUTES)
 class GeneratorTest {
 
-  private MessageProducer<JsonObject> producer;
+  private MessageProducer<VertxProject> producer;
   private Path workdir;
   private List<Runnable> cleanupTasks = new ArrayList<>();
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
+    vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
     producer = vertx.eventBus().publisher(Topics.PROJECT_REQUESTED);
     workdir = Files.createTempDirectory(GeneratorTest.class.getSimpleName());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
@@ -96,7 +97,7 @@ class GeneratorTest {
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
       .setVertxVersion("3.6.3")
-      .setVertxDependencies(Collections.singleton("vertx-web"))
+      .setVertxDependencies(new HashSet<>(Collections.singleton("vertx-web")))
       .setArchiveFormat(TGZ)
       .setJdkVersion(JdkVersion.JDK_1_8);
   }
@@ -129,7 +130,7 @@ class GeneratorTest {
   }
 
   private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    producer.<Buffer>send(JsonObject.mapFrom(project), testContext.succeeding(msg -> {
+    producer.<Buffer>send(project, testContext.succeeding(msg -> {
       unpack(vertx, testContext, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
 
