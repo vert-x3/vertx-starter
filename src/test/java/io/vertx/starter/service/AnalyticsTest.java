@@ -24,7 +24,6 @@ import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.AnalyticsVerticle;
 import io.vertx.starter.config.Topics;
-import io.vertx.starter.model.VertxProject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +33,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.stream.Stream;
 
-import static io.vertx.starter.model.ArchiveFormat.TGZ;
-import static io.vertx.starter.model.BuildTool.MAVEN;
-import static io.vertx.starter.model.Language.JAVA;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -71,29 +67,20 @@ class AnalyticsTest {
     testContext.completeNow();
   }
 
-  static VertxProject defaultProject() {
-    return new VertxProject()
-      .setId("demo")
-      .setGroupId("analytics")
-      .setArtifactId("test")
-      .setLanguage(JAVA)
-      .setBuildTool(MAVEN)
-      .setVertxVersion("3.6.3")
-      .setVertxDependencies(Collections.singleton("vertx-web"))
-      .setArchiveFormat(TGZ);
-  }
-
   @Test
   void projectPersisted(Vertx vertx, VertxTestContext testContext) {
-    vertx.eventBus().publish(Topics.PROJECT_CREATED, JsonObject.mapFrom(defaultProject()));
+    JsonObject expected = new JsonObject().put("foo", "bar");
+    vertx.eventBus().publish(Topics.PROJECT_CREATED, expected);
     vertx.setTimer(500, l -> {
       JsonObject query = new JsonObject();
       client.find(AnalyticsService.COLLECTION_NAME, query, testContext.succeeding(list -> {
+        Stream<JsonObject> stream = list.stream().map(json -> {
+          JsonObject copy = json.copy();
+          copy.remove("_id");
+          return copy;
+        });
         testContext.verify(() -> {
-          assertThat(list).hasSize(1);
-          JsonObject jsonObject = list.get(0);
-          assertThat(jsonObject.getString("groupId")).isEqualTo("analytics");
-          assertThat(jsonObject.getString("artifactId")).isEqualTo("test");
+          assertThat(stream).hasSize(1).contains(expected);
           testContext.completeNow();
         });
       }));

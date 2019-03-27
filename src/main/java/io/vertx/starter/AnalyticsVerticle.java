@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnalyticsVerticle extends AbstractVerticle {
 
-  private final Logger log = LoggerFactory.getLogger(AnalyticsVerticle.class);
+  private static final Logger log = LoggerFactory.getLogger(AnalyticsVerticle.class);
 
   private MongoClient mongoClient() {
     return MongoClient.createShared(vertx, config());

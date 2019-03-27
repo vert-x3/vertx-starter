@@ -31,8 +31,9 @@ import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PO
 
 public class WebVerticle extends AbstractVerticle {
 
+  private static final Logger log = LoggerFactory.getLogger(WebVerticle.class);
+
   public static final int DEFAULT_HTTP_PORT = 8080;
-  private final Logger log = LoggerFactory.getLogger(WebVerticle.class);
 
   private StarterResource starterResource;
 
@@ -56,7 +57,7 @@ public class WebVerticle extends AbstractVerticle {
       .requestHandler(router)
       .listen(port, ar -> {
         if (ar.failed()) {
-          log.error("Fail to start {}: {}", WebVerticle.class.getSimpleName(), ar.cause().getMessage());
+          log.error("Fail to start {}", WebVerticle.class.getSimpleName(), ar.cause());
           startFuture.fail(ar.cause());
         } else {
           log.info("\n----------------------------------------------------------\n\t" +

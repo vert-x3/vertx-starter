@@ -34,8 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 
@@ -46,8 +44,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(VertxExtension.class)
 public class StarterResourceTest {
-
-  private static final Logger log = LoggerFactory.getLogger(StarterResourceTest.class);
 
   private static final int HTTP_PORT = 9000;
   private WebClient webClient;

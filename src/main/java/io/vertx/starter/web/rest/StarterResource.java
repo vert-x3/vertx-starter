@@ -61,7 +61,7 @@ public class StarterResource {
   }
 
   public void getStarterMetadata(RoutingContext rc) {
-    log.debug("REST request to get starter metdata");
+    log.trace("REST request to get starter metdata");
     JsonObject details = new JsonObject();
     details.put("defaults", defaults);
     details.put("buildTools", asList("maven", "gradle"));
@@ -85,22 +85,24 @@ public class StarterResource {
 
   public void generateProject(RoutingContext rc) {
     VertxProject project = buildProject(rc.request());
-    log.debug("REST request to generate project: {}", project);
+    log.trace("REST request to generate project: {}", project);
     this.eventBus.<Buffer>send(PROJECT_REQUESTED, JsonObject.mapFrom(project), reply -> {
       if (reply.succeeded()) {
         Buffer content = reply.result().body();
         String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
-        log.debug("Sending archive: " + filename);
         rc.response()
           .setStatusCode(HTTP_OK)
           .putHeader("Content-Type", project.getArchiveFormat().getContentType())
           .putHeader("Content-Disposition", "attachment; filename=" + filename)
           .end(content);
-        log.debug("Notifying project created");
-        this.eventBus.publish(PROJECT_CREATED, JsonObject.mapFrom(project));
+        log.trace("Notifying project created");
+        JsonObject message = JsonObject.mapFrom(project);
+        message.remove("groupId");
+        message.remove("artifactId");
+        message.remove("packageName");
+        this.eventBus.publish(PROJECT_CREATED, message);
       } else {
-        String errorMessage = reply.cause().getMessage();
-        log.error("Failed to create project: {}", project.getId());
+        log.error("Failed to create project " + project.getId(), reply.cause());
         RestUtil.error(rc, "Failed to create project: " + project.getId());
       }
     });

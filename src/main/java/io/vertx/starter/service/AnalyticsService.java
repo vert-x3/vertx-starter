@@ -36,12 +36,9 @@ public class AnalyticsService {
 
   public void onProjectCreated(Message<JsonObject> message) {
     log.debug("Building analytics with on new project created");
-    JsonObject document = message.body();
-    mongoClient.save(COLLECTION_NAME, document, res -> {
+    mongoClient.save(COLLECTION_NAME, message.body(), res -> {
       if (res.failed()) {
-        log.error("Failed to save project {}: {}", document, res.cause().getMessage());
-      } else {
-        log.debug("Saved project: {}", document);
+        log.error("Failed to save document", res.cause());
       }
     });
   }

@@ -113,16 +113,14 @@ public class VertxProject {
 
   @Override
   public String toString() {
+    // DO NOT RETURN USER RELATED-DATA (groupId, artifactId, packageName)
     return "VertxProject{" +
       "id='" + id + '\'' +
-      ", groupId='" + groupId + '\'' +
-      ", artifactId='" + artifactId + '\'' +
       ", language=" + language +
       ", buildTool=" + buildTool +
       ", vertxVersion='" + vertxVersion + '\'' +
       ", vertxDependencies=" + vertxDependencies +
       ", archiveFormat=" + archiveFormat +
-      ", packageName='" + packageName + '\'' +
       '}';
   }
 }

@@ -18,8 +18,6 @@ package io.vertx.starter.service;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.eventbus.Message;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
 import io.vertx.starter.model.Language;
@@ -86,9 +84,7 @@ public class GeneratorService {
     templateEngine = FreeMarkerTemplateEngine.create(vertx);
   }
 
-  public Buffer onProjectRequested(Message<JsonObject> message) throws Exception {
-    VertxProject project = message.body().mapTo(VertxProject.class);
-
+  public Buffer onProjectRequested(VertxProject project) throws Exception {
     ArchiveOutputStreamFactory factory;
     ArchiveFormat archiveFormat = project.getArchiveFormat();
     if (archiveFormat == ArchiveFormat.TGZ) {
@@ -114,7 +110,7 @@ public class GeneratorService {
   }
 
   private void createProject(VertxProject project, TempDir tempDir) throws IOException {
-    log.debug("Generating project: {}", project);
+    log.trace("Generating project: {}", project);
 
     Map<String, Object> ctx = new HashMap<>();
     ctx.put("buildTool", project.getBuildTool().name().toLowerCase());

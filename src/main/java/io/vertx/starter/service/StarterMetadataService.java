@@ -49,9 +49,9 @@ public class StarterMetadataService {
       if (ar.succeeded()) {
         String raw = ar.result().toString();
         this.dependencies = new JsonObject(raw).getJsonArray("content");
-        log.info("Vert.x dependencies loaded");
+        log.debug("Vert.x dependencies loaded");
       } else {
-        log.error("Impossible to load dependencies {}: {}", DEPENDENCIES_PATH, ar.cause().getMessage());
+        log.error("Impossible to load dependencies " + DEPENDENCIES_PATH, ar.cause());
       }
     });
   }
@@ -64,7 +64,7 @@ public class StarterMetadataService {
         JsonObject data = new JsonObject(ar.result().body());
         reply.handle(Future.succeededFuture(data.getJsonArray("versions")));
       } else {
-        log.error("Providing default versions because: {}", ar.cause());
+        log.error("Providing default versions", ar.cause());
         reply.handle(Future.succeededFuture(DEFAULT_VERSIONS));
       }
     });
