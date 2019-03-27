@@ -27,4 +27,5 @@ public interface ProjectConstants {
   String VERTX_VERSION = "vertxVersion";
   String VERTX_DEPENDENCIES = "vertxDependencies";
   String ARCHIVE_FORMAT = "archiveFormat";
+  String PACKAGE_NAME = "packageName";
 }

@@ -28,6 +28,7 @@ public class VertxProject {
   private String vertxVersion;
   private Set<String> vertxDependencies;
   private ArchiveFormat archiveFormat;
+  private String packageName;
 
   public String getId() {
     return id;
@@ -101,9 +102,18 @@ public class VertxProject {
     return this;
   }
 
+  public String getPackageName() {
+    return packageName;
+  }
+
+  public VertxProject setPackageName(String packageName) {
+    this.packageName = packageName;
+    return this;
+  }
+
   @Override
   public String toString() {
-    return "Project{" +
+    return "VertxProject{" +
       "id='" + id + '\'' +
       ", groupId='" + groupId + '\'' +
       ", artifactId='" + artifactId + '\'' +
@@ -112,6 +122,7 @@ public class VertxProject {
       ", vertxVersion='" + vertxVersion + '\'' +
       ", vertxDependencies=" + vertxDependencies +
       ", archiveFormat=" + archiveFormat +
+      ", packageName='" + packageName + '\'' +
       '}';
   }
 }

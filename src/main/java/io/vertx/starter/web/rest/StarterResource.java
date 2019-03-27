@@ -138,6 +138,9 @@ public class StarterResource {
       .ofNullable(ArchiveFormat.fromFilename(request.path()))
       .orElse(ArchiveFormat.valueOf(defaults.getString(ARCHIVE_FORMAT).toUpperCase()));
     project.setArchiveFormat(archiveFormat);
+    if (isNotBlank(params.get(PACKAGE_NAME))) {
+      project.setPackageName(params.get(PACKAGE_NAME));
+    }
     return project;
   }
 

@@ -28,7 +28,7 @@
     <vertx.version>${vertxVersion}</vertx.version>
     <junit-jupiter.version>5.4.0</junit-jupiter.version>
 
-    <main.verticle>${groupId}.${artifactId}.MainVerticle</main.verticle>
+    <main.verticle>${packageName}.MainVerticle</main.verticle>
   </properties>
 
   <dependencyManagement>

@@ -30,7 +30,8 @@ You can provide the following query parameters to customize the project
 - `language`: `java` or `kotlin`
 - `buildTool`: `maven` or `gradle` build tool
 - `vertxVersion`: the Vert.x version
-- `vertxDependencies`: a comma separated list of artifactIds  of the vert.x modules
+- `vertxDependencies`: a comma separated list of artifactIds of the vert.x modules
+- `packageName`: code package name, derived from `groupId` and `artifactId` by default
 
 Full example:
 
