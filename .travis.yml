@@ -7,7 +7,7 @@ branches:
   only:
     - master
     - prod
-jdk: oraclejdk8
+jdk: openjdk11
 jobs:
   include:
     - stage: test

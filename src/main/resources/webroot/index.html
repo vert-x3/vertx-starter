@@ -25,9 +25,11 @@
   <meta charset=utf-8>
   <meta http-equiv=X-UA-Compatible content="IE=edge">
   <meta content="width=device-width,initial-scale=1" name=viewport>
-  <link href=https://vertx.io/stylesheets/main.css media=screen rel=stylesheet>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" rel="stylesheet">
   <link href=https://vertx.io/stylesheets/font-awesome.min.css media=screen rel=stylesheet>
   <link href=https://vertx.io/javascripts/styles/rainbow.min.css media=screen rel=stylesheet>
+  <link href=https://vertx.io/stylesheets/main.css media=screen rel=stylesheet>
   <!--[if lt IE 9]>
   <script src="https://static.jboss.org/theme/js/libs/html5/pre3.6/html5.min.js"></script><![endif]-->
   <link rel=apple-touch-icon sizes=57x57
@@ -59,7 +61,6 @@
   <meta name=msapplication-TileImage content=https://vertx.io/assets/favicons/vertx-favicon-7/mstile-144x144.png>
   <meta name=theme-color content=#ffffff>
   <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700,400italic" rel=stylesheet type=text/css>
-  <link rel=alternate type=application/rss+xml title=RSS href=https://vertx.io/feed.xml>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-hotkeys/1.7.0/hotkeys.min.css"
         integrity="sha256-vxIU4Ev/ETvzurX+kISsIZV27IMxEKPCjcSYLazm6Og=" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ng-toast/2.0.0/ngToast-animations.min.css"
@@ -256,6 +257,15 @@
           <input class="form-control" type="text" id="packageName" name="packageName" ng-model="vm.vertxProject.packageName"
                  placeholder="Your project package name" ng-pattern="vm.packageNameRegexp">
           <span class="help-block" ng-hide="form.packageName.$valid">Invalid format</span>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">JDK Version</label>
+        <div class="col-sm-8">
+          <div class="btn-group">
+            <label class="btn btn-sm btn-default" ng-model="vm.vertxProject.jdkVersion" uib-btn-radio="'1.8'">JDK 1.8</label>
+            <label class="btn btn-sm btn-default" ng-model="vm.vertxProject.jdkVersion" uib-btn-radio="'11'">JDK 11</label>
+          </div>
         </div>
       </div>
       <hr>

@@ -31,7 +31,7 @@ application {
 }
 
 <#if language != "kotlin">
-sourceCompatibility = '1.8'
+sourceCompatibility = '${jdkVersion}'
 </#if>
 
 def mainVerticleName = '${packageName}.MainVerticle'

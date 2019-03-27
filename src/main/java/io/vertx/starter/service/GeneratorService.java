@@ -124,14 +124,15 @@ public class GeneratorService {
       throw new IllegalArgumentException("Invalid artifactId");
     }
     ctx.put("artifactId", artifactId);
-    String packageName = packageName(project);
-    ctx.put("packageName", packageName);
     Language language = project.getLanguage();
     ctx.put("language", language.name().toLowerCase());
     ctx.put("vertxVersion", project.getVertxVersion());
     Set<String> vertxDependencies = project.getVertxDependencies();
     vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
+    String packageName = packageName(project);
+    ctx.put("packageName", packageName);
+    ctx.put("jdkVersion", project.getJdkVersion().getValue());
 
     Path tempDirPath = tempDir.path();
     String tempDirPathStr = tempDirPath.toString();

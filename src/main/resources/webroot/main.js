@@ -29,7 +29,8 @@ angular
             buildTool: vertxProject.buildTool,
             vertxVersion: vertxProject.vertxVersion,
             vertxDependencies: vertxProject.vertxDependencies,
-            packageName: vertxProject.packageName
+            packageName: vertxProject.packageName,
+            jdkVersion: vertxProject.jdkVersion
           }
         });
       },
@@ -120,6 +121,7 @@ angular
         vm.vertxProject.archiveFormat = defaults.archiveFormat;
         vm.vertxProject.vertxDependencies = [];
         vm.vertxProject.packageName = defaults.packageName;
+        vm.vertxProject.jdkVersion = defaults.jdkVersion;
       }
 
       function onDependencySelected($item, $model, $label, $event) {
@@ -173,6 +175,7 @@ angular
           vm.advancedCollapsed = false;
         } else {
           vm.vertxProject.packageName = vm.projectDefaults.packageName;
+          vm.vertxProject.jdkVersion = vm.projectDefaults.jdkVersion;
           vm.advancedCollapsed = true;
         }
       }

@@ -29,6 +29,7 @@ public class VertxProject {
   private Set<String> vertxDependencies;
   private ArchiveFormat archiveFormat;
   private String packageName;
+  private JdkVersion jdkVersion;
 
   public String getId() {
     return id;
@@ -111,6 +112,15 @@ public class VertxProject {
     return this;
   }
 
+  public JdkVersion getJdkVersion() {
+    return jdkVersion;
+  }
+
+  public VertxProject setJdkVersion(JdkVersion jdkVersion) {
+    this.jdkVersion = jdkVersion;
+    return this;
+  }
+
   @Override
   public String toString() {
     // DO NOT RETURN USER RELATED-DATA (groupId, artifactId, packageName)
@@ -121,6 +131,7 @@ public class VertxProject {
       ", vertxVersion='" + vertxVersion + '\'' +
       ", vertxDependencies=" + vertxDependencies +
       ", archiveFormat=" + archiveFormat +
+      ", jdkVersion=" + jdkVersion +
       '}';
   }
 }
