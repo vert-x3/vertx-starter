@@ -1,4 +1,6 @@
 language: java
+services:
+  - docker
 addons:
   ssh_known_hosts: start.vertx.io
 branches:

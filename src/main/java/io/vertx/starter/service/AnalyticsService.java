@@ -26,7 +26,7 @@ public class AnalyticsService {
 
   private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
 
-  private static final String COLLECTION_NAME = "projects";
+  static final String COLLECTION_NAME = "projects";
 
   private final MongoClient mongoClient;
 
