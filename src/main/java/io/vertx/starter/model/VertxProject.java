@@ -16,6 +16,7 @@
 
 package io.vertx.starter.model;
 
+import java.time.Instant;
 import java.util.Set;
 
 public class VertxProject {
@@ -28,6 +29,10 @@ public class VertxProject {
   private String vertxVersion;
   private Set<String> vertxDependencies;
   private ArchiveFormat archiveFormat;
+  private String packageName;
+  private JdkVersion jdkVersion;
+  private String operatingSystem;
+  private Instant createdOn;
 
   public String getId() {
     return id;
@@ -101,17 +106,55 @@ public class VertxProject {
     return this;
   }
 
+  public String getPackageName() {
+    return packageName;
+  }
+
+  public VertxProject setPackageName(String packageName) {
+    this.packageName = packageName;
+    return this;
+  }
+
+  public JdkVersion getJdkVersion() {
+    return jdkVersion;
+  }
+
+  public VertxProject setJdkVersion(JdkVersion jdkVersion) {
+    this.jdkVersion = jdkVersion;
+    return this;
+  }
+
+  public String getOperatingSystem() {
+    return operatingSystem;
+  }
+
+  public VertxProject setOperatingSystem(String operatingSystem) {
+    this.operatingSystem = operatingSystem;
+    return this;
+  }
+
+  public Instant getCreatedOn() {
+    return createdOn;
+  }
+
+  public VertxProject setCreatedOn(Instant createdOn) {
+    this.createdOn = createdOn;
+    return this;
+  }
+
   @Override
   public String toString() {
-    return "Project{" +
+    // DO NOT RETURN USER RELATED-DATA (groupId, artifactId, packageName)
+    return "VertxProject{" +
       "id='" + id + '\'' +
-      ", groupId='" + groupId + '\'' +
-      ", artifactId='" + artifactId + '\'' +
       ", language=" + language +
       ", buildTool=" + buildTool +
       ", vertxVersion='" + vertxVersion + '\'' +
       ", vertxDependencies=" + vertxDependencies +
       ", archiveFormat=" + archiveFormat +
+      ", jdkVersion=" + jdkVersion +
+      ", operatingSystem=" + operatingSystem +
+      ", createdOn=" + createdOn +
       '}';
   }
 }

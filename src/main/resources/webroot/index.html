@@ -25,9 +25,11 @@
   <meta charset=utf-8>
   <meta http-equiv=X-UA-Compatible content="IE=edge">
   <meta content="width=device-width,initial-scale=1" name=viewport>
-  <link href=https://vertx.io/stylesheets/main.css media=screen rel=stylesheet>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" rel="stylesheet">
   <link href=https://vertx.io/stylesheets/font-awesome.min.css media=screen rel=stylesheet>
   <link href=https://vertx.io/javascripts/styles/rainbow.min.css media=screen rel=stylesheet>
+  <link href=https://vertx.io/stylesheets/main.css media=screen rel=stylesheet>
   <!--[if lt IE 9]>
   <script src="https://static.jboss.org/theme/js/libs/html5/pre3.6/html5.min.js"></script><![endif]-->
   <link rel=apple-touch-icon sizes=57x57
@@ -59,7 +61,6 @@
   <meta name=msapplication-TileImage content=https://vertx.io/assets/favicons/vertx-favicon-7/mstile-144x144.png>
   <meta name=theme-color content=#ffffff>
   <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700,400italic" rel=stylesheet type=text/css>
-  <link rel=alternate type=application/rss+xml title=RSS href=https://vertx.io/feed.xml>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-hotkeys/1.7.0/hotkeys.min.css"
         integrity="sha256-vxIU4Ev/ETvzurX+kISsIZV27IMxEKPCjcSYLazm6Og=" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ng-toast/2.0.0/ngToast-animations.min.css"
@@ -68,6 +69,10 @@
         integrity="sha256-ykEGhHpzOb/LqfHbKYQNWhgXjusMR4T/MAVanhpqpnU=" crossorigin="anonymous" />
 
   <style>
+    div.title {
+      margin-bottom: 2em;
+    }
+
     .tag {
       display: inline-block;
       margin-right: 0.2em;
@@ -90,7 +95,7 @@
       font-size: 21px;
       font-weight: bold;
       line-height: 1;
-      color: #000;
+      color: #fff;
     }
 
     .tags-wrapper {
@@ -148,8 +153,9 @@
       box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
     }
 
-
-
+    .btn-advanced:active, .btn-advanced:focus {
+      outline: none;
+    }
   </style>
 </head>
 <body ng-app="app">
@@ -174,109 +180,139 @@
     </nav>
   </div>
 </header>
-<div class="container highlight" ng-controller="VertxStarterController as vm">
-  <div class="row">
-    <div class="col-sm-12">
-      <h2>Create a new Vert.x application</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="form-group row">
-        <label for="version" class="col-sm-4 col-form-label">Version</label>
-        <div class="col-sm-8">
-          <select class="form-control" id="version" ng-model="vm.vertxProject.vertxVersion">
-            <option ng-repeat="vertxVersion in vm.vertxVersions">{{ vertxVersion }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="language" class="col-sm-4 col-form-label">Language</label>
-        <div class="col-sm-8">
-          <select class="form-control" id="language" ng-model="vm.vertxProject.language">
-            <option ng-repeat="language in vm.languages" value="{{language}}">{{ language | capitalize }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="buildTool" class="col-sm-4 col-form-label">Build</label>
-        <div class="col-sm-8">
-          <select class="form-control" id="buildTool" ng-model="vm.vertxProject.buildTool">
-            <option ng-repeat="buildTool in vm.buildTools" value="{{buildTool}}">{{ buildTool | capitalize }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="groupId" class="col-sm-4 col-form-label">GroupId</label>
-        <div class="col-sm-8">
-          <input class="form-control" type="text" id="groupId" ng-model="vm.vertxProject.groupId"
-                 placeholder="Your  project Group Id">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="artifactId" class="col-sm-4 col-form-label">ArtifactId</label>
-        <div class="col-sm-8">
-          <input class="form-control" type="text" id="artifactId" ng-model="vm.vertxProject.artifactId"
-                 placeholder="Your project Artifact Id">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="dependencies" class="col-sm-4 col-form-label">Dependencies</label>
-        <div class="col-sm-8">
-          <input type="text" id="dependencies" class="form-control" placeholder="Web, MQTT, etc."
-                 ng-model="vm.selectedDependency"
-                 uib-typeahead="dependency as dependency.name for dependency in vm.vertxDependencies | filter:$viewValue | limitTo:8"
-                 typeahead-on-select="vm.onDependencySelected($item, $model, $label, $event)">
-
-        </div>
+<div class="container" ng-controller="VertxStarterController as vm">
+  <form name="form" novalidate onsubmit="return false">
+    <div class="row title">
+      <div class="col-sm-12">
+        <h2>Create a new Vert.x application</h2>
       </div>
     </div>
-  </div>
-
-  <div class="row" ng-if="vm.vertxProject.vertxDependencies.length != 0">
-    <div class="col-sm-12">
-      <div class="form-group">
-        <label class="control-label">Selected dependencies</label>
-        <br>
-        <div class="tag" ng-repeat="dependency in vm.vertxProject.vertxDependencies">
-          {{ dependency.name }}
-          <button type="button" class="remove" aria-label="Remove" ng-click="vm.removeDependency(dependency)">
-            <span aria-hidden="true">&times;</span>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group row">
+          <label for="version" class="col-sm-4 col-form-label">Version</label>
+          <div class="col-sm-8">
+            <select class="form-control" id="version" ng-model="vm.vertxProject.vertxVersion">
+              <option ng-repeat="vertxVersion in vm.vertxVersions">{{ vertxVersion }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="language" class="col-sm-4 col-form-label">Language</label>
+          <div class="col-sm-8">
+            <select class="form-control" id="language" ng-model="vm.vertxProject.language">
+              <option ng-repeat="language in vm.languages" value="{{language}}">{{ language | capitalize }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="buildTool" class="col-sm-4 col-form-label">Build</label>
+          <div class="col-sm-8">
+            <select class="form-control" id="buildTool" ng-model="vm.vertxProject.buildTool">
+              <option ng-repeat="buildTool in vm.buildTools" value="{{buildTool}}">{{ buildTool | capitalize }}</option>
+            </select>
+          </div>
+        </div>
+        <div ng-class="form.groupId.$valid ? 'form-group row' : 'form-group row has-error'">
+          <label for="groupId" class="col-sm-4 col-form-label control-label">Group Id</label>
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="groupId" name="groupId" ng-model="vm.vertxProject.groupId"
+                   placeholder="Your project group id" ng-pattern="vm.idRegexp">
+            <span class="help-block" ng-hide="form.groupId.$valid">Invalid format</span>
+          </div>
+        </div>
+        <div ng-class="form.artifactId.$valid ? 'form-group row' : 'form-group row has-error'">
+          <label for="artifactId" class="col-sm-4 col-form-label control-label">Artifact Id</label>
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="artifactId" name="artifactId" ng-model="vm.vertxProject.artifactId"
+                   placeholder="Your project artifact id" ng-pattern="vm.idRegexp">
+            <span class="help-block" ng-hide="form.artifactId.$valid">Invalid format</span>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="dependencies" class="col-sm-4 col-form-label">Dependencies</label>
+          <div class="col-sm-8">
+            <input type="text" id="dependencies" class="form-control" placeholder="Web, MQTT, etc."
+                   ng-model="vm.selectedDependency"
+                   uib-typeahead="dependency as dependency.name for dependency in vm.vertxDependencies | filter:$viewValue | limitTo:8"
+                   typeahead-on-select="vm.onDependencySelected($item, $model, $label, $event)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <p class="text-center">
+          <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleAdvanced()">
+            Advanced options <i ng-class="vm.advancedCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i>
           </button>
+        </p>
+      </div>
+    </div>
+    <div uib-collapse="vm.advancedCollapsed">
+      <hr>
+      <div ng-class="form.packageName.$valid ? 'form-group row' : 'form-group row has-error'">
+        <label for="packageName" class="col-sm-4 col-form-label control-label">Package</label>
+        <div class="col-sm-8">
+          <input class="form-control" type="text" id="packageName" name="packageName" ng-model="vm.vertxProject.packageName"
+                 placeholder="Your project package name" ng-pattern="vm.packageNameRegexp">
+          <span class="help-block" ng-hide="form.packageName.$valid">Invalid format</span>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">JDK Version</label>
+        <div class="col-sm-8">
+          <div class="btn-group">
+            <label class="btn btn-sm btn-default" ng-model="vm.vertxProject.jdkVersion" uib-btn-radio="'1.8'">JDK 1.8</label>
+            <label class="btn btn-sm btn-default" ng-model="vm.vertxProject.jdkVersion" uib-btn-radio="'11'">JDK 11</label>
+          </div>
+        </div>
+      </div>
+      <hr>
+    </div>
+    <div class="row" ng-if="vm.vertxProject.vertxDependencies.length != 0">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <label class="control-label">Selected dependencies</label>
+          <br>
+          <div class="tag" ng-repeat="dependency in vm.vertxProject.vertxDependencies">
+            {{ dependency.name }}
+            <button type="button" class="remove" aria-label="Remove" ng-click="vm.removeDependency(dependency)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div uib-alert ng-repeat="alert in vm.alerts track by $index" class="alert-danger" close="vm.closeAlert($index)">
-      <p>
-        {{alert}}. Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a> an
-        issue.
-      </p>
+    <div class="row">
+      <div uib-alert ng-repeat="alert in vm.alerts track by $index" class="alert-danger" close="vm.closeAlert($index)">
+        <p>
+          {{alert}}. Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a> an
+          issue.
+        </p>
+      </div>
+      <div class="col-sm-12">
+        <p class="text-center">
+          <button class="btn btn-lg btn-primary" ng-disabled="form.$invalid" ng-click="vm.generate()">
+            Generate Project <kbd>{{ vm.hotkey }}</kbd>
+          </button>
+        </p>
+      </div>
+      <div class="col-sm-12" ng-show="vm.isGenerating">
+        <p class="text-center">
+          <i class="fa fa-spinner fa-spin"></i>
+        </p>
+      </div>
     </div>
-    <div class="col-sm-12">
-      <p class="text-center">
-        <button class="btn btn-lg btn-primary"
-                ng-click="vm.generate()">
-          Generate Project
-          <kbd>{{ vm.hotkey }}</kbd>
-        </button>
-      </p>
+    <div class="row">
+      <div class="col-sm-12">
+        <p class="small pull-right">
+          <a href="https://github.com/vert-x3/vertx-starter/issues"><i class="fa fa-bug" aria-hidden="true"></i> Report an
+            issue</a>
+        </p>
+      </div>
     </div>
-    <div class="col-sm-12" ng-show="vm.isGenerating">
-      <p class="text-center">
-        <i class="fa fa-spinner fa-spin"></i>
-      </p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <p class="small pull-right">
-        <a href="https://github.com/vert-x3/vertx-starter/issues"><i class="fa fa-bug" aria-hidden="true"></i> Report an
-          issue</a>
-      </p>
-    </div>
-  </div>
+  </form>
 </div>
 <div ng-if="vm.isFileSaverSupported">
   Not Supported
@@ -346,8 +382,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-touch.min.js"
 
         integrity="sha256-KueV4js581pLp3tYKpdkjEI5NA/XFL7sNnhoPBmfdOE=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"
-        integrity="sha256-tyfWW2LtJQNI+l3F0h6xDV/ij6Mfn8lwSKHWOsmEgXM=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.min.js"
         integrity="sha256-6vbKDGwy9JmzGKxxeypGzCjyOmACDtgheaOQT6ZVafA=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"

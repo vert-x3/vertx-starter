@@ -15,7 +15,7 @@
  */
 
 angular
-  .module('app', ['ngResource', 'ui.bootstrap', 'cfp.hotkeys'])
+  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys'])
   .value('bowser', bowser)
   .factory('Starter', ['$http', function ($http) {
     var service = {
@@ -28,7 +28,9 @@ angular
             language: vertxProject.language,
             buildTool: vertxProject.buildTool,
             vertxVersion: vertxProject.vertxVersion,
-            vertxDependencies: vertxProject.vertxDependencies
+            vertxDependencies: vertxProject.vertxDependencies,
+            packageName: vertxProject.packageName,
+            jdkVersion: vertxProject.jdkVersion
           }
         });
       },
@@ -50,17 +52,22 @@ angular
   .controller('VertxStarterController', ['$scope', '$document', '$window', 'hotkeys', 'Starter',
     function VertxStarterController($scope, $document, $window, hotkeys, Starter) {
       var vm = this;
+      vm.idRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
+      vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.isGenerating = false;
       vm.vertxVersions = [];
       vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
+      vm.advancedCollapsed = true;
 
+      vm.projectDefaults = {};
       vm.vertxProject = {};
       vm.selectedDependency = null;
       vm.alerts = [];
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
+      vm.toggleAdvanced = toggleAdvanced;
       vm.generate = generate;
       vm.addAlert = addAlert;
       vm.closeAlert = closeAlert;
@@ -71,7 +78,9 @@ angular
         combo: ['command+enter', 'alt+enter'],
         callback: function (event, hotkey) {
           event.preventDefault();
-          generate();
+          if ($scope.form.$valid) {
+            generate();
+          }
         }
       });
       vm.hotkey = (bowser.mac) ? '\u2318 + \u23CE' : 'alt + \u23CE';
@@ -102,6 +111,7 @@ angular
       }
 
       function initProjectWithDefaults(defaults) {
+        vm.projectDefaults = defaults;
         vm.vertxProject.model = defaults.model;
         vm.vertxProject.groupId = defaults.groupId;
         vm.vertxProject.artifactId = defaults.artifactId;
@@ -110,6 +120,8 @@ angular
         vm.vertxProject.vertxVersion = defaults.vertxVersion;
         vm.vertxProject.archiveFormat = defaults.archiveFormat;
         vm.vertxProject.vertxDependencies = [];
+        vm.vertxProject.packageName = defaults.packageName;
+        vm.vertxProject.jdkVersion = defaults.jdkVersion;
       }
 
       function onDependencySelected($item, $model, $label, $event) {
@@ -148,7 +160,6 @@ angular
         }
       }
 
-
       function vertxProjectRequest() {
         var vertxProject = {};
         angular.copy(vm.vertxProject, vertxProject);
@@ -157,6 +168,16 @@ angular
         });
         vertxProject.vertxDependencies = artifacts.join();
         return vertxProject;
+      }
+
+      function toggleAdvanced() {
+        if (vm.advancedCollapsed) {
+          vm.advancedCollapsed = false;
+        } else {
+          vm.vertxProject.packageName = vm.projectDefaults.packageName;
+          vm.vertxProject.jdkVersion = vm.projectDefaults.jdkVersion;
+          vm.advancedCollapsed = true;
+        }
       }
 
       function generate() {

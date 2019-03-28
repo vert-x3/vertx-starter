@@ -19,18 +19,17 @@ package io.vertx.starter.web.rest;
 import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.starter.model.ArchiveFormat;
-import io.vertx.starter.model.BuildTool;
-import io.vertx.starter.model.Language;
-import io.vertx.starter.model.VertxProject;
+import io.vertx.starter.model.*;
 import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -61,7 +60,7 @@ public class StarterResource {
   }
 
   public void getStarterMetadata(RoutingContext rc) {
-    log.debug("REST request to get starter metdata");
+    log.trace("REST request to get starter metdata");
     JsonObject details = new JsonObject();
     details.put("defaults", defaults);
     details.put("buildTools", asList("maven", "gradle"));
@@ -85,22 +84,21 @@ public class StarterResource {
 
   public void generateProject(RoutingContext rc) {
     VertxProject project = buildProject(rc.request());
-    log.debug("REST request to generate project: {}", project);
-    this.eventBus.<Buffer>send(PROJECT_REQUESTED, JsonObject.mapFrom(project), reply -> {
+    log.trace("REST request to generate project: {}", project);
+
+    eventBus.<Buffer>send(PROJECT_REQUESTED, project, reply -> {
       if (reply.succeeded()) {
         Buffer content = reply.result().body();
         String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
-        log.debug("Sending archive: " + filename);
         rc.response()
           .setStatusCode(HTTP_OK)
           .putHeader("Content-Type", project.getArchiveFormat().getContentType())
           .putHeader("Content-Disposition", "attachment; filename=" + filename)
           .end(content);
-        log.debug("Notifying project created");
-        this.eventBus.publish(PROJECT_CREATED, JsonObject.mapFrom(project));
+        log.trace("Notifying project created");
+        eventBus.publish(PROJECT_CREATED, project);
       } else {
-        String errorMessage = reply.cause().getMessage();
-        log.error("Failed to create project: {}", project.getId());
+        log.error("Failed to create project " + project.getId(), reply.cause());
         RestUtil.error(rc, "Failed to create project: " + project.getId());
       }
     });
@@ -138,7 +136,28 @@ public class StarterResource {
       .ofNullable(ArchiveFormat.fromFilename(request.path()))
       .orElse(ArchiveFormat.valueOf(defaults.getString(ARCHIVE_FORMAT).toUpperCase()));
     project.setArchiveFormat(archiveFormat);
+    if (isNotBlank(params.get(PACKAGE_NAME))) {
+      project.setPackageName(params.get(PACKAGE_NAME));
+    }
+    if (isNotBlank(params.get(JDK_VERSION))) {
+      project.setJdkVersion(JdkVersion.fromString(params.get(JDK_VERSION)));
+    }
+    project.setOperatingSystem(operatingSystem(request.getHeader(HttpHeaders.USER_AGENT)));
+    project.setCreatedOn(Instant.now());
     return project;
+  }
+
+  private String operatingSystem(String userAgentHeader) {
+    if (userAgentHeader != null) {
+      String ua = userAgentHeader.toLowerCase();
+      if (ua.contains("macintosh")) {
+        return "Mac";
+      }
+      if (ua.contains("windows")) {
+        return "Windows";
+      }
+    }
+    return "Other";
   }
 
   private boolean isNotBlank(String value) {

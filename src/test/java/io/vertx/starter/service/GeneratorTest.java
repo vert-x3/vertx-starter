@@ -27,14 +27,15 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
+import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.BuildTool;
+import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -43,19 +44,18 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
 import static io.vertx.starter.model.BuildTool.GRADLE;
@@ -63,6 +63,7 @@ import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.Language.JAVA;
 import static io.vertx.starter.model.Language.KOTLIN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 /**
  * @author Thomas Segismont
@@ -71,12 +72,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Timeout(value = 1, timeUnit = TimeUnit.MINUTES)
 class GeneratorTest {
 
-  private MessageProducer<JsonObject> producer;
+  private MessageProducer<VertxProject> producer;
   private Path workdir;
   private List<Runnable> cleanupTasks = new ArrayList<>();
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
+    vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
     producer = vertx.eventBus().publisher(Topics.PROJECT_REQUESTED);
     workdir = Files.createTempDirectory(GeneratorTest.class.getSimpleName());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
@@ -87,7 +89,7 @@ class GeneratorTest {
     cleanupTasks.forEach(Runnable::run);
   }
 
-  private VertxProject defaultProject() {
+  static VertxProject defaultProject() {
     return new VertxProject()
       .setId("demo")
       .setGroupId("com.example")
@@ -95,32 +97,40 @@ class GeneratorTest {
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
       .setVertxVersion("3.6.3")
-      .setVertxDependencies(Collections.singleton("vertx-web"))
-      .setArchiveFormat(TGZ);
+      .setVertxDependencies(new HashSet<>(Collections.singleton("vertx-web")))
+      .setArchiveFormat(TGZ)
+      .setJdkVersion(JdkVersion.JDK_1_8);
   }
 
-  @Test
-  void java_with_maven_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject());
+  @ParameterizedTest
+  @MethodSource("testProjects")
+  void testProjectJdk8(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    testProject(project, vertx, testContext);
   }
 
-  @Test
-  void java_with_gradle_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setBuildTool(GRADLE));
+  static Stream<VertxProject> testProjects() {
+    return Stream.<VertxProject>builder()
+      .add(defaultProject())
+      .add(defaultProject().setBuildTool(GRADLE))
+      .add(defaultProject().setLanguage(KOTLIN))
+      .add(defaultProject().setLanguage(KOTLIN).setBuildTool(GRADLE))
+      .add(defaultProject().setPackageName("com.mycompany.project.special"))
+      .build();
   }
 
-  @Test
-  void kotlin_with_maven_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setLanguage(KOTLIN));
+  @ParameterizedTest
+  @MethodSource("testProjectsJdk11")
+  void testProjectJdk11(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(System.getProperty("java.specification.version")).isEqualTo("11");
+    testProject(project, vertx, testContext);
   }
 
-  @Test
-  void kotlin_with_gradle_tgz(Vertx vertx, VertxTestContext testContext) {
-    testProject(vertx, testContext, defaultProject().setLanguage(KOTLIN).setBuildTool(GRADLE));
+  static Stream<VertxProject> testProjectsJdk11() {
+    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
   }
 
-  private void testProject(Vertx vertx, VertxTestContext testContext, VertxProject project) {
-    producer.<Buffer>send(JsonObject.mapFrom(project), testContext.succeeding(msg -> {
+  private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    producer.<Buffer>send(project, testContext.succeeding(msg -> {
       unpack(vertx, testContext, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
 
@@ -137,7 +147,11 @@ class GeneratorTest {
             return;
           }
 
-          verifySourceFiles(language);
+          try {
+            verifySourceFiles(language);
+          } catch (IOException e) {
+            throw new AssertionError(e);
+          }
 
           if (Utils.isWindows()) {
             // For now, we won't test on Windows, it's tested on Travis anyway
@@ -148,9 +162,17 @@ class GeneratorTest {
               testContext.verify(() -> {
 
                 if (buildTool == MAVEN) {
-                  verifyMavenOutputFiles();
+                  try {
+                    verifyMavenOutputFiles();
+                  } catch (IOException e) {
+                    throw new AssertionError(e);
+                  }
                 } else if (buildTool == GRADLE) {
-                  verifyGradleOutputFiles();
+                  try {
+                    verifyGradleOutputFiles();
+                  } catch (IOException e) {
+                    throw new AssertionError(e);
+                  }
                 } else {
                   testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
                 }
@@ -179,8 +201,9 @@ class GeneratorTest {
     assertThat(workdir.resolve(".mvn/wrapper/MavenWrapperDownloader.java")).isRegularFile();
   }
 
-  private void verifyMavenOutputFiles() {
-    assertThat(workdir.resolve("target/surefire-reports/com.example.demo.TestMainVerticle.txt")).isRegularFile();
+  private void verifyMavenOutputFiles() throws IOException {
+    Optional<Path> testResult = Files.walk(workdir).filter(p -> p.toString().endsWith("TestMainVerticle.txt")).findFirst();
+    assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
     assertThat(workdir.resolve("target/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
   }
 
@@ -196,16 +219,21 @@ class GeneratorTest {
     assertThat(workdir.resolve("gradle/wrapper/gradle-wrapper.jar")).isRegularFile();
   }
 
-  private void verifyGradleOutputFiles() {
-    assertThat(workdir.resolve("build/test-results/test/TEST-com.example.demo.TestMainVerticle.xml")).isRegularFile();
+  private void verifyGradleOutputFiles() throws IOException {
+    Optional<Path> testResult = Files.walk(workdir).filter(p -> p.toString().endsWith("TestMainVerticle.xml")).findFirst();
+    assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
     assertThat(workdir.resolve("build/libs/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
   }
 
-  private void verifySourceFiles(Language language) {
-    String verticleFile = String.format("src/main/%s/com/example/demo/MainVerticle%s", language.getName(), language.getExtension());
-    assertThat(workdir.resolve(verticleFile)).isRegularFile();
-    String testFile = String.format("src/test/%s/com/example/demo/TestMainVerticle%s", language.getName(), language.getExtension());
-    assertThat(workdir.resolve(testFile)).isRegularFile();
+  private void verifySourceFiles(Language language) throws IOException {
+    Optional<Path> verticleFile = Files.walk(workdir.resolve("src/main/" + language.getName()))
+      .filter(p -> p.endsWith("MainVerticle" + language.getExtension()))
+      .findFirst();
+    assertThat(verticleFile).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
+    Optional<Path> testFile = Files.walk(workdir.resolve("src/test/" + language.getName()))
+      .filter(p -> p.endsWith("TestMainVerticle" + language.getExtension()))
+      .findFirst();
+    assertThat(testFile).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
   }
 
   private void buildProject(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {

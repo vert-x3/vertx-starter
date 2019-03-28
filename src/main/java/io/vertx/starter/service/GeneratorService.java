@@ -18,8 +18,6 @@ package io.vertx.starter.service;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.eventbus.Message;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
 import io.vertx.starter.model.Language;
@@ -86,9 +84,7 @@ public class GeneratorService {
     templateEngine = FreeMarkerTemplateEngine.create(vertx);
   }
 
-  public Buffer onProjectRequested(Message<JsonObject> message) throws Exception {
-    VertxProject project = message.body().mapTo(VertxProject.class);
-
+  public Buffer onProjectRequested(VertxProject project) throws Exception {
     ArchiveOutputStreamFactory factory;
     ArchiveFormat archiveFormat = project.getArchiveFormat();
     if (archiveFormat == ArchiveFormat.TGZ) {
@@ -114,7 +110,7 @@ public class GeneratorService {
   }
 
   private void createProject(VertxProject project, TempDir tempDir) throws IOException {
-    log.debug("Generating project: {}", project);
+    log.trace("Generating project: {}", project);
 
     Map<String, Object> ctx = new HashMap<>();
     ctx.put("buildTool", project.getBuildTool().name().toLowerCase());
@@ -128,14 +124,15 @@ public class GeneratorService {
       throw new IllegalArgumentException("Invalid artifactId");
     }
     ctx.put("artifactId", artifactId);
-    String packageName = packageName(project);
-    ctx.put("packageName", packageName);
     Language language = project.getLanguage();
     ctx.put("language", language.name().toLowerCase());
     ctx.put("vertxVersion", project.getVertxVersion());
     Set<String> vertxDependencies = project.getVertxDependencies();
     vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
+    String packageName = packageName(project);
+    ctx.put("packageName", packageName);
+    ctx.put("jdkVersion", project.getJdkVersion().getValue());
 
     Path tempDirPath = tempDir.path();
     String tempDirPathStr = tempDirPath.toString();
@@ -174,6 +171,10 @@ public class GeneratorService {
   }
 
   private String packageName(VertxProject project) {
+    String packageName = project.getPackageName();
+    if (packageName != null && !packageName.trim().isEmpty()) {
+      return packageName;
+    }
     String groupId = project.getGroupId();
     String artifactId = project.getArtifactId();
     return Stream.concat(DOT_REGEX.splitAsStream(groupId), DOT_REGEX.splitAsStream(artifactId))

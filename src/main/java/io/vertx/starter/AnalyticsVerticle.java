@@ -18,16 +18,16 @@ package io.vertx.starter;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.starter.config.Topics;
+import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.AnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AnalyticsVerticle extends AbstractVerticle {
 
-  private final Logger log = LoggerFactory.getLogger(AnalyticsVerticle.class);
+  private static final Logger log = LoggerFactory.getLogger(AnalyticsVerticle.class);
 
   private MongoClient mongoClient() {
     return MongoClient.createShared(vertx, config());
@@ -36,7 +36,7 @@ public class AnalyticsVerticle extends AbstractVerticle {
   @Override
   public void start(Future<Void> startFuture) {
     AnalyticsService analyticsService = new AnalyticsService(mongoClient());
-    vertx.eventBus().<JsonObject>consumer(Topics.PROJECT_CREATED).handler(analyticsService::onProjectCreated);
+    vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_CREATED).handler(analyticsService::onProjectCreated);
 
     log.info(
       "\n----------------------------------------------------------\n\t" +

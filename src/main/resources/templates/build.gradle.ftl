@@ -31,10 +31,10 @@ application {
 }
 
 <#if language != "kotlin">
-sourceCompatibility = '1.8'
+sourceCompatibility = '${jdkVersion}'
 </#if>
 
-def mainVerticleName = '${groupId}.${artifactId}.MainVerticle'
+def mainVerticleName = '${packageName}.MainVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
 

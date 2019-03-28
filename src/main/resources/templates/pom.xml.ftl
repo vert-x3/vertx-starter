@@ -11,15 +11,17 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-<#if language =="kotlin">
+<#if language == "kotlin">
     <kotlin.version>1.3.20</kotlin.version>
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
 <#else>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+<#if jdkVersion == "1.8">
+    <maven.compiler.source>${jdkVersion}</maven.compiler.source>
+    <maven.compiler.target>${jdkVersion}</maven.compiler.target>
 
-    <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+</#if>
+    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 </#if>
     <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
     <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
@@ -28,7 +30,7 @@
     <vertx.version>${vertxVersion}</vertx.version>
     <junit-jupiter.version>5.4.0</junit-jupiter.version>
 
-    <main.verticle>${groupId}.${artifactId}.MainVerticle</main.verticle>
+    <main.verticle>${packageName}.MainVerticle</main.verticle>
   </properties>
 
   <dependencyManagement>
@@ -81,20 +83,23 @@
   </dependencies>
 
   <build>
-<#if language =="kotlin">
+<#if language == "kotlin">
 <#noparse>
       <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
       <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 </#noparse>
 </#if>
     <plugins>
-<#if language =="kotlin">
+<#if language == "kotlin">
       <plugin>
-        <artifactId>kotlin-maven-plugin</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
 <#noparse>
         <version>${kotlin.version}</version>
 </#noparse>
+        <configuration>
+          <jvmTarget>1.8</jvmTarget>
+        </configuration>
         <executions>
           <execution>
             <id>compile</id>
@@ -116,6 +121,11 @@
 <#noparse>
         <version>${maven-compiler-plugin.version}</version>
 </#noparse>
+<#if jdkVersion == "11">
+        <configuration>
+          <release>${jdkVersion}</release>
+        </configuration>
+</#if>
       </plugin>
 </#if>
       <plugin>

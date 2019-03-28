@@ -22,6 +22,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.rest.StarterResource;
 import org.slf4j.Logger;
@@ -31,13 +32,16 @@ import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PO
 
 public class WebVerticle extends AbstractVerticle {
 
+  private static final Logger log = LoggerFactory.getLogger(WebVerticle.class);
+
   public static final int DEFAULT_HTTP_PORT = 8080;
-  private final Logger log = LoggerFactory.getLogger(WebVerticle.class);
 
   private StarterResource starterResource;
 
   @Override
   public void start(Future<Void> startFuture) {
+    vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
+
     starterResource = new StarterResource(
       this.vertx.eventBus(),
       new StarterMetadataService(this.vertx),
@@ -56,7 +60,7 @@ public class WebVerticle extends AbstractVerticle {
       .requestHandler(router)
       .listen(port, ar -> {
         if (ar.failed()) {
-          log.error("Fail to start {}: {}", WebVerticle.class.getSimpleName(), ar.cause().getMessage());
+          log.error("Fail to start {}", WebVerticle.class.getSimpleName(), ar.cause());
           startFuture.fail(ar.cause());
         } else {
           log.info("\n----------------------------------------------------------\n\t" +

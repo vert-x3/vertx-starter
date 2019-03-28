@@ -30,7 +30,9 @@ You can provide the following query parameters to customize the project
 - `language`: `java` or `kotlin`
 - `buildTool`: `maven` or `gradle` build tool
 - `vertxVersion`: the Vert.x version
-- `vertxDependencies`: a comma separated list of artifactIds  of the vert.x modules
+- `vertxDependencies`: a comma separated list of artifactIds of the vert.x modules
+- `packageName`: code package name, derived from `groupId` and `artifactId` by default
+- `jdkVersion`: which version of the JDK to use, defaults to `1.8`
 
 Full example:
 
@@ -93,6 +95,29 @@ $ docker run --rm -d mongo -p 27017:27017
 Vert.x starter relies on the [`vertx-boot`](https://github.com/jponge/vertx-boot) launcher.
 The application is configured by [`src/main/resources/application.conf`](./src/main/resources/application.conf).
 Please see the according documentation to know how to override the configuration.
+
+## Releasing
+
+To release the project, proceed as follows.
+
+First, tag the last commit in `master` branch:
+
+```
+git tag -f -a x.y.z -m "Version x.y.z"
+git push upstream  --tags
+```
+
+Then close the corresponding [milestone](https://github.com/vert-x3/vertx-starter/milestones) on GitHub.
+
+Eventually, merge the `master` branch into the `prod` branch:
+
+```
+git checkout prod
+git merge master 
+git push
+```
+
+Travis will automatically redeploy the starter if the `prod` branch build passes.
 
 ## License
 

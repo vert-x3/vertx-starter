@@ -26,7 +26,7 @@
   <logger name="org.mongodb.driver" level="info"/>
   <logger name="io.vertx" level="info"/>
 
-  <root level="debug">
+  <root level="info">
     <appender-ref ref="STDOUT"/>
   </root>
 
