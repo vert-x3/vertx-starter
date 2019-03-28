@@ -37,15 +37,23 @@ public class AnalyticsService {
 
   public void onProjectCreated(Message<VertxProject> message) {
     log.debug("Building analytics with on new project created");
-    JsonObject document = JsonObject.mapFrom(message.body());
-    document.remove("id");
-    document.remove("groupId");
-    document.remove("artifactId");
-    document.remove("packageName");
+    VertxProject project = message.body();
+    JsonObject document = toDocument(project);
     mongoClient.save(COLLECTION_NAME, document, res -> {
       if (res.failed()) {
         log.error("Failed to save document", res.cause());
       }
     });
+  }
+
+  private JsonObject toDocument(VertxProject project) {
+    JsonObject document = JsonObject.mapFrom(project);
+    document.remove("id");
+    document.remove("groupId");
+    document.remove("artifactId");
+    document.remove("packageName");
+    String createdOn = document.getString("createdOn");
+    document.put("createdOn", new JsonObject().put("$date", createdOn));
+    return document;
   }
 }

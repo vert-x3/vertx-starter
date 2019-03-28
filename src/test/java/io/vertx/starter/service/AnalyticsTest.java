@@ -95,7 +95,7 @@ class AnalyticsTest {
           assertEquals(1, list.size());
           JsonObject document = list.get(0);
           assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-          assertEquals(vertxProject.getCreatedOn(), document.getInstant("createdOn"));
+          assertEquals(vertxProject.getCreatedOn(), document.getJsonObject("createdOn").getInstant("$date"));
           assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
           testContext.completeNow();
         });
