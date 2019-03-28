@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.stream.Stream;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -95,7 +96,8 @@ class AnalyticsTest {
           assertEquals(1, list.size());
           JsonObject document = list.get(0);
           assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-          assertEquals(vertxProject.getCreatedOn(), document.getJsonObject("createdOn").getInstant("$date"));
+          Instant createdOn = document.getJsonObject("createdOn").getInstant("$date").truncatedTo(MILLIS);
+          assertEquals(vertxProject.getCreatedOn().truncatedTo(MILLIS), createdOn);
           assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
           testContext.completeNow();
         });
