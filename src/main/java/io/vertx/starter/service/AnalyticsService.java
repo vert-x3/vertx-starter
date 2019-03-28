@@ -19,6 +19,7 @@ package io.vertx.starter.service;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.starter.model.VertxProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +35,25 @@ public class AnalyticsService {
     this.mongoClient = mongoClient;
   }
 
-  public void onProjectCreated(Message<JsonObject> message) {
+  public void onProjectCreated(Message<VertxProject> message) {
     log.debug("Building analytics with on new project created");
-    mongoClient.save(COLLECTION_NAME, message.body(), res -> {
+    VertxProject project = message.body();
+    JsonObject document = toDocument(project);
+    mongoClient.save(COLLECTION_NAME, document, res -> {
       if (res.failed()) {
         log.error("Failed to save document", res.cause());
       }
     });
+  }
+
+  private JsonObject toDocument(VertxProject project) {
+    JsonObject document = JsonObject.mapFrom(project);
+    document.remove("id");
+    document.remove("groupId");
+    document.remove("artifactId");
+    document.remove("packageName");
+    String createdOn = document.getString("createdOn");
+    document.put("createdOn", new JsonObject().put("$date", createdOn));
+    return document;
   }
 }

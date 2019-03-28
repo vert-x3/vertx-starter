@@ -22,6 +22,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.rest.StarterResource;
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ public class WebVerticle extends AbstractVerticle {
 
   @Override
   public void start(Future<Void> startFuture) {
+    vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
+
     starterResource = new StarterResource(
       this.vertx.eventBus(),
       new StarterMetadataService(this.vertx),

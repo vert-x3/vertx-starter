@@ -19,6 +19,7 @@ package io.vertx.starter.web.rest;
 import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -28,6 +29,7 @@ import io.vertx.starter.web.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -83,7 +85,8 @@ public class StarterResource {
   public void generateProject(RoutingContext rc) {
     VertxProject project = buildProject(rc.request());
     log.trace("REST request to generate project: {}", project);
-    this.eventBus.<Buffer>send(PROJECT_REQUESTED, JsonObject.mapFrom(project), reply -> {
+
+    eventBus.<Buffer>send(PROJECT_REQUESTED, project, reply -> {
       if (reply.succeeded()) {
         Buffer content = reply.result().body();
         String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
@@ -93,11 +96,7 @@ public class StarterResource {
           .putHeader("Content-Disposition", "attachment; filename=" + filename)
           .end(content);
         log.trace("Notifying project created");
-        JsonObject message = JsonObject.mapFrom(project);
-        message.remove("groupId");
-        message.remove("artifactId");
-        message.remove("packageName");
-        this.eventBus.publish(PROJECT_CREATED, message);
+        eventBus.publish(PROJECT_CREATED, project);
       } else {
         log.error("Failed to create project " + project.getId(), reply.cause());
         RestUtil.error(rc, "Failed to create project: " + project.getId());
@@ -143,7 +142,22 @@ public class StarterResource {
     if (isNotBlank(params.get(JDK_VERSION))) {
       project.setJdkVersion(JdkVersion.fromString(params.get(JDK_VERSION)));
     }
+    project.setOperatingSystem(operatingSystem(request.getHeader(HttpHeaders.USER_AGENT)));
+    project.setCreatedOn(Instant.now());
     return project;
+  }
+
+  private String operatingSystem(String userAgentHeader) {
+    if (userAgentHeader != null) {
+      String ua = userAgentHeader.toLowerCase();
+      if (ua.contains("macintosh")) {
+        return "Mac";
+      }
+      if (ua.contains("windows")) {
+        return "Windows";
+      }
+    }
+    return "Other";
   }
 
   private boolean isNotBlank(String value) {
