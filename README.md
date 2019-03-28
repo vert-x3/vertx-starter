@@ -22,7 +22,7 @@ $ curl -X GET http://start.vertx.io/starter.zip -d groupId=com.acme -d language=
 http://start.vertx.io/starter.{archiveFormat}
 ```
 
-*Note*: `{archiveFormat}` can be `zip`, `tgz`, `tar.gz`, etc. if the project generator can handle the format, it will use the appropriate compression tool.  
+*Note*: `{archiveFormat}` can be `zip`, `tgz`, `tar.gz`, etc. if the project generator can handle the format, it will use the appropriate compression tool.
 
 You can provide the following query parameters to customize the project
 
@@ -107,17 +107,27 @@ git tag -f -a x.y.z -m "Version x.y.z"
 git push upstream  --tags
 ```
 
-Then close the corresponding [milestone](https://github.com/vert-x3/vertx-starter/milestones) on GitHub.
+Close the corresponding [milestone](https://github.com/vert-x3/vertx-starter/milestones) on GitHub.
 
-Eventually, merge the `master` branch into the `prod` branch:
+Then merge the `master` branch into the `prod` branch:
 
 ```
 git checkout prod
-git merge master 
+git merge master
 git push
 ```
 
 Travis will automatically redeploy the starter if the `prod` branch build passes.
+
+Eventually, checkout `master` again and update the version property in the Gradle build file.
+For example:
+
+```
+git checkout master
+sed -i -e 's/version = "2\.0\.4"/version = "2.0.5"/' build.gradle.kts
+git commit -a -m "Set version to 2.0.5"
+git push
+```
 
 ## License
 
