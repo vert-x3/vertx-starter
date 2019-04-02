@@ -33,7 +33,7 @@ public class StarterMetadataService {
 
   private static final String DEPENDENCIES_PATH = "dependencies.json";
   public static final String VERSION_PROVIDER_API_URL = "https://api.bintray.com/packages/bintray/jcenter/io.vertx:vertx-core";
-  public static final JsonArray DEFAULT_VERSIONS = new JsonArray().add("3.6.3");
+  public static final JsonArray DEFAULT_VERSIONS = new JsonArray().add("3.7.0");
 
   private final WebClient webClient;
   private JsonArray dependencies;
