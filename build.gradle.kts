@@ -53,7 +53,7 @@ dependencies {
 }
 
 vertx {
-  vertxVersion = "3.6.3"
+  vertxVersion = "3.7.0"
   mainVerticle = "io.github.jponge.vertx.boot.BootVerticle"
   jvmArgs = listOf("-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory")
 }
