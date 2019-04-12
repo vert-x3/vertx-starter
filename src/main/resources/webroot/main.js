@@ -49,13 +49,14 @@ angular
   .config(['hotkeysProvider', function (hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = false;
   }])
-  .controller('VertxStarterController', ['$scope', '$document', '$window', 'hotkeys', 'Starter',
-    function VertxStarterController($scope, $document, $window, hotkeys, Starter) {
+  .controller('VertxStarterController', ['$scope', '$document', '$window', 'hotkeys', '$uibModal', 'Starter',
+    function VertxStarterController($scope, $document, $window, hotkeys, $uibModal, Starter) {
       var vm = this;
       vm.idRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.isGenerating = false;
       vm.vertxVersions = [];
+      vm.vertxDependenciesWithDetails = {};
       vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
@@ -71,6 +72,7 @@ angular
       vm.generate = generate;
       vm.addAlert = addAlert;
       vm.closeAlert = closeAlert;
+      vm.openVertxDependenciesModal = openVertxDependenciesModal;
 
       loadAll();
 
@@ -95,7 +97,8 @@ angular
           .then(function (response) {
             var data = response.data;
             vm.vertxVersions = data.vertxVersions.slice(0, 10);
-            vm.vertxDependencies = data.vertxDependencies
+            vm.vertxDependenciesWithDetails = data.vertxDependencies;
+            vm.vertxDependencies = vm.vertxDependenciesWithDetails
               .map(function (category) {
                 return category.items;
               }).reduce(function (a, b) {
@@ -209,4 +212,66 @@ angular
       function closeAlert(index) {
         vm.alerts.splice(index, 1);
       }
+
+      function openVertxDependenciesModal() {
+        var modal = $uibModal.open({
+          templateUrl: 'vertxDependenciesModal.html',
+          controller: 'VertxDependenciesModalController',
+          controllerAs: 'vm',
+          size: 'lg',
+          resolve: {
+            vertxDependencies: function () {
+              return vm.vertxDependenciesWithDetails;
+            },
+            vertxDependenciesSelected: function() {
+              return vm.vertxProject.vertxDependencies.slice();
+            }
+          }
+        });
+
+        modal.result.then(function (vertxDependenciesSelected) {
+          vm.vertxProject.vertxDependencies = vertxDependenciesSelected;
+        }, function () {
+          console.log('Modal dismissed at: ' + new Date());
+        });
+      }
+
+    }])
+  .controller('VertxDependenciesModalController', ['$uibModalInstance', 'vertxDependencies', 'vertxDependenciesSelected',
+    function VertxDependenciesModalController($uibModalInstance, vertxDependencies, vertxDependenciesSelected) {
+      var vm = this;
+      vm.vertxDependencies = vertxDependencies;
+      vm.vertxDependenciesSelected = vertxDependenciesSelected;
+      vm.apply = apply;
+      vm.cancel = cancel;
+      vm.indexOfDependencyArtifactId = indexOfDependencyArtifactId;
+      vm.toggleDependency = toggleDependency;
+
+      function apply() {
+        $uibModalInstance.close(vm.vertxDependenciesSelected);
+      }
+
+      function cancel() {
+          $uibModalInstance.dismiss('cancel');
+      }
+
+      function indexOfDependencyArtifactId(artifactId) {
+        for (var i = 0; i < vertxDependenciesSelected.length; i++) {
+          if (vertxDependenciesSelected[i].artifactId == artifactId) {
+            return i;
+          }
+        }
+        return -1;
+      }
+
+      function toggleDependency(dependency) {
+        var index = indexOfDependencyArtifactId(dependency.artifactId);
+        if(index > -1) {
+          vm.vertxDependenciesSelected.splice(index, 1);
+        } else {
+          vm.vertxDependenciesSelected.push(dependency);
+        }
+      }
+
     }]);
+
