@@ -156,6 +156,18 @@
     .btn-advanced:active, .btn-advanced:focus {
       outline: none;
     }
+
+    .dropdown-menu-large {
+      width: 400px;
+    }
+    .p-3 {
+      padding: 16px;
+    }
+
+    /*By default line-heigh is 1.33 and look like if not rounded the button-group items are not aligned*/
+    .fix-btn-lg > button.btn-lg {
+      line-height: 1.40;
+    }
   </style>
 </head>
 <body ng-app="app">
@@ -291,12 +303,79 @@
           issue.
         </p>
       </div>
-      <div class="col-sm-12">
-        <p class="text-center">
-          <button class="btn btn-lg btn-primary" ng-disabled="form.$invalid" ng-click="vm.generate()">
-            Generate Project <kbd>{{ vm.hotkey }}</kbd>
-          </button>
-        </p>
+      <div class="col-sm-12 text-center">
+          <div class="btn-group fix-btn-lg" uib-dropdown auto-close="outsideClick" on-toggle="vm.generateCommands(open)" ng-switch on="vm.isWindows">
+            <button type="button" class="btn btn-lg btn-primary" ng-disabled="form.$invalid" ng-click="vm.generate()">
+              Generate Project <kbd>{{ vm.hotkey }}</kbd>
+            </button>
+            <button type="button" class="btn btn-lg btn-default" uib-dropdown-toggle ng-disabled="form.$invalid">
+              <i class="fa fa-terminal"></i>
+              <span class="sr-only">CLI</span>
+            </button>
+            <ul ng-switch-when="true" class="p-3 dropdown-menu dropdown-menu-large pull-right" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+              <li role="menuitem">
+                <label class="label-bold">
+                  Generate with Power Shell
+                </label>
+                <div class="input-group">
+                  <input type="text" id="powershellCommand" ng-model="vm.powershellCommand" class="form-control" readonly="readonly" aria-label="Project Power Shell URL">
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-default"
+                      type="button"
+                      ngclipboard
+                      data-clipboard-target="#powershellCommand"
+                      uib-tooltip="Copied!"
+                      tooltip-trigger="'focus'"
+                      tooltip-popup-close-delay="2000">
+                      <i class="fa fa-copy"></i>
+                    </button>
+                  </span>
+                </div>
+              </li>
+            </ul>
+            <ul ng-switch-default class="p-3 dropdown-menu dropdown-menu-large pull-right" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+              <li role="menuitem">
+                <label class="label-bold">
+                  Generate with Curl
+                </label>
+                <div class="input-group">
+                  <input type="text" id="curlCommand" ng-model="vm.curlCommand" class="form-control" readonly="readonly" aria-label="Project Curl URL">
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-default"
+                      type="button"
+                      ngclipboard data-clipboard-target="#curlCommand"
+                      uib-tooltip="Copied!"
+                      tooltip-trigger="'focus'"
+                      tooltip-popup-close-delay="2000">
+                      <i class="fa fa-copy"></i>
+                    </button>
+                  </span>
+                </div>
+              </li>
+              <li role="menuitem">
+                <label class="label-bold">
+                  Generate with HTTPie
+                </label>
+                <div class="input-group">
+                  <input type="text" id="httpieCommand" ng-model="vm.httpieCommand" class="form-control" readonly="readonly" aria-label="Project HTTPie URL">
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-default"
+                      type="button"
+                      ngclipboard
+                      data-clipboard-target="#httpieCommand"
+                      uib-tooltip="Copied!"
+                      tooltip-trigger="'focus'"
+                      tooltip-popup-close-delay="2000">
+                      <i class="fa fa-copy"></i>
+                    </button>
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </div>
       </div>
       <div class="col-sm-12" ng-show="vm.isGenerating">
         <p class="text-center">
@@ -396,6 +475,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-toast/2.0.0/ngToast.min.js"
         integrity="sha256-/EknZ+SToqk3nm8DtgdHs+a0g09c1fnYRn1zDHOcyuw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"
+        integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ngclipboard/2.0.0/ngclipboard.min.js"
+        integrity="sha256-bxUFazYFWIbQnXNe5E4n1xIdArznYtjf/cH6rrjbZXA=" crossorigin="anonymous"></script>
 
 <script src="./main.js"></script>
 </body>
