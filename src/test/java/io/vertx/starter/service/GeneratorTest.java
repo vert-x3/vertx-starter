@@ -38,6 +38,7 @@ import io.vertx.starter.model.BuildTool;
 import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
+import io.vertx.starter.web.rest.StarterResource;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -45,6 +46,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -62,6 +64,7 @@ import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.Language.JAVA;
 import static io.vertx.starter.model.Language.KOTLIN;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
@@ -72,15 +75,23 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 @Timeout(value = 1, timeUnit = TimeUnit.MINUTES)
 class GeneratorTest {
 
+  @TempDir
+  Path m2dir;
+  @TempDir
+  Path mavenRepository;
+  @TempDir
+  Path workdir;
+
+  private Path settingsFile;
   private MessageProducer<VertxProject> producer;
-  private Path workdir;
   private List<Runnable> cleanupTasks = new ArrayList<>();
 
   @BeforeEach
-  void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
+  void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
+    settingsFile = m2dir.resolve("settings.xml");
+    Files.copy(getClass().getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
     producer = vertx.eventBus().publisher(Topics.PROJECT_REQUESTED);
-    workdir = Files.createTempDirectory(GeneratorTest.class.getSimpleName());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
 
@@ -109,13 +120,20 @@ class GeneratorTest {
   }
 
   static Stream<VertxProject> testProjects() {
-    return Stream.<VertxProject>builder()
-      .add(defaultProject())
-      .add(defaultProject().setBuildTool(GRADLE))
-      .add(defaultProject().setLanguage(KOTLIN))
-      .add(defaultProject().setLanguage(KOTLIN).setBuildTool(GRADLE))
-      .add(defaultProject().setPackageName("com.mycompany.project.special"))
-      .build();
+    Stream.Builder<VertxProject> builder = Stream.builder();
+    for (BuildTool buildTool : BuildTool.values()) {
+      for (Language language : Language.values()) {
+        for (Object version : StarterResource.VERSIONS) {
+          VertxProject vertxProject = defaultProject()
+            .setBuildTool(buildTool)
+            .setLanguage(language)
+            .setVertxVersion((String) version)
+            .setPackageName("com.mycompany.project.special");
+          builder.add(vertxProject);
+        }
+      }
+    }
+    return builder.build();
   }
 
   @ParameterizedTest
@@ -242,10 +260,23 @@ class GeneratorTest {
     List<String> args;
     if (buildTool == MAVEN) {
       command = "./mvnw";
-      args = Collections.singletonList("verify");
+      args = Stream.<String>builder()
+        .add("-Dmaven.repo.local=" + mavenRepository.toAbsolutePath().toString())
+        .add("-s")
+        .add(settingsFile.toAbsolutePath().toString())
+        .add("-B")
+        .add("verify")
+        .build()
+        .collect(toList());
     } else if (buildTool == GRADLE) {
       command = "./gradlew";
-      args = Arrays.asList("assemble", "check");
+      args = Stream.<String>builder()
+        .add("--no-build-cache")
+        .add("--no-daemon")
+        .add("assemble")
+        .add("check")
+        .build()
+        .collect(toList());
     } else {
       handler.handle(Future.failedFuture(unsupported(buildTool)));
       return;

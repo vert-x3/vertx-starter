@@ -12,6 +12,14 @@ group = '${groupId}'
 version = '1.0.0-SNAPSHOT'
 
 repositories {
+<#if vertxVersion?ends_with("-SNAPSHOT")>
+  maven {
+    url 'https://oss.sonatype.org/content/repositories/snapshots'
+    mavenContent {
+      snapshotsOnly()
+    }
+  }
+</#if>
   mavenCentral()
 <#if language == "kotlin">
   jcenter()

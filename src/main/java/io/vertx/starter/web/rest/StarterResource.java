@@ -21,10 +21,10 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.starter.model.*;
-import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +42,28 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 
+/**
+ * @author Daniel Petisme
+ */
 public class StarterResource {
 
   private static final Logger log = LoggerFactory.getLogger(StarterResource.class);
 
+  public static final JsonArray VERSIONS = new JsonArray()
+    // latest minor
+    .add("3.7.0")
+    // previous minor
+    .add("3.6.3")
+    // latest snapshot
+    .add("4.0.0-SNAPSHOT");
+
   private final EventBus eventBus;
-  private final StarterMetadataService starterMetadataService;
+  private final JsonArray dependencies;
   private final JsonObject defaults;
 
-  public StarterResource(EventBus eventBus, StarterMetadataService starterMetadataService, JsonObject defaults) {
+  public StarterResource(EventBus eventBus, JsonArray dependencies, JsonObject defaults) {
     this.eventBus = eventBus;
-    this.starterMetadataService = starterMetadataService;
+    this.dependencies = dependencies;
     this.defaults = defaults;
   }
 
@@ -66,21 +77,9 @@ public class StarterResource {
     details.put("defaults", defaults);
     details.put("buildTools", asList("maven", "gradle"));
     details.put("languages", asList("java", "kotlin"));
-    starterMetadataService.getAllVertxDependencies(dependencies -> {
-      if (dependencies.succeeded()) {
-        details.put("vertxDependencies", dependencies.result());
-        starterMetadataService.getAllVertxVersions(versions -> {
-          if (versions.succeeded()) {
-            details.put("vertxVersions", versions.result());
-            RestUtil.respondJson(rc, details);
-          } else {
-            RestUtil.error(rc, versions.cause());
-          }
-        });
-      } else {
-        RestUtil.error(rc, dependencies.cause());
-      }
-    });
+    details.put("vertxDependencies", dependencies);
+    details.put("vertxVersions", VERSIONS);
+    RestUtil.respondJson(rc, details);
   }
 
   public void generateProject(RoutingContext rc) {
