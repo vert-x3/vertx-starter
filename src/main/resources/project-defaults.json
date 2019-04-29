@@ -1,0 +1,9 @@
+{
+  "groupId": "com.example",
+  "artifactId": "starter",
+  "language": "java",
+  "buildTool": "maven",
+  "vertxVersion": "3.7.0",
+  "archiveFormat": "zip",
+  "jdkVersion": "1.8"
+}

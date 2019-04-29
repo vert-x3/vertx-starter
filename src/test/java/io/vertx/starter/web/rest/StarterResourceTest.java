@@ -26,20 +26,15 @@ import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.WebVerticle;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.config.VerticleConfigurationConstants;
-import io.vertx.starter.model.ArchiveFormat;
-import io.vertx.starter.model.BuildTool;
-import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.HashSet;
-
+import static io.vertx.starter.config.util.ConfigUtil.loadProjectDefaults;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(VertxExtension.class)
@@ -49,22 +44,9 @@ public class StarterResourceTest {
   private WebClient webClient;
   private JsonObject config;
 
-  private static VertxProject defaultProject() {
-    VertxProject defaultProject = new VertxProject();
-    defaultProject.setGroupId("AA.BB.CC");
-    defaultProject.setArtifactId("DD");
-    defaultProject.setLanguage(Language.JAVA);
-    defaultProject.setBuildTool(BuildTool.MAVEN);
-    defaultProject.setVertxVersion("0.0.0");
-    defaultProject.setVertxDependencies(new HashSet<>(asList("EE", "FF")));
-    defaultProject.setArchiveFormat(ArchiveFormat.ZIP);
-    return defaultProject;
-  }
-
   private static JsonObject testConfig() {
     JsonObject config = new JsonObject();
     config.put(VerticleConfigurationConstants.Web.HTTP_PORT, HTTP_PORT);
-    config.put(VerticleConfigurationConstants.Web.PROJECT_DEFAULTS, JsonObject.mapFrom(defaultProject()));
     return config;
   }
 
@@ -88,7 +70,8 @@ public class StarterResourceTest {
     vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
       VertxProject project = message.body();
       testContext.verify(() -> {
-        assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id", "operatingSystem", "createdOn");
+        VertxProject other = loadProjectDefaults().mapTo(VertxProject.class);
+        assertThat(project).isEqualToIgnoringGivenFields(other, "id", "operatingSystem", "createdOn");
         vertx.fileSystem().readFile("web/starter.zip", testContext.succeeding(buffer -> {
           message.reply(buffer);
         }));
@@ -107,7 +90,8 @@ public class StarterResourceTest {
     vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_REQUESTED).handler(message -> {
       VertxProject project = message.body();
       testContext.verify(() -> {
-        assertThat(project).isEqualToIgnoringGivenFields(defaultProject(), "id", "operatingSystem", "createdOn");
+        VertxProject other = loadProjectDefaults().mapTo(VertxProject.class);
+        assertThat(project).isEqualToIgnoringGivenFields(other, "id", "operatingSystem", "createdOn");
         message.fail(-1, "Failure");
       });
     });
@@ -127,7 +111,7 @@ public class StarterResourceTest {
         JsonObject metadata = response.bodyAsJsonObject();
         assertThat(metadata.getJsonArray("languages")).contains("java", "kotlin");
         assertThat(metadata.getJsonArray("buildTools")).contains("maven", "gradle");
-        assertThat(metadata.getJsonObject("defaults")).isEqualTo(this.config.getJsonObject("project-defaults"));
+        assertThat(metadata.getJsonObject("defaults")).isEqualTo(loadProjectDefaults());
         testContext.completeNow();
       })));
   }

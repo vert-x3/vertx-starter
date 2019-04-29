@@ -158,7 +158,6 @@ angular
 
       function initProjectWithDefaults(defaults) {
         vm.projectDefaults = defaults;
-        vm.vertxProject.model = defaults.model;
         vm.vertxProject.groupId = defaults.groupId;
         vm.vertxProject.artifactId = defaults.artifactId;
         vm.vertxProject.language = defaults.language;
@@ -166,7 +165,7 @@ angular
         vm.vertxProject.vertxVersion = defaults.vertxVersion;
         vm.vertxProject.archiveFormat = defaults.archiveFormat;
         vm.vertxProject.vertxDependencies = [];
-        vm.vertxProject.packageName = defaults.packageName;
+        vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
       }
 
