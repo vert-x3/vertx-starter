@@ -54,7 +54,6 @@ public class GeneratorService {
 
   private static final Logger log = LoggerFactory.getLogger(GeneratorService.class);
 
-  private static final Pattern ID_REGEX = Pattern.compile("[A-Za-z0-9_\\-.]+");
   private static final Pattern DOT_REGEX = Pattern.compile("\\.");
 
   private static final Set<String> EXECUTABLES;
@@ -113,13 +112,7 @@ public class GeneratorService {
     ctx.put("buildTool", project.getBuildTool().name().toLowerCase());
     String groupId = project.getGroupId();
     ctx.put("groupId", groupId);
-    if (!ID_REGEX.matcher(groupId).matches()) {
-      throw new IllegalArgumentException("Invalid groupId");
-    }
     String artifactId = project.getArtifactId();
-    if (!ID_REGEX.matcher(artifactId).matches()) {
-      throw new IllegalArgumentException("Invalid artifactId");
-    }
     ctx.put("artifactId", artifactId);
     Language language = project.getLanguage();
     ctx.put("language", language.name().toLowerCase());

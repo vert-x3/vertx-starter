@@ -50,4 +50,13 @@ public enum Language {
   public Set<String> getLanguageDependencies() {
     return languageDependencies;
   }
+
+  public static Language fromString(String str) {
+    for (Language language : values()) {
+      if (language.name.equalsIgnoreCase(str)) {
+        return language;
+      }
+    }
+    return null;
+  }
 }

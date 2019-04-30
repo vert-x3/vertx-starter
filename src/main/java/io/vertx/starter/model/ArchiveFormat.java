@@ -18,34 +18,37 @@ package io.vertx.starter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum ArchiveFormat {
 
   @JsonProperty("zip")
-  ZIP("zip", "application/zip"),
+  ZIP("application/zip", "zip"),
 
   @JsonProperty("tgz")
-  TGZ("tar.gz", "application/gzip");
+  TGZ("application/gzip", "tar.gz", ".tar.gz");
 
-  private final String fileExtension;
+  private final List<String> fileExtensions;
   private final String contentType;
 
-  ArchiveFormat(String fileExtension, String contentType) {
+  ArchiveFormat(String contentType, String... extensions) {
     this.contentType = contentType;
-    this.fileExtension = fileExtension;
+    this.fileExtensions = Arrays.asList(extensions);
   }
 
   public static ArchiveFormat fromFilename(String filename) {
-    if (filename.matches(".*\\.zip$")) {
-      return ArchiveFormat.ZIP;
-    }
-    if (filename.matches(".*(\\.tar\\.gz|\\.tgz)$")) {
-      return ArchiveFormat.TGZ;
+    String lc = filename.toLowerCase();
+    for (ArchiveFormat format : values()) {
+      if (format.fileExtensions.stream().anyMatch(lc::endsWith)) {
+        return format;
+      }
     }
     return null;
   }
 
   public String getFileExtension() {
-    return fileExtension;
+    return fileExtensions.get(0);
   }
 
   public String getContentType() {

@@ -100,6 +100,7 @@ angular
       vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
+      vm.jdkVersions = [];
       vm.advancedCollapsed = true;
       vm.isWindows = bowser.windows;
 
@@ -107,6 +108,7 @@ angular
       vm.vertxProject = {};
       vm.selectedDependency = null;
       vm.alerts = [];
+      vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
       vm.toggleAdvanced = toggleAdvanced;
@@ -140,20 +142,36 @@ angular
         Starter.metadata()
           .then(function (response) {
             var data = response.data;
-            vm.vertxVersions = data.vertxVersions.slice(0, 10);
-            vm.vertxDependencies = data.vertxDependencies
-              .map(function (category) {
-                return category.items;
-              }).reduce(function (a, b) {
-                return a.concat(b);
-              });
-            vm.buildTools = data.buildTools;
-            vm.languages = data.languages;
+            initModel(data);
             initProjectWithDefaults(data.defaults);
           })
           .catch(function (error) {
             console.error('Impossible to load starter metadata: ' + JSON.stringify(error));
           });
+      }
+
+      function initModel(data) {
+        vm.versions = data.versions;
+        vm.exclusions = data.versions.reduce(function (res, value) {
+          res[value.number] = value.exclusions || [];
+          return res;
+        }, {});
+        vm.stack = data.stack;
+        vm.buildTools = data.buildTools;
+        vm.languages = data.languages;
+        vm.jdkVersions = data.jdkVersions;
+        vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
+        vm.vertxVersions = data.versions.map(function (version) {
+          return version.number;
+        });
+      }
+
+      function availableDependencies(version) {
+        return vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return !vm.exclusions[version].includes(value.artifactId);
+          });
+        });
       }
 
       function initProjectWithDefaults(defaults) {
@@ -174,6 +192,12 @@ angular
         vm.selectedDependency = null;
       }
 
+      function onVertxVersionChanged() {
+        var version = vm.vertxProject.vertxVersion;
+        vm.exclusions[version].forEach(removeDependency);
+        vm.vertxDependencies = availableDependencies(version);
+      }
+
       function indexOfDependency(predicate) {
         for (var i = 0; i < vm.vertxProject.vertxDependencies.length; i++) {
           if (predicate(vm.vertxProject.vertxDependencies[i])) {
@@ -187,14 +211,14 @@ angular
         var index = indexOfDependency(function (it) {
           return it.name === dependency.name;
         });
-        if (index == -1) {
+        if (index === -1) {
           vm.vertxProject.vertxDependencies.push(dependency);
         }
       }
 
-      function removeDependency(dependency) {
+      function removeDependency(artifactId) {
         vm.vertxProject.vertxDependencies = vm.vertxProject.vertxDependencies.filter(function (it) {
-          return it.name !== dependency.name;
+          return it.artifactId !== artifactId;
         });
       }
 
