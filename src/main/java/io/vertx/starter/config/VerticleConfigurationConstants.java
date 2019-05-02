@@ -20,7 +20,6 @@ public interface VerticleConfigurationConstants {
 
   interface Web {
     String HTTP_PORT = "http-port";
-    String PROJECT_DEFAULTS = "project-defaults";
   }
 
   interface Generator {

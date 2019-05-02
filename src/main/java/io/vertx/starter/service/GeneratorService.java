@@ -38,10 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -128,6 +125,9 @@ public class GeneratorService {
     ctx.put("language", language.name().toLowerCase());
     ctx.put("vertxVersion", project.getVertxVersion());
     Set<String> vertxDependencies = project.getVertxDependencies();
+    if (vertxDependencies == null) {
+      vertxDependencies = new HashSet<>();
+    }
     vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
     String packageName = packageName(project);

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -40,6 +40,7 @@ import static io.vertx.starter.config.Topics.PROJECT_CREATED;
 import static io.vertx.starter.config.Topics.PROJECT_REQUESTED;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toSet;
 
 public class StarterResource {
 
@@ -125,11 +126,10 @@ public class StarterResource {
     if (isNotBlank(params.get(VERTX_VERSION))) {
       project.setVertxVersion(params.get(VERTX_VERSION));
     }
-    Set<String> vertxDependencies = new HashSet<>(project.getVertxDependencies());
     if (isNotBlank(params.get(VERTX_DEPENDENCIES))) {
-      for (String dependency : params.get(VERTX_DEPENDENCIES).split(",")) {
-        vertxDependencies.add(dependency.toLowerCase());
-      }
+      Set<String> vertxDependencies = Arrays.stream(params.get(VERTX_DEPENDENCIES).split(","))
+        .map(String::toLowerCase)
+        .collect(toSet());
       project.setVertxDependencies(vertxDependencies);
     }
     ArchiveFormat archiveFormat = Optional

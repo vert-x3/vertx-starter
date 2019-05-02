@@ -19,6 +19,7 @@ package io.vertx.starter;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
+import static io.vertx.starter.config.util.ConfigUtil.loadProjectDefaults;
 
 public class WebVerticle extends AbstractVerticle {
 
@@ -36,17 +38,13 @@ public class WebVerticle extends AbstractVerticle {
 
   public static final int DEFAULT_HTTP_PORT = 8080;
 
-  private StarterResource starterResource;
-
   @Override
   public void start(Future<Void> startFuture) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
-    starterResource = new StarterResource(
-      this.vertx.eventBus(),
-      new StarterMetadataService(this.vertx),
-      config().getJsonObject("project-defaults")
-    );
+    StarterMetadataService starterMetadataService = new StarterMetadataService(vertx);
+    JsonObject projectDefaults = loadProjectDefaults();
+    StarterResource starterResource = new StarterResource(vertx.eventBus(), starterMetadataService, projectDefaults);
 
     Router router = Router.router(vertx);
     cors(router);
