@@ -19,18 +19,19 @@ package io.vertx.starter;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.starter.model.VertxProject;
-import io.vertx.starter.service.StarterMetadataService;
 import io.vertx.starter.web.rest.StarterResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
 import static io.vertx.starter.config.util.ConfigUtil.loadProjectDefaults;
+import static io.vertx.starter.service.util.MetadataUtil.loadDependencies;
 
 public class WebVerticle extends AbstractVerticle {
 
@@ -42,15 +43,15 @@ public class WebVerticle extends AbstractVerticle {
   public void start(Future<Void> startFuture) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
-    StarterMetadataService starterMetadataService = new StarterMetadataService(vertx);
     JsonObject projectDefaults = loadProjectDefaults();
-    StarterResource starterResource = new StarterResource(vertx.eventBus(), starterMetadataService, projectDefaults);
+    JsonArray dependencies = loadDependencies();
+    StarterResource starterResource = new StarterResource(vertx.eventBus(), dependencies, projectDefaults);
 
     Router router = Router.router(vertx);
     cors(router);
     router.get("/starter.*").handler(starterResource::generateProject);
     router.get("/metadata").handler(starterResource::getStarterMetadata);
-    router.route().produces("text/html").handler(StaticHandler.create());
+    router.route().handler(StaticHandler.create());
 
     int port = config().getInteger(HTTP_PORT, DEFAULT_HTTP_PORT);
     vertx

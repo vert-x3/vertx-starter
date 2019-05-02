@@ -14,29 +14,28 @@
  * under the License.
  */
 
-package io.vertx.starter.config.util;
+package io.vertx.starter.service.util;
 
 import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.json.JsonArray;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Thomas Segismont
  */
-public class ConfigUtil {
+public class MetadataUtil {
 
-  @SuppressWarnings("unchecked")
-  public static JsonObject loadProjectDefaults() {
-    try (InputStream is = ConfigUtil.class.getClassLoader().getResourceAsStream("project-defaults.json")) {
-      return new JsonObject(Json.mapper.readValue(is, Map.class));
+  public static JsonArray loadDependencies() {
+    try (InputStream is = MetadataUtil.class.getClassLoader().getResourceAsStream("dependencies.json")) {
+      return new JsonArray(Json.mapper.readValue(is, List.class));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private ConfigUtil() {
+  private MetadataUtil() {
   }
 }
