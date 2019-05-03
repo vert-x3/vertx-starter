@@ -202,27 +202,31 @@
     <div class="row">
       <div class="col-sm-12">
         <div class="form-group row">
-          <label for="version" class="col-sm-4 col-form-label">Version</label>
+          <label class="col-sm-4 col-form-label">Version</label>
           <div class="col-sm-8">
-            <select class="form-control" id="version" ng-model="vm.vertxProject.vertxVersion">
-              <option ng-repeat="vertxVersion in vm.vertxVersions">{{ vertxVersion }}</option>
-            </select>
+            <div class="btn-group">
+              <label class="btn btn-sm btn-default" ng-repeat="vertxVersion in vm.vertxVersions"
+                     ng-model="$parent.vm.vertxProject.vertxVersion" ng-change="$parent.vm.onVertxVersionChanged()"
+                     uib-btn-radio="vertxVersion">{{ vertxVersion }}</label>
+            </div>
           </div>
         </div>
         <div class="form-group row">
-          <label for="language" class="col-sm-4 col-form-label">Language</label>
+          <label class="col-sm-4 col-form-label">Language</label>
           <div class="col-sm-8">
-            <select class="form-control" id="language" ng-model="vm.vertxProject.language">
-              <option ng-repeat="language in vm.languages" value="{{language}}">{{ language | capitalize }}</option>
-            </select>
+            <div class="btn-group">
+              <label class="btn btn-sm btn-default" ng-repeat="language in vm.languages"
+                     ng-model="$parent.vm.vertxProject.language" uib-btn-radio="language">{{ language | capitalize }}</label>
+            </div>
           </div>
         </div>
         <div class="form-group row">
-          <label for="buildTool" class="col-sm-4 col-form-label">Build</label>
+          <label class="col-sm-4 col-form-label">Build</label>
           <div class="col-sm-8">
-            <select class="form-control" id="buildTool" ng-model="vm.vertxProject.buildTool">
-              <option ng-repeat="buildTool in vm.buildTools" value="{{buildTool}}">{{ buildTool | capitalize }}</option>
-            </select>
+            <div class="btn-group">
+              <label class="btn btn-sm btn-default" ng-repeat="buildTool in vm.buildTools"
+                     ng-model="$parent.vm.vertxProject.buildTool" uib-btn-radio="buildTool">{{ buildTool | capitalize }}</label>
+            </div>
           </div>
         </div>
         <div ng-class="form.groupId.$valid ? 'form-group row' : 'form-group row has-error'">
@@ -275,8 +279,8 @@
         <label class="col-sm-4 col-form-label">JDK Version</label>
         <div class="col-sm-8">
           <div class="btn-group">
-            <label class="btn btn-sm btn-default" ng-model="vm.vertxProject.jdkVersion" uib-btn-radio="'1.8'">JDK 1.8</label>
-            <label class="btn btn-sm btn-default" ng-model="vm.vertxProject.jdkVersion" uib-btn-radio="'11'">JDK 11</label>
+            <label class="btn btn-sm btn-default" ng-repeat="jdkVersion in vm.jdkVersions"
+                   ng-model="$parent.vm.vertxProject.jdkVersion" uib-btn-radio="jdkVersion">JDK {{ jdkVersion }}</label>
           </div>
         </div>
       </div>
@@ -289,7 +293,8 @@
           <br>
           <div class="tag" ng-repeat="dependency in vm.vertxProject.vertxDependencies">
             {{ dependency.name }}
-            <button type="button" class="remove" aria-label="Remove" ng-click="vm.removeDependency(dependency)">
+            <button type="button" class="remove" aria-label="Remove"
+                    ng-click="vm.removeDependency(dependency.artifactId)">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>

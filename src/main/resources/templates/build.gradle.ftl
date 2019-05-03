@@ -47,7 +47,9 @@ def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
 
 dependencies {
+<#if !vertxDependencies?has_content>
   implementation "io.vertx:vertx-core:$vertxVersion"
+</#if>
 <#list vertxDependencies as dependency>
   implementation "io.vertx:${dependency}:$vertxVersion"
 </#list>

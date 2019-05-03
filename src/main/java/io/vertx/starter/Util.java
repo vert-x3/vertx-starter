@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.vertx.starter.config.util;
+package io.vertx.starter;
 
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
@@ -26,17 +26,12 @@ import java.util.Map;
 /**
  * @author Thomas Segismont
  */
-public class ConfigUtil {
+public class Util {
 
   @SuppressWarnings("unchecked")
-  public static JsonObject loadProjectDefaults() {
-    try (InputStream is = ConfigUtil.class.getClassLoader().getResourceAsStream("project-defaults.json")) {
+  public static JsonObject loadStarterData() throws IOException {
+    try (InputStream is = WebVerticle.class.getClassLoader().getResourceAsStream("starter.json")) {
       return new JsonObject(Json.mapper.readValue(is, Map.class));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
-  }
-
-  private ConfigUtil() {
   }
 }

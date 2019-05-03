@@ -39,10 +39,10 @@ public enum JdkVersion {
 
   public static JdkVersion fromString(String str) {
     for (JdkVersion jdkVersion : values()) {
-      if (jdkVersion.getValue().equals(str)) {
+      if (jdkVersion.getValue().equalsIgnoreCase(str)) {
         return jdkVersion;
       }
     }
-    throw new IllegalArgumentException(str);
+    return null;
   }
 }

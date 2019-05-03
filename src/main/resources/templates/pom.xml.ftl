@@ -48,10 +48,12 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-    </dependency>
+    <#if !vertxDependencies?has_content>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-core</artifactId>
+      </dependency>
+    </#if>
 <#list vertxDependencies as dependency>
     <dependency>
       <groupId>io.vertx</groupId>

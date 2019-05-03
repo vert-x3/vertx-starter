@@ -27,18 +27,19 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
+import io.vertx.starter.Util;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.BuildTool;
 import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
-import io.vertx.starter.web.rest.StarterResource;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -72,7 +73,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
  * @author Thomas Segismont
  */
 @ExtendWith(VertxExtension.class)
-@Timeout(value = 1, timeUnit = TimeUnit.MINUTES)
+@Timeout(value = 5, timeUnit = TimeUnit.MINUTES)
 class GeneratorTest {
 
   @TempDir
@@ -119,15 +120,20 @@ class GeneratorTest {
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjects() {
+  static Stream<VertxProject> testProjects() throws IOException {
+    List<String> versions = Util.loadStarterData().getJsonArray("versions").stream()
+      .map(JsonObject.class::cast)
+      .map(obj -> obj.getString("number"))
+      .collect(toList());
+
     Stream.Builder<VertxProject> builder = Stream.builder();
     for (BuildTool buildTool : BuildTool.values()) {
       for (Language language : Language.values()) {
-        for (Object version : StarterResource.VERSIONS) {
+        for (String version : versions) {
           VertxProject vertxProject = defaultProject()
             .setBuildTool(buildTool)
             .setLanguage(language)
-            .setVertxVersion((String) version)
+            .setVertxVersion(version)
             .setPackageName("com.mycompany.project.special");
           builder.add(vertxProject);
         }
@@ -143,7 +149,7 @@ class GeneratorTest {
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjectsJdk11() {
+  static Stream<VertxProject> testProjectsJdk11() throws IOException {
     return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
   }
 
