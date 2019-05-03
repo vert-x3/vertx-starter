@@ -43,6 +43,11 @@
           "artifactId": "vertx-web-graphql",
           "name": "Web GraphQL Handler",
           "description": "Create GraphQL servers with Vert.x Web and the GraphQL-Java library."
+        },
+        {
+          "artifactId": "vertx-web-api-contract",
+          "name": "Web API Contract",
+          "description": "Web API Contract supports OpenApi 3 specification for a design first approach and provides a validation framework."
         }
       ]
     },
