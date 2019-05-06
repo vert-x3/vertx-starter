@@ -12,6 +12,14 @@ group = '${groupId}'
 version = '1.0.0-SNAPSHOT'
 
 repositories {
+<#if vertxVersion?ends_with("-SNAPSHOT")>
+  maven {
+    url 'https://oss.sonatype.org/content/repositories/snapshots'
+    mavenContent {
+      snapshotsOnly()
+    }
+  }
+</#if>
   mavenCentral()
 <#if language == "kotlin">
   jcenter()
@@ -39,7 +47,9 @@ def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
 
 dependencies {
+<#if !vertxDependencies?has_content>
   implementation "io.vertx:vertx-core:$vertxVersion"
+</#if>
 <#list vertxDependencies as dependency>
   implementation "io.vertx:${dependency}:$vertxVersion"
 </#list>

@@ -48,10 +48,12 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-    </dependency>
+    <#if !vertxDependencies?has_content>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-core</artifactId>
+      </dependency>
+    </#if>
 <#list vertxDependencies as dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -189,4 +191,24 @@
       </plugin>
     </plugins>
   </build>
+
+<#if vertxVersion?ends_with("-SNAPSHOT")>
+  <repositories>
+    <repository>
+      <id>sonatype-oss-snapshots</id>
+      <name>Sonatype OSSRH Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+</#if>
+
 </project>

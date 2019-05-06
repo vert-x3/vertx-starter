@@ -14,35 +14,24 @@
  * under the License.
  */
 
-package io.vertx.starter.model;
+package io.vertx.starter;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author Thomas Segismont
  */
-public enum JdkVersion {
-  @JsonProperty("1.8")
-  JDK_1_8("1.8"),
-  @JsonProperty("11")
-  JDK_11("11");
+public class Util {
 
-  private final String value;
-
-  JdkVersion(String value) {
-    this.value = value;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public static JdkVersion fromString(String str) {
-    for (JdkVersion jdkVersion : values()) {
-      if (jdkVersion.getValue().equalsIgnoreCase(str)) {
-        return jdkVersion;
-      }
+  @SuppressWarnings("unchecked")
+  public static JsonObject loadStarterData() throws IOException {
+    try (InputStream is = WebVerticle.class.getClassLoader().getResourceAsStream("starter.json")) {
+      return new JsonObject(Json.mapper.readValue(is, Map.class));
     }
-    return null;
   }
 }

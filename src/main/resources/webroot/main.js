@@ -13,9 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+String.prototype.format = String.prototype.format ||
+function () {
+    "use strict";
+    var str = this.toString();
+    if (arguments.length) {
+        var t = typeof arguments[0];
+        var key;
+        var args = ("string" === t || "number" === t) ?
+            Array.prototype.slice.call(arguments)
+            : arguments[0];
+
+        for (key in args) {
+            str = str.replace(new RegExp("\\${" + key + "\\}", "gi"), args[key]);
+        }
+    }
+
+    return str;
+};
 
 angular
-  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys'])
+  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys',  'ngclipboard'])
   .value('bowser', bowser)
   .factory('Starter', ['$http', function ($http) {
     var service = {
@@ -41,6 +59,29 @@ angular
 
     return service;
   }])
+  .constant('CliConstants', {
+    commands: {
+      curl: {
+        name: "curl",
+        template: "curl -G ${baseUrl}starter.${archiveFormat} ${args} --output ${artifactId}.${archiveFormat}",
+        argMapper: function (name, value) { return "-d \"${0}=${1}\"".format(name, value); },
+        argSeparator: " "
+      },
+      httpie: {
+        name: "HTTPie",
+        template: "http ${baseUrl}starter.${archiveFormat} ${args} --output ${artifactId}.${archiveFormat}",
+        argMapper: function (name, value) { return "${0}==${1}".format(name, value); },
+        argSeparator: " "
+      },
+      powershell: {
+        name: "Power Shell",
+        template: "Invoke-WebRequest -Uri ${baseUrl}starter.${archiveFormat} -Body @{ ${args} } -OutFile ${artifactId}.${archiveFormat}",
+        argMapper: function (name, value) { return "${0}='${1}'".format(name, value); },
+        argSeparator: "; "
+      }
+    },
+    args: ["groupId", "artifactId", "packageName", "vertxVersion", "vertxDependencies", "language", "jdkVersion", "buildTool"]
+   })
   .filter('capitalize', function () {
     return function (input) {
       return (!!input) ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
@@ -49,8 +90,8 @@ angular
   .config(['hotkeysProvider', function (hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = false;
   }])
-  .controller('VertxStarterController', ['$scope', '$document', '$window', 'hotkeys', 'Starter',
-    function VertxStarterController($scope, $document, $window, hotkeys, Starter) {
+  .controller('VertxStarterController', ['$scope', '$document', '$location', '$window', 'hotkeys', 'Starter', 'CliConstants',
+    function VertxStarterController($scope, $document, $location, $window, hotkeys, Starter, CliConstants) {
       var vm = this;
       vm.idRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
@@ -59,18 +100,25 @@ angular
       vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
+      vm.jdkVersions = [];
       vm.advancedCollapsed = true;
+      vm.isWindows = bowser.windows;
 
       vm.projectDefaults = {};
       vm.vertxProject = {};
       vm.selectedDependency = null;
       vm.alerts = [];
+      vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
       vm.toggleAdvanced = toggleAdvanced;
       vm.generate = generate;
       vm.addAlert = addAlert;
       vm.closeAlert = closeAlert;
+      vm.generateCommands = generateCommands;
+
+      var baseUrl = $location.$$absUrl.replace($location.$$url, '');
+
 
       loadAll();
 
@@ -94,15 +142,7 @@ angular
         Starter.metadata()
           .then(function (response) {
             var data = response.data;
-            vm.vertxVersions = data.vertxVersions.slice(0, 10);
-            vm.vertxDependencies = data.vertxDependencies
-              .map(function (category) {
-                return category.items;
-              }).reduce(function (a, b) {
-                return a.concat(b);
-              });
-            vm.buildTools = data.buildTools;
-            vm.languages = data.languages;
+            initModel(data);
             initProjectWithDefaults(data.defaults);
           })
           .catch(function (error) {
@@ -110,9 +150,32 @@ angular
           });
       }
 
+      function initModel(data) {
+        vm.versions = data.versions;
+        vm.exclusions = data.versions.reduce(function (res, value) {
+          res[value.number] = value.exclusions || [];
+          return res;
+        }, {});
+        vm.stack = data.stack;
+        vm.buildTools = data.buildTools;
+        vm.languages = data.languages;
+        vm.jdkVersions = data.jdkVersions;
+        vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
+        vm.vertxVersions = data.versions.map(function (version) {
+          return version.number;
+        });
+      }
+
+      function availableDependencies(version) {
+        return vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return !vm.exclusions[version].includes(value.artifactId);
+          });
+        });
+      }
+
       function initProjectWithDefaults(defaults) {
         vm.projectDefaults = defaults;
-        vm.vertxProject.model = defaults.model;
         vm.vertxProject.groupId = defaults.groupId;
         vm.vertxProject.artifactId = defaults.artifactId;
         vm.vertxProject.language = defaults.language;
@@ -120,13 +183,19 @@ angular
         vm.vertxProject.vertxVersion = defaults.vertxVersion;
         vm.vertxProject.archiveFormat = defaults.archiveFormat;
         vm.vertxProject.vertxDependencies = [];
-        vm.vertxProject.packageName = defaults.packageName;
+        vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
       }
 
       function onDependencySelected($item, $model, $label, $event) {
         addDependency($model);
         vm.selectedDependency = null;
+      }
+
+      function onVertxVersionChanged() {
+        var version = vm.vertxProject.vertxVersion;
+        vm.exclusions[version].forEach(removeDependency);
+        vm.vertxDependencies = availableDependencies(version);
       }
 
       function indexOfDependency(predicate) {
@@ -142,14 +211,14 @@ angular
         var index = indexOfDependency(function (it) {
           return it.name === dependency.name;
         });
-        if (index == -1) {
+        if (index === -1) {
           vm.vertxProject.vertxDependencies.push(dependency);
         }
       }
 
-      function removeDependency(dependency) {
+      function removeDependency(artifactId) {
         vm.vertxProject.vertxDependencies = vm.vertxProject.vertxDependencies.filter(function (it) {
-          return it.name !== dependency.name;
+          return it.artifactId !== artifactId;
         });
       }
 
@@ -209,4 +278,36 @@ angular
       function closeAlert(index) {
         vm.alerts.splice(index, 1);
       }
+
+      function generateCommands(open) {
+        if(!open) {
+          return;
+        }
+        var projectRequest = vertxProjectRequest();
+        if(bowser.windows) {
+          vm.powershellCommand = renderCommand(CliConstants.commands.powershell, CliConstants.args, projectRequest);
+        }
+        vm.curlCommand = renderCommand(CliConstants.commands.curl, CliConstants.args, projectRequest);
+        vm.httpieCommand = renderCommand(CliConstants.commands.httpie, CliConstants.args, projectRequest);
+      }
+
+      function renderCommand(command, commandArgs,  projectRequest) {
+        return command.template.format({
+           baseUrl: baseUrl,
+           archiveFormat: projectRequest.archiveFormat,
+           args: toCliArgs(projectRequest, commandArgs, command.argMapper, command.argSeparator),
+           artifactId: projectRequest.artifactId
+        });
+      }
+
+      function toCliArgs(obj, commandArgs, argMapper, argSeparator) {
+        var args = [];
+        commandArgs.forEach(function(argName) {
+          if(obj.hasOwnProperty(argName) && obj[argName] != undefined && obj[argName].trim().length > 0 ) {
+             args.push(argMapper(argName, obj[argName]));
+          }
+        });
+        return args.join(argSeparator);
+      }
+
     }]);

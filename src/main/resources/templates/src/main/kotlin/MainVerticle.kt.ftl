@@ -21,7 +21,5 @@ class MainVerticle : AbstractVerticle() {
           startFuture.fail(http.cause());
         }
       }
-
   }
-
 }

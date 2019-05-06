@@ -27,11 +27,13 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
+import io.vertx.starter.Util;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.BuildTool;
@@ -45,6 +47,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -62,6 +65,7 @@ import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.Language.JAVA;
 import static io.vertx.starter.model.Language.KOTLIN;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
@@ -69,18 +73,26 @@ import static org.assertj.core.api.Assumptions.assumeThat;
  * @author Thomas Segismont
  */
 @ExtendWith(VertxExtension.class)
-@Timeout(value = 1, timeUnit = TimeUnit.MINUTES)
+@Timeout(value = 5, timeUnit = TimeUnit.MINUTES)
 class GeneratorTest {
 
+  @TempDir
+  Path m2dir;
+  @TempDir
+  Path mavenRepository;
+  @TempDir
+  Path workdir;
+
+  private Path settingsFile;
   private MessageProducer<VertxProject> producer;
-  private Path workdir;
   private List<Runnable> cleanupTasks = new ArrayList<>();
 
   @BeforeEach
-  void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
+  void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
+    settingsFile = m2dir.resolve("settings.xml");
+    Files.copy(getClass().getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
     producer = vertx.eventBus().publisher(Topics.PROJECT_REQUESTED);
-    workdir = Files.createTempDirectory(GeneratorTest.class.getSimpleName());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
 
@@ -108,14 +120,26 @@ class GeneratorTest {
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjects() {
-    return Stream.<VertxProject>builder()
-      .add(defaultProject())
-      .add(defaultProject().setBuildTool(GRADLE))
-      .add(defaultProject().setLanguage(KOTLIN))
-      .add(defaultProject().setLanguage(KOTLIN).setBuildTool(GRADLE))
-      .add(defaultProject().setPackageName("com.mycompany.project.special"))
-      .build();
+  static Stream<VertxProject> testProjects() throws IOException {
+    List<String> versions = Util.loadStarterData().getJsonArray("versions").stream()
+      .map(JsonObject.class::cast)
+      .map(obj -> obj.getString("number"))
+      .collect(toList());
+
+    Stream.Builder<VertxProject> builder = Stream.builder();
+    for (BuildTool buildTool : BuildTool.values()) {
+      for (Language language : Language.values()) {
+        for (String version : versions) {
+          VertxProject vertxProject = defaultProject()
+            .setBuildTool(buildTool)
+            .setLanguage(language)
+            .setVertxVersion(version)
+            .setPackageName("com.mycompany.project.special");
+          builder.add(vertxProject);
+        }
+      }
+    }
+    return builder.build();
   }
 
   @ParameterizedTest
@@ -125,7 +149,7 @@ class GeneratorTest {
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjectsJdk11() {
+  static Stream<VertxProject> testProjectsJdk11() throws IOException {
     return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
   }
 
@@ -242,10 +266,23 @@ class GeneratorTest {
     List<String> args;
     if (buildTool == MAVEN) {
       command = "./mvnw";
-      args = Collections.singletonList("verify");
+      args = Stream.<String>builder()
+        .add("-Dmaven.repo.local=" + mavenRepository.toAbsolutePath().toString())
+        .add("-s")
+        .add(settingsFile.toAbsolutePath().toString())
+        .add("-B")
+        .add("verify")
+        .build()
+        .collect(toList());
     } else if (buildTool == GRADLE) {
       command = "./gradlew";
-      args = Arrays.asList("assemble", "check");
+      args = Stream.<String>builder()
+        .add("--no-build-cache")
+        .add("--no-daemon")
+        .add("assemble")
+        .add("check")
+        .build()
+        .collect(toList());
     } else {
       handler.handle(Future.failedFuture(unsupported(buildTool)));
       return;

@@ -20,7 +20,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum BuildTool {
   @JsonProperty("maven")
-  MAVEN,
+  MAVEN("maven"),
   @JsonProperty("gradle")
-  GRADLE
+  GRADLE("gradle");
+
+  private final String value;
+
+  BuildTool(String value) {
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public static BuildTool fromString(String str) {
+    for (BuildTool buildTool : values()) {
+      if (buildTool.getValue().equalsIgnoreCase(str)) {
+        return buildTool;
+      }
+    }
+    return null;
+  }
 }

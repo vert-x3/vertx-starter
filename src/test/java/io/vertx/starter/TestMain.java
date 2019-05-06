@@ -14,35 +14,18 @@
  * under the License.
  */
 
-package io.vertx.starter.model;
+package io.vertx.starter;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.jponge.vertx.boot.BootVerticle;
+import io.vertx.core.Vertx;
 
 /**
  * @author Thomas Segismont
  */
-public enum JdkVersion {
-  @JsonProperty("1.8")
-  JDK_1_8("1.8"),
-  @JsonProperty("11")
-  JDK_11("11");
+public class TestMain {
 
-  private final String value;
-
-  JdkVersion(String value) {
-    this.value = value;
+  public static void main(String[] args) {
+    Vertx.vertx().deployVerticle(new BootVerticle());
   }
 
-  public String getValue() {
-    return value;
-  }
-
-  public static JdkVersion fromString(String str) {
-    for (JdkVersion jdkVersion : values()) {
-      if (jdkVersion.getValue().equalsIgnoreCase(str)) {
-        return jdkVersion;
-      }
-    }
-    return null;
-  }
 }
