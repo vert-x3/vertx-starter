@@ -1,7 +1,7 @@
 package ${packageName}
 
 import io.vertx.core.AbstractVerticle
-<#if vertxVersion?index_of("4") == 0>
+<#if vertxVersion?index_of("3") != 0>
 import io.vertx.core.Promise
 <#else>
 import io.vertx.core.Future
@@ -9,7 +9,7 @@ import io.vertx.core.Future
 
 class MainVerticle : AbstractVerticle() {
 
-  <#if vertxVersion?index_of("4") == 0>
+  <#if vertxVersion?index_of("3") != 0>
   override fun start(startFuture: Primise<Void>) {
   <#else>
   override fun start(startFuture: Future<Void>) {
