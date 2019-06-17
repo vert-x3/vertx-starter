@@ -1,12 +1,20 @@
 package ${packageName};
 
 import io.vertx.core.AbstractVerticle;
+<#if vertxVersion?index_of("4") == 0>
+import io.vertx.core.Promise;
+<#else>
 import io.vertx.core.Future;
+</#if>
 
 public class MainVerticle extends AbstractVerticle {
 
   @Override
+  <#if vertxVersion?index_of("4") == 0>
+  public void start(Promise<Void> startFuture) throws Exception {
+  <#else>
   public void start(Future<Void> startFuture) throws Exception {
+  </#if>
     vertx.createHttpServer().requestHandler(req -> {
       req.response()
         .putHeader("content-type", "text/plain")
