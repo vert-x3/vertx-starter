@@ -11,7 +11,7 @@ public class MainVerticle extends AbstractVerticle {
 
   @Override
   <#if vertxVersion?index_of("3") != 0>
-  public void start(Promise<Void> startPromise) throws Exception {
+  public void start(Promise<Void> startFuture) throws Exception {
   <#else>
   public void start(Future<Void> startFuture) throws Exception {
   </#if>
