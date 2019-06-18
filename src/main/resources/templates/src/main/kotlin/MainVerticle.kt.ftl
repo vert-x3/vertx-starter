@@ -10,7 +10,7 @@ import io.vertx.core.Future
 class MainVerticle : AbstractVerticle() {
 
   <#if vertxVersion?index_of("3") != 0>
-  override fun start(startFuture: Primise<Void>) {
+  override fun start(startPromise: Promise<Void>) {
   <#else>
   override fun start(startFuture: Future<Void>) {
   </#if>
