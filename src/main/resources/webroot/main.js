@@ -108,9 +108,16 @@ angular
       vm.vertxProject = {};
       vm.selectedDependency = null;
       vm.alerts = [];
+
+      vm.stack = [];
+      vm.selectedPanel = '';
+      vm.selectedDependencies = [];
+
       vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
+      vm.disableDependencies = disableDependencies;
+      vm.isDependencyNotAvailable = isDependencyNotAvailable;
       vm.toggleAdvanced = toggleAdvanced;
       vm.generate = generate;
       vm.addAlert = addAlert;
@@ -161,6 +168,7 @@ angular
         vm.languages = data.languages;
         vm.jdkVersions = data.jdkVersions;
         vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
+        vm.selectedPanel = data.stack && data.stack.length > 0 ? data.stack[0].code: 'none';
         vm.selectedDependencies = [];
         vm.vertxVersions = data.versions.map(function (version) {
           return version.number;
@@ -186,17 +194,40 @@ angular
         vm.vertxProject.vertxDependencies = [];
         vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
+
+        vm.disableDependencies(defaults.vertxVersion);
       }
 
       function onDependencySelected($item, $model, $label, $event) {
-        addDependency($model);
-        vm.selectedDependency = null;
+        var index = indexOfDependency(function (it) {
+          return it.name === $model.name;
+        });
+        if (index === -1) {
+          addDependency($model);
+        }
+        else
+        {
+          vm.removeDependency($model.artifactId);
+        }
       }
 
       function onVertxVersionChanged() {
         var version = vm.vertxProject.vertxVersion;
         vm.exclusions[version].forEach(removeDependency);
-        vm.vertxDependencies = availableDependencies(version);
+        // vm.vertxDependencies = availableDependencies(version);
+        vm.disableDependencies(version);
+      }
+
+      function disableDependencies(version) {
+        vm.stack.forEach(function(cat){
+          cat.items.forEach(function(dep){
+            dep.disabled = isDependencyNotAvailable(dep, version);
+          })
+        })
+      }
+
+      function isDependencyNotAvailable(dependency, version){
+        return vm.exclusions[version].includes(dependency.artifactId);
       }
 
       function indexOfDependency(predicate) {
@@ -209,17 +240,20 @@ angular
       }
 
       function addDependency(dependency) {
-        var index = indexOfDependency(function (it) {
-          return it.name === dependency.name;
-        });
-        if (index === -1) {
-          vm.vertxProject.vertxDependencies.push(dependency);
-        }
+        vm.vertxProject.vertxDependencies.push(dependency);
       }
 
       function removeDependency(artifactId) {
         vm.vertxProject.vertxDependencies = vm.vertxProject.vertxDependencies.filter(function (it) {
           return it.artifactId !== artifactId;
+        });
+
+        vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return value.artifactId == artifactId;
+          });
+        }).forEach(function (module) {
+          module.selected = false;
         });
       }
 

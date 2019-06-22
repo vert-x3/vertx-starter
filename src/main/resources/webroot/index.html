@@ -246,34 +246,28 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="dependencies" class="col-sm-4 col-form-label">Dependencies</label>
-          <div class="col-sm-8">
-            <input type="text" id="dependencies" class="form-control" placeholder="Web, MQTT, etc."
-                   ng-model="vm.selectedDependency"
-                   uib-typeahead="dependency as dependency.name for dependency in vm.vertxDependencies | filter:$viewValue | limitTo:8"
-                   typeahead-on-select="vm.onDependencySelected($item, $model, $label, $event)">
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="dependencies" class="col-sm-4 col-form-label">Dependencies</label>
-          <div class="col-sm-8">
-            <ul class="nav nav-tabs">
-              <li role="presentation" ng-repeat="item in vm.stack"><a data-toggle="tab" href="#tab-{{item.code}}" ng-class="{active:$first}">{{item.category}}</a></li>
+          <div class="col-md-4">
+            <h3>Dependencies ({{vm.vertxProject.vertxDependencies.length}})</h3>
+            <ul class="nav nav-pills nav-stacked">
+              <li role="presentation" ng-repeat="cat in vm.stack" ng-class="{active:vm.selectedPanel === cat.code}"><a ng-click="vm.selectedPanel = cat.code">{{cat.category}}</a></li>
             </ul>
+          </div>
+          <div class="col-sm-8">
             <div class="tab-content">
-              <div id="tab-{{cat.code}}" class="tab-pane fade" ng-class="{in: $first, active:$first}" ng-repeat="cat in vm.stack">
+              <div id="tab-{{cat.code}}" class="tab-pane fade" ng-class="{in: cat.code == vm.selectedPanel, active: cat.code == vm.selectedPanel}" ng-repeat="cat in vm.stack">
                 <h3>{{cat.category}}</h3>
                 <p>{{cat.description}}</p>
-                <div ng-repeat="module in cat.items">
-                <label>
+                <div ng-repeat="dependency in cat.items">
+                <label ng-class="{'text-muted': dependency.disabled}">
                   <input
                     type="checkbox"
-                    name="vm.selectedDependencies"
-                    value="{{module.name}}"
-                    ng-model="module.selected"
-                  > {{module.name}}
-                  <p>{{module.description}}</p>
+                    ng-disabled="dependency.disabled"
+                    value="{{dependency.name}}"
+                    ng-model="dependency.selected"
+                    ng-change="$parent.vm.onDependencySelected($item, dependency, $label, $event)">
+                  {{dependency.name}}
                 </label>
+                  <p ng-class="{'text-muted': dependency.disabled}">{{dependency.description}}</p>
                 </div>
               </div>
             </div>
@@ -316,6 +310,10 @@
         <div class="form-group">
           <label class="control-label">Selected dependencies</label>
           <br>
+          <div ng-repeat="dependency in vm.selectedDependencies">
+            {{dependency.artifactId}}
+          </div>
+
           <div class="tag" ng-repeat="dependency in vm.vertxProject.vertxDependencies">
             {{ dependency.name }}
             <button type="button" class="remove" aria-label="Remove"
