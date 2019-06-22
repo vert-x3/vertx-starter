@@ -27,6 +27,7 @@
   ],
   "stack": [
     {
+      "code": "web",
       "category": "Web",
       "items": [
         {
@@ -52,6 +53,7 @@
       ]
     },
     {
+      "code": "dataaccess",
       "category": "Data Access",
       "description": "Vert.x provides a few different asynchronous clients for accessing various data stores from your application. You don't have to use these clients - you could use clients direct from the vendor if you prefer (e.g. MongoDB provide their own cool async and reactive clients), but these provide a simple async API which is available in various languages.",
       "items": [
@@ -74,6 +76,7 @@
       ]
     },
     {
+      "code": "reactive",
       "category": "Reactive",
       "description": "Vert.x provides a few components to make your applications more reactive.",
       "items": [
@@ -105,6 +108,7 @@
       ]
     },
     {
+      "code": "microservices",
       "category": "Microservices",
       "description": "Vert.x offers various component to build microservice-based applications.",
       "items": [
@@ -126,6 +130,7 @@
       ]
     },
     {
+      "code": "iot",
       "category": "IoT",
       "items": [
         {
@@ -136,6 +141,7 @@
       ]
     },
     {
+      "code": "auth",
       "category": "Authentication and Authorisation",
       "description": "Vert.x provides simple APIs for auth in your applications. We also provide a few out of the box implementations.",
       "items": [
@@ -172,6 +178,7 @@
       ]
     },
     {
+      "code": "messaging",
       "category": "Messaging",
       "items": [
         {
@@ -197,6 +204,7 @@
       ]
     },
     {
+      "code": "integration",
       "category": "Integration",
       "items": [
         {
@@ -222,6 +230,7 @@
       ]
     },
     {
+      "code": "eventbus",
       "category": "Event Bus Bridge",
       "description": "Vert.x offers various bridges to extend the Event Bus beyond the JVM",
       "items": [
@@ -238,6 +247,7 @@
       ]
     },
     {
+      "code": "devops",
       "category": "DevOps",
       "description": "Vert.x offers various component to keep your Vert.x application on track when running in production",
       "items": [
@@ -264,6 +274,7 @@
       ]
     },
     {
+      "code": "testing",
       "category": "Testing",
       "description": "Vert.x-Unit is an unit testing tool-kit especially design to work well with asynchronous code.",
       "items": [
@@ -278,6 +289,7 @@
       ]
     },
     {
+      "code": "cluster",
       "category": "Clustering",
       "description": "Vert.x supports clustering and HA out of the box. Cluster group management is implemented in cluster managers which are pluggable. The default cluster manager uses Hazelcast.",
       "items": [
@@ -304,6 +316,7 @@
       ]
     },
     {
+      "code": "services",
       "category": "Services",
       "description": "Vert.x services are a simple and effective way to encapsulate reusable functionality for use elsewhere. Services are deployed using a service identifier which decouples the user from details of the implementation.",
       "items": [

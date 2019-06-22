@@ -161,6 +161,7 @@ angular
         vm.languages = data.languages;
         vm.jdkVersions = data.jdkVersions;
         vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
+        vm.selectedDependencies = [];
         vm.vertxVersions = data.versions.map(function (version) {
           return version.number;
         });

@@ -254,6 +254,31 @@
                    typeahead-on-select="vm.onDependencySelected($item, $model, $label, $event)">
           </div>
         </div>
+        <div class="form-group row">
+          <label for="dependencies" class="col-sm-4 col-form-label">Dependencies</label>
+          <div class="col-sm-8">
+            <ul class="nav nav-tabs">
+              <li role="presentation" ng-repeat="item in vm.stack"><a data-toggle="tab" href="#tab-{{item.code}}" ng-class="{active:$first}">{{item.category}}</a></li>
+            </ul>
+            <div class="tab-content">
+              <div id="tab-{{cat.code}}" class="tab-pane fade" ng-class="{in: $first, active:$first}" ng-repeat="cat in vm.stack">
+                <h3>{{cat.category}}</h3>
+                <p>{{cat.description}}</p>
+                <div ng-repeat="module in cat.items">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="vm.selectedDependencies"
+                    value="{{module.name}}"
+                    ng-model="module.selected"
+                  > {{module.name}}
+                  <p>{{module.description}}</p>
+                </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row">
