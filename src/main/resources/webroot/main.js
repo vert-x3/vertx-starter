@@ -97,7 +97,6 @@ angular
       vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.isGenerating = false;
       vm.vertxVersions = [];
-      vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
       vm.jdkVersions = [];
@@ -111,7 +110,6 @@ angular
 
       vm.stack = [];
       vm.selectedPanel = '';
-      vm.selectedDependencies = [];
 
       vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
@@ -167,19 +165,9 @@ angular
         vm.buildTools = data.buildTools;
         vm.languages = data.languages;
         vm.jdkVersions = data.jdkVersions;
-        vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
         vm.selectedPanel = data.stack && data.stack.length > 0 ? data.stack[0].code: 'none';
-        vm.selectedDependencies = [];
         vm.vertxVersions = data.versions.map(function (version) {
           return version.number;
-        });
-      }
-
-      function availableDependencies(version) {
-        return vm.stack.flatMap(function (category) {
-          return category.items.filter(function (value) {
-            return !vm.exclusions[version].includes(value.artifactId);
-          });
         });
       }
 
@@ -214,7 +202,6 @@ angular
       function onVertxVersionChanged() {
         var version = vm.vertxProject.vertxVersion;
         vm.exclusions[version].forEach(removeDependency);
-        // vm.vertxDependencies = availableDependencies(version);
         vm.disableDependencies(version);
       }
 
