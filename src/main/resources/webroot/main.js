@@ -105,17 +105,20 @@ angular
 
       vm.projectDefaults = {};
       vm.vertxProject = {};
-      vm.selectedDependency = null;
       vm.alerts = [];
 
       vm.stack = [];
+      vm.detailedOptionsCollapsed = true;
+      vm.selectedDependency = null;
       vm.selectedPanel = '';
+      vm.availableVertxDependencies = [];
 
       vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
       vm.disableDependencies = disableDependencies;
       vm.isDependencyNotAvailable = isDependencyNotAvailable;
+      vm.toggleDetailedOptions = toggleDetailedOptions;
       vm.toggleAdvanced = toggleAdvanced;
       vm.generate = generate;
       vm.addAlert = addAlert;
@@ -183,7 +186,16 @@ angular
         vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
 
+        vm.availableVertxDependencies = availableDependencies(defaults.vertxVersion)
         vm.disableDependencies(defaults.vertxVersion);
+      }
+
+      function availableDependencies(version) {
+        return vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return !vm.exclusions[version].includes(value.artifactId);
+          });
+        });
       }
 
       function onDependencySelected($item, $model, $label, $event) {
@@ -196,6 +208,11 @@ angular
         else
         {
           vm.removeDependency($model.artifactId);
+        }
+
+        if(vm.detailedOptionsCollapsed)
+        {
+          vm.selectedDependency = null
         }
       }
 
@@ -227,6 +244,7 @@ angular
       }
 
       function addDependency(dependency) {
+        dependency.selected = true
         vm.vertxProject.vertxDependencies.push(dependency);
       }
 
@@ -259,6 +277,21 @@ angular
         });
         vertxProject.vertxDependencies = artifacts.join();
         return vertxProject;
+      }
+
+      function toggleDetailedOptions() {
+        vm.detailedOptionsCollapsed = !vm.detailedOptionsCollapsed;
+
+        if(vm.detailedOptionsCollapsed)
+        {
+          var elmnt = document.getElementById("projectArtifactIdRow");
+          elmnt.scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"});
+        }
+        else {
+          var elmnt = document.getElementById("scrollAnchor");
+          elmnt.scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"});
+        }
+
       }
 
       function toggleAdvanced() {
