@@ -17,7 +17,7 @@
 package io.vertx.starter;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
@@ -68,7 +68,7 @@ public class WebVerticle extends AbstractVerticle {
   }
 
   @Override
-  public void start(Future<Void> startFuture) {
+  public void start(Promise<Void> startPromise) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
     Router router = Router.router(vertx);
@@ -93,14 +93,14 @@ public class WebVerticle extends AbstractVerticle {
       .listen(port, ar -> {
         if (ar.failed()) {
           log.error("Fail to start {}", WebVerticle.class.getSimpleName(), ar.cause());
-          startFuture.fail(ar.cause());
+          startPromise.fail(ar.cause());
         } else {
           log.info("\n----------------------------------------------------------\n\t" +
               "{} is running! Access URLs:\n\t" +
               "Local: \t\thttp://localhost:{}\n" +
               "----------------------------------------------------------",
             WebVerticle.class.getSimpleName(), port);
-          startFuture.complete();
+          startPromise.complete();
         }
       });
   }

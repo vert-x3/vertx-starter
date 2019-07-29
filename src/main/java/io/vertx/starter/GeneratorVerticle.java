@@ -17,7 +17,7 @@
 package io.vertx.starter;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.starter.config.Topics;
@@ -40,7 +40,7 @@ public class GeneratorVerticle extends AbstractVerticle {
   private GeneratorService generatorService;
 
   @Override
-  public void start(Future<Void> startFuture) {
+  public void start(Promise<Void> startPromise) {
     vertx.fileSystem().readFile("keywords", kar -> {
       if (kar.succeeded()) {
 
@@ -62,15 +62,15 @@ public class GeneratorVerticle extends AbstractVerticle {
               GeneratorVerticle.class.getSimpleName()
             );
 
-            startFuture.complete();
+            startPromise.complete();
 
           } else {
-            startFuture.fail(ar.cause());
+            startPromise.fail(ar.cause());
           }
         });
 
       } else {
-        startFuture.fail(kar.cause());
+        startPromise.fail(kar.cause());
       }
     });
   }

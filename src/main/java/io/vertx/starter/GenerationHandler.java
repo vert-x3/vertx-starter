@@ -38,7 +38,7 @@ public class GenerationHandler implements Handler<RoutingContext> {
   public void handle(RoutingContext rc) {
     VertxProject project = rc.get(WebVerticle.VERTX_PROJECT_KEY);
 
-    rc.vertx().eventBus().<Buffer>send(PROJECT_REQUESTED, project, reply -> {
+    rc.vertx().eventBus().<Buffer>request(PROJECT_REQUESTED, project, reply -> {
       if (reply.succeeded()) {
 
         rc.vertx().eventBus().publish(PROJECT_CREATED, project);
