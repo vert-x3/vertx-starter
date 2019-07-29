@@ -17,7 +17,7 @@
 package io.vertx.starter;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
@@ -34,7 +34,7 @@ public class AnalyticsVerticle extends AbstractVerticle {
   }
 
   @Override
-  public void start(Future<Void> startFuture) {
+  public void start(Promise<Void> startPromise) {
     AnalyticsService analyticsService = new AnalyticsService(mongoClient());
     vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_CREATED).handler(analyticsService::onProjectCreated);
 
@@ -45,6 +45,6 @@ public class AnalyticsVerticle extends AbstractVerticle {
       AnalyticsVerticle.class.getSimpleName()
     );
 
-    startFuture.complete();
+    startPromise.complete();
   }
 }

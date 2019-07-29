@@ -19,12 +19,8 @@ package io.vertx.starter.service;
 import com.julienviet.childprocess.Process;
 import com.julienviet.childprocess.ProcessOptions;
 import io.netty.buffer.ByteBufInputStream;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.eventbus.MessageProducer;
 import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
 import io.vertx.core.json.JsonObject;
@@ -84,7 +80,6 @@ class GeneratorTest {
   Path workdir;
 
   private Path settingsFile;
-  private MessageProducer<VertxProject> producer;
   private List<Runnable> cleanupTasks = new ArrayList<>();
 
   @BeforeEach
@@ -92,7 +87,6 @@ class GeneratorTest {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
     settingsFile = m2dir.resolve("settings.xml");
     Files.copy(getClass().getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
-    producer = vertx.eventBus().publisher(Topics.PROJECT_REQUESTED);
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
 
@@ -108,7 +102,7 @@ class GeneratorTest {
       .setArtifactId("demo")
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
-      .setVertxVersion("3.7.1")
+      .setVertxVersion("3.8.0")
       .setVertxDependencies(new HashSet<>(Collections.singleton("vertx-web")))
       .setArchiveFormat(TGZ)
       .setJdkVersion(JdkVersion.JDK_1_8);
@@ -154,7 +148,7 @@ class GeneratorTest {
   }
 
   private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    producer.<Buffer>send(project, testContext.succeeding(msg -> {
+    vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project, testContext.succeeding(msg -> {
       unpack(vertx, testContext, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
 
@@ -318,16 +312,17 @@ class GeneratorTest {
     }
     Process process = Process.create(vertx, command, args, processOptions);
     cleanupTasks.add(() -> process.kill(true));
-    Future<Void> future = Future.<Void>future().setHandler(handler);
+    Promise<Void> promise = Promise.promise();
+    promise.future().setHandler(handler);
     RecordParser parser = RecordParser.newDelimited("\n")
-      .exceptionHandler(future::fail)
+      .exceptionHandler(promise::fail)
       .handler(buffer -> {
         String line = buffer.toString().trim();
         if (line.contains("HTTP server started on port 8888")) {
-          future.complete();
+          promise.complete();
         }
       });
-    process.stdout().exceptionHandler(future::fail).handler(parser);
+    process.stdout().exceptionHandler(promise::fail).handler(parser);
     process.start();
   }
 

@@ -4,21 +4,27 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "3.7.1",
+    "vertxVersion": "3.8.0",
     "archiveFormat": "zip",
     "jdkVersion": "1.8"
   },
   "versions": [
     {
-      "number": "3.7.1",
+      "number": "3.8.0",
       "exclusions": []
     },
     {
-      "number": "3.6.3",
+      "number": "3.7.1",
       "exclusions": [
         "vertx-web-graphql",
-        "vertx-amqp-client"
+        "vertx-amqp-client",
+        "vertx-pg-client",
+        "vertx-mysql-client"
       ]
+    },
+    {
+      "number": "4.0.0-milestone1",
+      "exclusions": []
     },
     {
       "number": "4.0.0-SNAPSHOT",
@@ -55,6 +61,14 @@
       "category": "Data Access",
       "description": "Vert.x provides a few different asynchronous clients for accessing various data stores from your application. You don't have to use these clients - you could use clients direct from the vendor if you prefer (e.g. MongoDB provide their own cool async and reactive clients), but these provide a simple async API which is available in various languages.",
       "items": [
+        {
+          "artifactId": "vertx-pg-client",
+          "name": "Reactive PostgreSQL client"
+        },
+        {
+          "artifactId": "vertx-mysql-client",
+          "name": "Reactive MySQL client"
+        },
         {
           "artifactId": "vertx-mongo-client",
           "name": "MongoDB client"
