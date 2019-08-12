@@ -64,9 +64,7 @@ angular
       curl: {
         name: "curl",
         template: "curl -G ${baseUrl}starter.${archiveFormat} ${args} --output ${artifactId}.${archiveFormat}",
-        argMapper: function (name, value) {
-          return "-d \"${0}=${1}\"".format(name, value);
-        },
+        argMapper: function (name, value) { return "-d \"${0}=${1}\"".format(name, value); },
         argSeparator: " "
       },
       httpie: {
@@ -80,9 +78,7 @@ angular
       powershell: {
         name: "Power Shell",
         template: "Invoke-WebRequest -Uri ${baseUrl}starter.${archiveFormat} -Body @{ ${args} } -OutFile ${artifactId}.${archiveFormat}",
-        argMapper: function (name, value) {
-          return "${0}='${1}'".format(name, value);
-        },
+        argMapper: function (name, value) { return "${0}='${1}'".format(name, value); },
         argSeparator: "; "
       }
     },
@@ -229,9 +225,10 @@ angular
           vm.removeDependency($model.artifactId);
         }
 
+        vm.selectedDependency = null
         // clean the selected dependency from typeahead if it's visible
         if (vm.detailedOptionsCollapsed) {
-          vm.selectedDependency = null
+
         }
 
       }
@@ -316,7 +313,7 @@ angular
         if (vm.detailedOptionsCollapsed) {
           scrollTo("homeAnchor");
         } else {
-          scrollTo("detailedDependenciesAnchor");
+          scrollTo("dependencyTypeaheadAnchor");
         }
       }
 
@@ -333,7 +330,7 @@ angular
           if(vm.detailedOptionsCollapsed)
             scrollTo("homeAnchor")
           else
-            scrollTo("detailedDependenciesAnchor")
+            scrollTo("dependencyTypeaheadAnchor")
         }
       }
 
