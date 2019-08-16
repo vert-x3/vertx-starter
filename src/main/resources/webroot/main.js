@@ -190,27 +190,26 @@ angular
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
 
         vm.disableDependencies(defaults.vertxVersion);
-        refreshAvailableDependencies(defaults.vertxVersion, true);
+        refreshAvailableDependencies(defaults.vertxVersion, false);
       }
 
-      function refreshAvailableDependencies(vertxVersion, initializing) {
-        vm.availableVertxDependencies = availableDependencies(vertxVersion, initializing)
-      }
-
-      function availableDependencies(version, initializing) {
+      function refreshAvailableDependencies(vertxVersion, dependenciesSelected) {
         // filter dependencies by version
         var filteredByVersion = vm.stack.flatMap(function (category) {
           return category.items.filter(function (value) {
-            return !vm.exclusions[version].includes(value.artifactId);
+            return !vm.exclusions[vertxVersion].includes(value.artifactId);
           });
         });
 
         // set total number of available dependencies for given version
         vm.totalPackagesAvailable = filteredByVersion.length;
-        if (initializing) return filteredByVersion;
 
-        // if the form is already initialized filter also by already selected dependencies so they are not available in typeahead
-        return filteredByVersion.filter(function (value) {
+        if (!dependenciesSelected)
+          // if no dependencies has been selected yet return all of them
+          vm.availableVertxDependencies = filteredByVersion;
+        else
+          // if some of the dependencies has been already selected filter also by already selected dependencies so they are not available in typeahead
+          vm.availableVertxDependencies = filteredByVersion.filter(function (value) {
           return !vm.vertxProject.vertxDependencies.includes(value)
         })
       }
