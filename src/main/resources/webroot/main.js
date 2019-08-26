@@ -97,7 +97,6 @@ angular
       vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.isGenerating = false;
       vm.vertxVersions = [];
-      vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
       vm.jdkVersions = [];
@@ -106,11 +105,21 @@ angular
 
       vm.projectDefaults = {};
       vm.vertxProject = {};
-      vm.selectedDependency = null;
       vm.alerts = [];
+
+      vm.stack = [];
+      vm.totalPackagesAvailable = 0;
+      vm.detailedOptionsCollapsed = true;
+      vm.selectedDependency = null;
+      vm.selectedPanel = '';
+      vm.availableVertxDependencies = [];
+
       vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
+      vm.disableDependencies = disableDependencies;
+      vm.isDependencyNotAvailable = isDependencyNotAvailable;
+      vm.toggleDetailedOptions = toggleDetailedOptions;
       vm.toggleAdvanced = toggleAdvanced;
       vm.generate = generate;
       vm.addAlert = addAlert;
@@ -160,17 +169,9 @@ angular
         vm.buildTools = data.buildTools;
         vm.languages = data.languages;
         vm.jdkVersions = data.jdkVersions;
-        vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
+        vm.selectedPanel = data.stack && data.stack.length > 0 ? data.stack[0].code : 'none';
         vm.vertxVersions = data.versions.map(function (version) {
           return version.number;
-        });
-      }
-
-      function availableDependencies(version) {
-        return vm.stack.flatMap(function (category) {
-          return category.items.filter(function (value) {
-            return !vm.exclusions[version].includes(value.artifactId);
-          });
         });
       }
 
@@ -185,17 +186,63 @@ angular
         vm.vertxProject.vertxDependencies = [];
         vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
+
+        vm.disableDependencies(defaults.vertxVersion);
+        refreshAvailableDependencies(defaults.vertxVersion, false);
+      }
+
+      function refreshAvailableDependencies(vertxVersion, dependenciesSelected) {
+        // filter dependencies by version
+        var filteredByVersion = vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return !vm.exclusions[vertxVersion].includes(value.artifactId);
+          });
+        });
+
+        // set total number of available dependencies for given version
+        vm.totalPackagesAvailable = filteredByVersion.length;
+
+        if (!dependenciesSelected)
+          // if no dependencies has been selected yet return all of them
+          vm.availableVertxDependencies = filteredByVersion;
+        else
+          // if some of the dependencies has been already selected filter also by already selected dependencies so they are not available in typeahead
+          vm.availableVertxDependencies = filteredByVersion.filter(function (value) {
+          return !vm.vertxProject.vertxDependencies.includes(value)
+        })
       }
 
       function onDependencySelected($item, $model, $label, $event) {
-        addDependency($model);
+        var index = indexOfDependency(function (it) {
+          return it.name === $model.name;
+        });
+        if (index === -1) {
+          addDependency($model);
+        } else {
+          vm.removeDependency($model.artifactId);
+        }
         vm.selectedDependency = null;
       }
 
       function onVertxVersionChanged() {
         var version = vm.vertxProject.vertxVersion;
         vm.exclusions[version].forEach(removeDependency);
-        vm.vertxDependencies = availableDependencies(version);
+        vm.disableDependencies(version);
+
+        // refresh dependencies so there are only available dependencies for given version
+        refreshAvailableDependencies(version)
+      }
+
+      function disableDependencies(version) {
+        vm.stack.forEach(function (cat) {
+          cat.items.forEach(function (dep) {
+            dep.disabled = isDependencyNotAvailable(dep, version);
+          })
+        })
+      }
+
+      function isDependencyNotAvailable(dependency, version) {
+        return vm.exclusions[version].includes(dependency.artifactId);
       }
 
       function indexOfDependency(predicate) {
@@ -208,18 +255,30 @@ angular
       }
 
       function addDependency(dependency) {
-        var index = indexOfDependency(function (it) {
-          return it.name === dependency.name;
-        });
-        if (index === -1) {
-          vm.vertxProject.vertxDependencies.push(dependency);
-        }
+        dependency.selected = true;
+        vm.vertxProject.vertxDependencies.push(dependency);
+
+        // refresh available dependencies so their are not available in typeahead anymore
+        refreshAvailableDependencies(vm.vertxProject.vertxVersion)
       }
 
       function removeDependency(artifactId) {
+        // filter out given dependency
         vm.vertxProject.vertxDependencies = vm.vertxProject.vertxDependencies.filter(function (it) {
           return it.artifactId !== artifactId;
         });
+
+        // deselect (set selected = false) given dependency
+        vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return value.artifactId == artifactId;
+          });
+        }).forEach(function (module) {
+          module.selected = false;
+        });
+
+        // refresh available dependencies so their are again available in typeahead
+        refreshAvailableDependencies(vm.vertxProject.vertxVersion)
       }
 
       function save(data, contentType) {
@@ -239,13 +298,28 @@ angular
         return vertxProject;
       }
 
+      function toggleDetailedOptions() {
+        vm.detailedOptionsCollapsed = !vm.detailedOptionsCollapsed;
+        if (vm.detailedOptionsCollapsed) {
+          scrollTo("homeAnchor");
+        } else {
+          scrollTo("dependencyTypeaheadAnchor");
+        }
+      }
+
       function toggleAdvanced() {
         if (vm.advancedCollapsed) {
           vm.advancedCollapsed = false;
+          scrollTo("advancedAnchor")
         } else {
           vm.vertxProject.packageName = vm.projectDefaults.packageName;
           vm.vertxProject.jdkVersion = vm.projectDefaults.jdkVersion;
           vm.advancedCollapsed = true;
+          if (vm.detailedOptionsCollapsed) {
+            scrollTo("homeAnchor");
+          } else {
+            scrollTo("dependencyTypeaheadAnchor")
+          }
         }
       }
 
@@ -310,4 +384,11 @@ angular
         return args.join(argSeparator);
       }
 
+      function scrollTo(elementId) {
+        setTimeout(function () {
+          var elmnt = document.getElementById(elementId);
+          if(elmnt)
+            elmnt.scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"});
+        }, 150)
+      }
     }]);
