@@ -221,13 +221,7 @@ angular
         } else {
           vm.removeDependency($model.artifactId);
         }
-
         vm.selectedDependency = null;
-        // clean the selected dependency from typeahead if it's visible
-        if (vm.detailedOptionsCollapsed) {
-
-        }
-
       }
 
       function onVertxVersionChanged() {
