@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 String.prototype.format = String.prototype.format ||
-  function () {
+function () {
     "use strict";
     var str = this.toString();
     if (arguments.length) {
-      var t = typeof arguments[0];
-      var key;
-      var args = ("string" === t || "number" === t) ?
-        Array.prototype.slice.call(arguments)
-        : arguments[0];
+        var t = typeof arguments[0];
+        var key;
+        var args = ("string" === t || "number" === t) ?
+            Array.prototype.slice.call(arguments)
+            : arguments[0];
 
-      for (key in args) {
-        str = str.replace(new RegExp("\\${" + key + "\\}", "gi"), args[key]);
-      }
+        for (key in args) {
+            str = str.replace(new RegExp("\\${" + key + "\\}", "gi"), args[key]);
+        }
     }
 
     return str;
-  };
+};
 
 angular
-  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys', 'ngclipboard'])
+  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys',  'ngclipboard'])
   .value('bowser', bowser)
   .factory('Starter', ['$http', function ($http) {
     var service = {
@@ -70,9 +70,7 @@ angular
       httpie: {
         name: "HTTPie",
         template: "http ${baseUrl}starter.${archiveFormat} ${args} --output ${artifactId}.${archiveFormat}",
-        argMapper: function (name, value) {
-          return "${0}==${1}".format(name, value);
-        },
+        argMapper: function (name, value) { return "${0}==${1}".format(name, value); },
         argSeparator: " "
       },
       powershell: {
@@ -83,7 +81,7 @@ angular
       }
     },
     args: ["groupId", "artifactId", "packageName", "vertxVersion", "vertxDependencies", "language", "jdkVersion", "buildTool"]
-  })
+   })
   .filter('capitalize', function () {
     return function (input) {
       return (!!input) ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
@@ -129,6 +127,7 @@ angular
       vm.generateCommands = generateCommands;
 
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
+
 
       loadAll();
 
@@ -361,31 +360,31 @@ angular
       }
 
       function generateCommands(open) {
-        if (!open) {
+        if(!open) {
           return;
         }
         var projectRequest = vertxProjectRequest();
-        if (bowser.windows) {
+        if(bowser.windows) {
           vm.powershellCommand = renderCommand(CliConstants.commands.powershell, CliConstants.args, projectRequest);
         }
         vm.curlCommand = renderCommand(CliConstants.commands.curl, CliConstants.args, projectRequest);
         vm.httpieCommand = renderCommand(CliConstants.commands.httpie, CliConstants.args, projectRequest);
       }
 
-      function renderCommand(command, commandArgs, projectRequest) {
+      function renderCommand(command, commandArgs,  projectRequest) {
         return command.template.format({
-          baseUrl: baseUrl,
-          archiveFormat: projectRequest.archiveFormat,
-          args: toCliArgs(projectRequest, commandArgs, command.argMapper, command.argSeparator),
-          artifactId: projectRequest.artifactId
+           baseUrl: baseUrl,
+           archiveFormat: projectRequest.archiveFormat,
+           args: toCliArgs(projectRequest, commandArgs, command.argMapper, command.argSeparator),
+           artifactId: projectRequest.artifactId
         });
       }
 
       function toCliArgs(obj, commandArgs, argMapper, argSeparator) {
         var args = [];
-        commandArgs.forEach(function (argName) {
-          if (obj.hasOwnProperty(argName) && obj[argName] != undefined && obj[argName].trim().length > 0) {
-            args.push(argMapper(argName, obj[argName]));
+        commandArgs.forEach(function(argName) {
+          if(obj.hasOwnProperty(argName) && obj[argName] != undefined && obj[argName].trim().length > 0 ) {
+             args.push(argMapper(argName, obj[argName]));
           }
         });
         return args.join(argSeparator);
