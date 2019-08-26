@@ -118,6 +118,7 @@ class GeneratorTest {
     List<String> versions = Util.loadStarterData().getJsonArray("versions").stream()
       .map(JsonObject.class::cast)
       .map(obj -> obj.getString("number"))
+      .filter(version -> !version.endsWith("-SNAPSHOT"))
       .collect(toList());
 
     Stream.Builder<VertxProject> builder = Stream.builder();
