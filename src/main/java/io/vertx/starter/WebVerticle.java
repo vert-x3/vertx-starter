@@ -51,7 +51,6 @@ public class WebVerticle extends AbstractVerticle {
 
   public WebVerticle() {
     try {
-
       JsonObject starterData = Util.loadStarterData();
 
       JsonObject defaults = starterData.getJsonObject("defaults");

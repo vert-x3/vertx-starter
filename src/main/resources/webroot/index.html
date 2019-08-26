@@ -25,8 +25,12 @@
   <meta charset=utf-8>
   <meta http-equiv=X-UA-Compatible content="IE=edge">
   <meta content="width=device-width,initial-scale=1" name=viewport>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" rel="stylesheet">
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+        rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"
+        rel="stylesheet">
   <link href=https://vertx.io/stylesheets/font-awesome.min.css media=screen rel=stylesheet>
   <link href=https://vertx.io/javascripts/styles/rainbow.min.css media=screen rel=stylesheet>
   <link href=https://vertx.io/stylesheets/main.css media=screen rel=stylesheet>
@@ -64,111 +68,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-hotkeys/1.7.0/hotkeys.min.css"
         integrity="sha256-vxIU4Ev/ETvzurX+kISsIZV27IMxEKPCjcSYLazm6Og=" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ng-toast/2.0.0/ngToast-animations.min.css"
-        integrity="sha256-gmwH/DtjLCbzXY+/gH/GsfaJw7Sa5vYkpimGQt/UTaw=" crossorigin="anonymous" />
+        integrity="sha256-gmwH/DtjLCbzXY+/gH/GsfaJw7Sa5vYkpimGQt/UTaw=" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ng-toast/2.0.0/ngToast.min.css"
-        integrity="sha256-ykEGhHpzOb/LqfHbKYQNWhgXjusMR4T/MAVanhpqpnU=" crossorigin="anonymous" />
+        integrity="sha256-ykEGhHpzOb/LqfHbKYQNWhgXjusMR4T/MAVanhpqpnU=" crossorigin="anonymous"/>
 
-  <style>
-    div.title {
-      margin-bottom: 2em;
-    }
-
-    .tag {
-      display: inline-block;
-      margin-right: 0.2em;
-      margin-bottom: 0;
-      border: 1px solid transparent;
-      text-align: center;
-      border-radius: 4px;
-      border-radius: 6px;
-      color: #fff;
-      background-color: #782b90;
-      border-color: #68257c;
-      padding: 10px 16px;
-      padding-right: 8px;
-    }
-
-    .remove {
-      border-color: transparent !important;
-      background: transparent !important;
-      float: none;
-      font-size: 21px;
-      font-weight: bold;
-      line-height: 1;
-      color: #fff;
-    }
-
-    .tags-wrapper {
-      margin-bottom: 15px;
-    }
-
-    .alert {
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-    }
-
-    .alert-danger {
-      color: #a94442;
-      background-color: #f2dede;
-      border-color: #ebccd1;
-    }
-
-    .alert-dismissable, .alert-dismissible {
-      padding-right: 35px;
-    }
-
-    button.close {
-      -webkit-appearance: none;
-      padding: 0;
-      cursor: pointer;
-      background: 0 0;
-      border: 0;
-    }
-
-    .close {
-      float: right;
-      font-size: 21px;
-      font-weight: 700;
-      line-height: 1;
-      color: #000;
-      text-shadow: 0 1px 0 #fff;
-      filter: alpha(opacity=20);
-      opacity: .2;
-    }
-
-    button kbd {
-      background: none;
-      margin-left: 0.5em;
-      box-shadow: none;
-    }
-
-    kbd {
-      padding: 2px 4px;
-      font-size: 90%;
-      color: #fff;
-      background-color: #333;
-      border-radius: 3px;
-      box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-    }
-
-    .btn-advanced:active, .btn-advanced:focus {
-      outline: none;
-    }
-
-    .dropdown-menu-large {
-      width: 400px;
-    }
-    .p-3 {
-      padding: 16px;
-    }
-
-    /*By default line-heigh is 1.33 and look like if not rounded the button-group items are not aligned*/
-    .fix-btn-lg > button.btn-lg {
-      line-height: 1.40;
-    }
-  </style>
+  <link rel="stylesheet" href="./main.css"/>
 </head>
 <body ng-app="app">
 <header class="navbar navbar-default navbar-static-top" id="top" role="banner">
@@ -178,7 +82,7 @@
               data-target="#vertx-navbar-collapse"><span class="sr-only">Toggle navigation</span> <span
         class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button>
       <a href="https://vertx.io/" class="navbar-brand"><img alt="Brand"
-                                                           src="https://vertx.io/assets/logo-sm.png"></a></div>
+                                                            src="https://vertx.io/assets/logo-sm.png"></a></div>
     <nav class="collapse navbar-collapse" id="vertx-navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="https://start.vertx.io">Starter</a></li>
@@ -193,6 +97,11 @@
   </div>
 </header>
 <div class="container" ng-controller="VertxStarterController as vm">
+  <a ng-click="vm.goToGenerateButton()" class="go-to-generate" style="display: inline;">
+    <i class="fa fa-arrow-circle-down fa-2x"></i>
+  </a>
+
+  <div id="homeAnchor"></div>
   <form name="form" novalidate onsubmit="return false">
     <div class="row title">
       <div class="col-sm-12">
@@ -237,25 +146,69 @@
             <span class="help-block" ng-hide="form.groupId.$valid">Invalid format</span>
           </div>
         </div>
-        <div ng-class="form.artifactId.$valid ? 'form-group row' : 'form-group row has-error'">
+        <div id="projectArtifactIdAnchor"
+             ng-class="form.artifactId.$valid ? 'form-group row' : 'form-group row has-error'">
           <label for="artifactId" class="col-sm-4 col-form-label control-label">Artifact Id</label>
           <div class="col-sm-8">
-            <input class="form-control" type="text" id="artifactId" name="artifactId" ng-model="vm.vertxProject.artifactId"
+            <input class="form-control" type="text" id="artifactId" name="artifactId"
+                   ng-model="vm.vertxProject.artifactId"
                    placeholder="Your project artifact id" ng-pattern="vm.idRegexp">
             <span class="help-block" ng-hide="form.artifactId.$valid">Invalid format</span>
           </div>
         </div>
-        <div class="form-group row">
-          <label for="dependencies" class="col-sm-4 col-form-label">Dependencies</label>
+
+        <div class="form-group row" id="dependencyTypeaheadAnchor">
+          <div class="col-sm-4">
+            <label for="dependencies" class="col-form-label">Dependencies
+              ({{vm.vertxProject.vertxDependencies.length}}/{{vm.availableVertxDependencies.length}})</label>
+            <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleDetailedOptions()" style="padding-left: 0px">
+              <i ng-class="vm.detailedOptionsCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i> {{vm.detailedOptionsCollapsed?"Show dependencies panel":"Hide dependencies panel"}}
+            </button>
+          </div>
+
           <div class="col-sm-8">
             <input type="text" id="dependencies" class="form-control" placeholder="Web, MQTT, etc."
                    ng-model="vm.selectedDependency"
-                   uib-typeahead="dependency as dependency.name for dependency in vm.vertxDependencies | filter:$viewValue | limitTo:8"
+                   uib-typeahead="dependency as dependency.name for dependency in vm.availableVertxDependencies | filter:$viewValue | limitTo:8"
                    typeahead-on-select="vm.onDependencySelected($item, $model, $label, $event)">
+          </div>
+        </div>
+        <div id="detailedDependenciesAnchor"></div>
+        <div class="form-group row" id="detailedDependencies" ng-hide="vm.detailedOptionsCollapsed">
+          <div class="col-md-4">
+            <h3>Dependencies
+              ({{vm.vertxProject.vertxDependencies.length}}/{{vm.availableVertxDependencies.length}})</h3>
+            <ul class="nav nav-pills nav-stacked">
+              <li role="presentation" ng-repeat="cat in vm.stack" ng-class="{active:vm.selectedPanel === cat.code}"><a
+                ng-click="vm.selectedPanel = cat.code">{{cat.category}}</a></li>
+            </ul>
+          </div>
+          <div class="col-sm-8">
+            <div class="tab-content">
+              <div id="tab-{{cat.code}}" class="tab-pane fade"
+                   ng-class="{in: cat.code == vm.selectedPanel, active: cat.code == vm.selectedPanel}"
+                   ng-repeat="cat in vm.stack">
+                <h3>{{cat.category}}</h3>
+                <p>{{cat.description}}</p>
+                <div ng-repeat="dependency in cat.items">
+                  <label ng-class="{'text-muted': dependency.disabled}">
+                    <input
+                      type="checkbox"
+                      ng-disabled="dependency.disabled"
+                      value="{{dependency.name}}"
+                      ng-model="dependency.selected"
+                      ng-change="$parent.vm.onDependencySelected($item, dependency, $label, $event)">
+                    {{dependency.name}}
+                  </label>
+                  <p ng-class="{'text-muted': dependency.disabled}">{{dependency.description}}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div id="advancedAnchor"></div>
     <div class="row">
       <div class="col-sm-12">
         <p class="text-center">
@@ -265,32 +218,40 @@
         </p>
       </div>
     </div>
-    <div uib-collapse="vm.advancedCollapsed">
-      <hr>
-      <div ng-class="form.packageName.$valid ? 'form-group row' : 'form-group row has-error'">
-        <label for="packageName" class="col-sm-4 col-form-label control-label">Package</label>
-        <div class="col-sm-8">
-          <input class="form-control" type="text" id="packageName" name="packageName" ng-model="vm.vertxProject.packageName"
-                 placeholder="Your project package name" ng-pattern="vm.packageNameRegexp">
-          <span class="help-block" ng-hide="form.packageName.$valid">Invalid format</span>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-4 col-form-label">JDK Version</label>
-        <div class="col-sm-8">
-          <div class="btn-group">
-            <label class="btn btn-sm btn-default" ng-repeat="jdkVersion in vm.jdkVersions"
-                   ng-model="$parent.vm.vertxProject.jdkVersion" uib-btn-radio="jdkVersion">JDK {{ jdkVersion }}</label>
+    <div class="row" ng-hide="vm.advancedCollapsed">
+      <div class="col-sm-12">
+        <hr>
+        <div ng-class="form.packageName.$valid ? 'form-group row' : 'form-group row has-error'">
+          <label for="packageName" class="col-sm-4 col-form-label control-label">Package</label>
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="packageName" name="packageName"
+                   ng-model="vm.vertxProject.packageName"
+                   placeholder="Your project package name" ng-pattern="vm.packageNameRegexp">
+            <span class="help-block" ng-hide="form.packageName.$valid">Invalid format</span>
           </div>
         </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">JDK Version</label>
+          <div class="col-sm-8">
+            <div class="btn-group">
+              <label class="btn btn-sm btn-default" ng-repeat="jdkVersion in vm.jdkVersions"
+                     ng-model="$parent.vm.vertxProject.jdkVersion" uib-btn-radio="jdkVersion">JDK {{ jdkVersion
+                }}</label>
+            </div>
+          </div>
+        </div>
+        <hr>
       </div>
-      <hr>
     </div>
     <div class="row" ng-if="vm.vertxProject.vertxDependencies.length != 0">
       <div class="col-sm-12">
         <div class="form-group">
-          <label class="control-label">Selected dependencies</label>
+          <label class="control-label">Selected dependencies ({{vm.vertxProject.vertxDependencies.length}})</label>
           <br>
+          <div ng-repeat="dependency in vm.selectedDependencies">
+            {{dependency.artifactId}}
+          </div>
+
           <div class="tag" ng-repeat="dependency in vm.vertxProject.vertxDependencies">
             {{ dependency.name }}
             <button type="button" class="remove" aria-label="Remove"
@@ -304,27 +265,31 @@
     <div class="row">
       <div uib-alert ng-repeat="alert in vm.alerts track by $index" class="alert-danger" close="vm.closeAlert($index)">
         <p>
-          {{alert}}. Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a> an
+          {{alert}}. Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a>
+          an
           issue.
         </p>
       </div>
-      <div class="col-sm-12 text-center">
-          <div class="btn-group fix-btn-lg" uib-dropdown auto-close="outsideClick" on-toggle="vm.generateCommands(open)" ng-switch on="vm.isWindows">
-            <button type="button" class="btn btn-lg btn-primary" ng-disabled="form.$invalid" ng-click="vm.generate()">
-              Generate Project <kbd>{{ vm.hotkey }}</kbd>
-            </button>
-            <button type="button" class="btn btn-lg btn-default" uib-dropdown-toggle ng-disabled="form.$invalid">
-              <i class="fa fa-terminal"></i>
-              <span class="sr-only">CLI</span>
-            </button>
-            <ul ng-switch-when="true" class="p-3 dropdown-menu dropdown-menu-large pull-right" uib-dropdown-menu role="menu" aria-labelledby="split-button">
-              <li role="menuitem">
-                <label class="label-bold">
-                  Generate with Power Shell
-                </label>
-                <div class="input-group">
-                  <input type="text" id="powershellCommand" ng-model="vm.powershellCommand" class="form-control" readonly="readonly" aria-label="Project Power Shell URL">
-                  <span class="input-group-btn">
+      <div class="col-sm-12 text-center" id="generateAnchor">
+        <div class="btn-group fix-btn-lg" uib-dropdown auto-close="outsideClick" on-toggle="vm.generateCommands(open)"
+             ng-switch on="vm.isWindows">
+          <button type="button" class="btn btn-lg btn-primary" ng-disabled="form.$invalid" ng-click="vm.generate()">
+            Generate Project <kbd>{{ vm.hotkey }}</kbd>
+          </button>
+          <button type="button" class="btn btn-lg btn-default" uib-dropdown-toggle ng-disabled="form.$invalid">
+            <i class="fa fa-terminal"></i>
+            <span class="sr-only">CLI</span>
+          </button>
+          <ul ng-switch-when="true" class="p-3 dropdown-menu dropdown-menu-large pull-right" uib-dropdown-menu
+              role="menu" aria-labelledby="split-button">
+            <li role="menuitem">
+              <label class="label-bold">
+                Generate with Microsoft PowerShell
+              </label>
+              <div class="input-group">
+                <input type="text" id="powershellCommand" ng-model="vm.powershellCommand" class="form-control"
+                       readonly="readonly" aria-label="Project Power Shell URL">
+                <span class="input-group-btn">
                     <button
                       class="btn btn-default"
                       type="button"
@@ -336,17 +301,19 @@
                       <i class="fa fa-copy"></i>
                     </button>
                   </span>
-                </div>
-              </li>
-            </ul>
-            <ul ng-switch-default class="p-3 dropdown-menu dropdown-menu-large pull-right" uib-dropdown-menu role="menu" aria-labelledby="split-button">
-              <li role="menuitem">
-                <label class="label-bold">
-                  Generate with Curl
-                </label>
-                <div class="input-group">
-                  <input type="text" id="curlCommand" ng-model="vm.curlCommand" class="form-control" readonly="readonly" aria-label="Project Curl URL">
-                  <span class="input-group-btn">
+              </div>
+            </li>
+          </ul>
+          <ul ng-switch-default class="p-3 dropdown-menu dropdown-menu-large pull-right" uib-dropdown-menu role="menu"
+              aria-labelledby="split-button">
+            <li role="menuitem">
+              <label class="label-bold">
+                Generate with Curl
+              </label>
+              <div class="input-group">
+                <input type="text" id="curlCommand" ng-model="vm.curlCommand" class="form-control" readonly="readonly"
+                       aria-label="Project Curl URL">
+                <span class="input-group-btn">
                     <button
                       class="btn btn-default"
                       type="button"
@@ -357,15 +324,16 @@
                       <i class="fa fa-copy"></i>
                     </button>
                   </span>
-                </div>
-              </li>
-              <li role="menuitem">
-                <label class="label-bold">
-                  Generate with HTTPie
-                </label>
-                <div class="input-group">
-                  <input type="text" id="httpieCommand" ng-model="vm.httpieCommand" class="form-control" readonly="readonly" aria-label="Project HTTPie URL">
-                  <span class="input-group-btn">
+              </div>
+            </li>
+            <li role="menuitem">
+              <label class="label-bold">
+                Generate with HTTPie
+              </label>
+              <div class="input-group">
+                <input type="text" id="httpieCommand" ng-model="vm.httpieCommand" class="form-control"
+                       readonly="readonly" aria-label="Project HTTPie URL">
+                <span class="input-group-btn">
                     <button
                       class="btn btn-default"
                       type="button"
@@ -377,10 +345,10 @@
                       <i class="fa fa-copy"></i>
                     </button>
                   </span>
-                </div>
-              </li>
-            </ul>
-          </div>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="col-sm-12" ng-show="vm.isGenerating">
         <p class="text-center">
@@ -391,7 +359,8 @@
     <div class="row">
       <div class="col-sm-12">
         <p class="small pull-right">
-          <a href="https://github.com/vert-x3/vertx-starter/issues"><i class="fa fa-bug" aria-hidden="true"></i> Report an
+          <a href="https://github.com/vert-x3/vertx-starter/issues"><i class="fa fa-bug" aria-hidden="true"></i> Report
+            an
             issue</a>
         </p>
       </div>
@@ -442,8 +411,8 @@
         <div class="row">
           <div class="col-sm-12 col-md-5 col-md-offset-1 col-lg-offset-2"><a
             href="https://eclipse.org"><img class="logo eclipse-logo"
-                                           src="https://vertx.io/assets/eclipse_logo_grey_small.png"
-                                           width="204" height="48"></a></div>
+                                            src="https://vertx.io/assets/eclipse_logo_grey_small.png"
+                                            width="204" height="48"></a></div>
           <div class="col-sm-12 col-md-5 col-md-offset-1 col-lg-offset-0"><a
             href="https://www.ej-technologies.com/products/jprofiler/overview.html"
             style="text-decoration:none"><img class="logo jprofiler-logo"

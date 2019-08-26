@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 String.prototype.format = String.prototype.format ||
-function () {
+  function () {
     "use strict";
     var str = this.toString();
     if (arguments.length) {
-        var t = typeof arguments[0];
-        var key;
-        var args = ("string" === t || "number" === t) ?
-            Array.prototype.slice.call(arguments)
-            : arguments[0];
+      var t = typeof arguments[0];
+      var key;
+      var args = ("string" === t || "number" === t) ?
+        Array.prototype.slice.call(arguments)
+        : arguments[0];
 
-        for (key in args) {
-            str = str.replace(new RegExp("\\${" + key + "\\}", "gi"), args[key]);
-        }
+      for (key in args) {
+        str = str.replace(new RegExp("\\${" + key + "\\}", "gi"), args[key]);
+      }
     }
 
     return str;
-};
+  };
 
 angular
-  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys',  'ngclipboard'])
+  .module('app', ['ngResource', 'ngAnimate', 'ui.bootstrap', 'cfp.hotkeys', 'ngclipboard'])
   .value('bowser', bowser)
   .factory('Starter', ['$http', function ($http) {
     var service = {
@@ -70,7 +70,9 @@ angular
       httpie: {
         name: "HTTPie",
         template: "http ${baseUrl}starter.${archiveFormat} ${args} --output ${artifactId}.${archiveFormat}",
-        argMapper: function (name, value) { return "${0}==${1}".format(name, value); },
+        argMapper: function (name, value) {
+          return "${0}==${1}".format(name, value);
+        },
         argSeparator: " "
       },
       powershell: {
@@ -81,7 +83,7 @@ angular
       }
     },
     args: ["groupId", "artifactId", "packageName", "vertxVersion", "vertxDependencies", "language", "jdkVersion", "buildTool"]
-   })
+  })
   .filter('capitalize', function () {
     return function (input) {
       return (!!input) ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
@@ -97,7 +99,6 @@ angular
       vm.packageNameRegexp = new RegExp('^[A-Za-z0-9_\\-.]+$');
       vm.isGenerating = false;
       vm.vertxVersions = [];
-      vm.vertxDependencies = [];
       vm.languages = [];
       vm.buildTools = [];
       vm.jdkVersions = [];
@@ -106,19 +107,29 @@ angular
 
       vm.projectDefaults = {};
       vm.vertxProject = {};
-      vm.selectedDependency = null;
       vm.alerts = [];
+
+      vm.stack = [];
+      vm.totalPackagesAvailable = 0;
+      vm.detailedOptionsCollapsed = true;
+      vm.selectedDependency = null;
+      vm.selectedPanel = '';
+      vm.availableVertxDependencies = [];
+
       vm.onVertxVersionChanged = onVertxVersionChanged;
       vm.onDependencySelected = onDependencySelected;
       vm.removeDependency = removeDependency;
+      vm.disableDependencies = disableDependencies;
+      vm.isDependencyNotAvailable = isDependencyNotAvailable;
+      vm.toggleDetailedOptions = toggleDetailedOptions;
       vm.toggleAdvanced = toggleAdvanced;
+      vm.goToGenerateButton = goToGenerateButton;
       vm.generate = generate;
       vm.addAlert = addAlert;
       vm.closeAlert = closeAlert;
       vm.generateCommands = generateCommands;
 
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
-
 
       loadAll();
 
@@ -160,17 +171,9 @@ angular
         vm.buildTools = data.buildTools;
         vm.languages = data.languages;
         vm.jdkVersions = data.jdkVersions;
-        vm.vertxDependencies = availableDependencies(data.defaults.vertxVersion);
+        vm.selectedPanel = data.stack && data.stack.length > 0 ? data.stack[0].code : 'none';
         vm.vertxVersions = data.versions.map(function (version) {
           return version.number;
-        });
-      }
-
-      function availableDependencies(version) {
-        return vm.stack.flatMap(function (category) {
-          return category.items.filter(function (value) {
-            return !vm.exclusions[version].includes(value.artifactId);
-          });
         });
       }
 
@@ -185,17 +188,69 @@ angular
         vm.vertxProject.vertxDependencies = [];
         vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
+
+        vm.disableDependencies(defaults.vertxVersion);
+        refreshAvailableDependencies(defaults.vertxVersion, false);
+      }
+
+      function refreshAvailableDependencies(vertxVersion, dependenciesSelected) {
+        // filter dependencies by version
+        var filteredByVersion = vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return !vm.exclusions[vertxVersion].includes(value.artifactId);
+          });
+        });
+
+        // set total number of available dependencies for given version
+        vm.totalPackagesAvailable = filteredByVersion.length;
+
+        if (!dependenciesSelected)
+          // if no dependencies has been selected yet return all of them
+          vm.availableVertxDependencies = filteredByVersion;
+        else
+          // if some of the dependencies has been already selected filter also by already selected dependencies so they are not available in typeahead
+          vm.availableVertxDependencies = filteredByVersion.filter(function (value) {
+          return !vm.vertxProject.vertxDependencies.includes(value)
+        })
       }
 
       function onDependencySelected($item, $model, $label, $event) {
-        addDependency($model);
-        vm.selectedDependency = null;
+        var index = indexOfDependency(function (it) {
+          return it.name === $model.name;
+        });
+        if (index === -1) {
+          addDependency($model);
+        } else {
+          vm.removeDependency($model.artifactId);
+        }
+
+        vm.selectedDependency = null
+        // clean the selected dependency from typeahead if it's visible
+        if (vm.detailedOptionsCollapsed) {
+
+        }
+
       }
 
       function onVertxVersionChanged() {
         var version = vm.vertxProject.vertxVersion;
         vm.exclusions[version].forEach(removeDependency);
-        vm.vertxDependencies = availableDependencies(version);
+        vm.disableDependencies(version);
+
+        // refresh dependencies so there are only available dependencies for given version
+        refreshAvailableDependencies(version)
+      }
+
+      function disableDependencies(version) {
+        vm.stack.forEach(function (cat) {
+          cat.items.forEach(function (dep) {
+            dep.disabled = isDependencyNotAvailable(dep, version);
+          })
+        })
+      }
+
+      function isDependencyNotAvailable(dependency, version) {
+        return vm.exclusions[version].includes(dependency.artifactId);
       }
 
       function indexOfDependency(predicate) {
@@ -208,18 +263,30 @@ angular
       }
 
       function addDependency(dependency) {
-        var index = indexOfDependency(function (it) {
-          return it.name === dependency.name;
-        });
-        if (index === -1) {
-          vm.vertxProject.vertxDependencies.push(dependency);
-        }
+        dependency.selected = true
+        vm.vertxProject.vertxDependencies.push(dependency);
+
+        // refresh available dependencies so their are not available in typeahead anymore
+        refreshAvailableDependencies(vm.vertxProject.vertxVersion)
       }
 
       function removeDependency(artifactId) {
+        // filter out given dependency
         vm.vertxProject.vertxDependencies = vm.vertxProject.vertxDependencies.filter(function (it) {
           return it.artifactId !== artifactId;
         });
+
+        // deselect (set selected = false) given dependency
+        vm.stack.flatMap(function (category) {
+          return category.items.filter(function (value) {
+            return value.artifactId == artifactId;
+          });
+        }).forEach(function (module) {
+          module.selected = false;
+        });
+
+        // refresh available dependencies so their are again available in typeahead
+        refreshAvailableDependencies(vm.vertxProject.vertxVersion)
       }
 
       function save(data, contentType) {
@@ -239,14 +306,35 @@ angular
         return vertxProject;
       }
 
+      function toggleDetailedOptions() {
+        vm.detailedOptionsCollapsed = !vm.detailedOptionsCollapsed;
+
+        if (vm.detailedOptionsCollapsed) {
+          scrollTo("homeAnchor");
+        } else {
+          scrollTo("dependencyTypeaheadAnchor");
+        }
+      }
+
       function toggleAdvanced() {
         if (vm.advancedCollapsed) {
           vm.advancedCollapsed = false;
+
+          scrollTo("advancedAnchor")
         } else {
           vm.vertxProject.packageName = vm.projectDefaults.packageName;
           vm.vertxProject.jdkVersion = vm.projectDefaults.jdkVersion;
-          vm.advancedCollapsed = true;
+          vm.advancedCollapsed = true
+
+          if(vm.detailedOptionsCollapsed)
+            scrollTo("homeAnchor")
+          else
+            scrollTo("dependencyTypeaheadAnchor")
         }
+      }
+
+      function goToGenerateButton() {
+        scrollTo("generateAnchor");
       }
 
       function generate() {
@@ -280,34 +368,41 @@ angular
       }
 
       function generateCommands(open) {
-        if(!open) {
+        if (!open) {
           return;
         }
         var projectRequest = vertxProjectRequest();
-        if(bowser.windows) {
+        if (bowser.windows) {
           vm.powershellCommand = renderCommand(CliConstants.commands.powershell, CliConstants.args, projectRequest);
         }
         vm.curlCommand = renderCommand(CliConstants.commands.curl, CliConstants.args, projectRequest);
         vm.httpieCommand = renderCommand(CliConstants.commands.httpie, CliConstants.args, projectRequest);
       }
 
-      function renderCommand(command, commandArgs,  projectRequest) {
+      function renderCommand(command, commandArgs, projectRequest) {
         return command.template.format({
-           baseUrl: baseUrl,
-           archiveFormat: projectRequest.archiveFormat,
-           args: toCliArgs(projectRequest, commandArgs, command.argMapper, command.argSeparator),
-           artifactId: projectRequest.artifactId
+          baseUrl: baseUrl,
+          archiveFormat: projectRequest.archiveFormat,
+          args: toCliArgs(projectRequest, commandArgs, command.argMapper, command.argSeparator),
+          artifactId: projectRequest.artifactId
         });
       }
 
       function toCliArgs(obj, commandArgs, argMapper, argSeparator) {
         var args = [];
-        commandArgs.forEach(function(argName) {
-          if(obj.hasOwnProperty(argName) && obj[argName] != undefined && obj[argName].trim().length > 0 ) {
-             args.push(argMapper(argName, obj[argName]));
+        commandArgs.forEach(function (argName) {
+          if (obj.hasOwnProperty(argName) && obj[argName] != undefined && obj[argName].trim().length > 0) {
+            args.push(argMapper(argName, obj[argName]));
           }
         });
         return args.join(argSeparator);
       }
 
+      function scrollTo(elementId) {
+        setTimeout(function () {
+          var elmnt = document.getElementById(elementId);
+          if(elmnt)
+            elmnt.scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"});
+        }, 150)
+      }
     }]);
