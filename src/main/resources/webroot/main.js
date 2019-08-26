@@ -123,7 +123,6 @@ angular
       vm.isDependencyNotAvailable = isDependencyNotAvailable;
       vm.toggleDetailedOptions = toggleDetailedOptions;
       vm.toggleAdvanced = toggleAdvanced;
-      vm.goToGenerateButton = goToGenerateButton;
       vm.generate = generate;
       vm.addAlert = addAlert;
       vm.closeAlert = closeAlert;
@@ -224,7 +223,7 @@ angular
           vm.removeDependency($model.artifactId);
         }
 
-        vm.selectedDependency = null
+        vm.selectedDependency = null;
         // clean the selected dependency from typeahead if it's visible
         if (vm.detailedOptionsCollapsed) {
 
@@ -263,7 +262,7 @@ angular
       }
 
       function addDependency(dependency) {
-        dependency.selected = true
+        dependency.selected = true;
         vm.vertxProject.vertxDependencies.push(dependency);
 
         // refresh available dependencies so their are not available in typeahead anymore
@@ -308,7 +307,6 @@ angular
 
       function toggleDetailedOptions() {
         vm.detailedOptionsCollapsed = !vm.detailedOptionsCollapsed;
-
         if (vm.detailedOptionsCollapsed) {
           scrollTo("homeAnchor");
         } else {
@@ -319,22 +317,17 @@ angular
       function toggleAdvanced() {
         if (vm.advancedCollapsed) {
           vm.advancedCollapsed = false;
-
           scrollTo("advancedAnchor")
         } else {
           vm.vertxProject.packageName = vm.projectDefaults.packageName;
           vm.vertxProject.jdkVersion = vm.projectDefaults.jdkVersion;
-          vm.advancedCollapsed = true
-
-          if(vm.detailedOptionsCollapsed)
-            scrollTo("homeAnchor")
-          else
+          vm.advancedCollapsed = true;
+          if (vm.detailedOptionsCollapsed) {
+            scrollTo("homeAnchor");
+          } else {
             scrollTo("dependencyTypeaheadAnchor")
+          }
         }
-      }
-
-      function goToGenerateButton() {
-        scrollTo("generateAnchor");
       }
 
       function generate() {
