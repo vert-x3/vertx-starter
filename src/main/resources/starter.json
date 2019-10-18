@@ -4,13 +4,13 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "3.8.2",
+    "vertxVersion": "3.8.3",
     "archiveFormat": "zip",
     "jdkVersion": "1.8"
   },
   "versions": [
     {
-      "number": "3.8.2",
+      "number": "3.8.3",
       "exclusions": []
     },
     {
