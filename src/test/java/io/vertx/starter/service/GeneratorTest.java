@@ -102,7 +102,7 @@ class GeneratorTest {
       .setArtifactId("demo")
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
-      .setVertxVersion("3.8.3")
+      .setVertxVersion("3.8.4")
       .setVertxDependencies(new HashSet<>(Collections.singleton("vertx-web")))
       .setArchiveFormat(TGZ)
       .setJdkVersion(JdkVersion.JDK_1_8);
