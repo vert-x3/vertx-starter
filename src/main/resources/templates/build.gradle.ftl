@@ -38,10 +38,6 @@ application {
   mainClassName = 'io.vertx.core.Launcher'
 }
 
-<#if language != "kotlin">
-sourceCompatibility = '${jdkVersion}'
-</#if>
-
 def mainVerticleName = '${packageName}.MainVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
