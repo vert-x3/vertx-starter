@@ -67,6 +67,11 @@ compileKotlin {
 compileTestKotlin {
   kotlinOptions.jvmTarget = '1.8'
 }
+<#else>
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 </#if>
 
