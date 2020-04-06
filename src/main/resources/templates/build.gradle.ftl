@@ -53,7 +53,9 @@ dependencies {
 <#list vertxDependencies as dependency>
   implementation "io.vertx:${dependency}:$vertxVersion"
 </#list>
-
+<#if language == "kotlin">
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+</#if>
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterEngineVersion"
