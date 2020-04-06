@@ -123,7 +123,7 @@
 <#noparse>
         <version>${maven-compiler-plugin.version}</version>
 </#noparse>
-<#if jdkVersion == "11">
+<#if jdkVersion == "11" || jdkVersion == "13">
         <configuration>
           <release>${jdkVersion}</release>
         </configuration>

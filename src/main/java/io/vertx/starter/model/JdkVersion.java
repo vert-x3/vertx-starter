@@ -25,7 +25,9 @@ public enum JdkVersion {
   @JsonProperty("1.8")
   JDK_1_8("1.8"),
   @JsonProperty("11")
-  JDK_11("11");
+  JDK_11("11"),
+  @JsonProperty("13")
+  JDK_13("13");
 
   private final String value;
 
