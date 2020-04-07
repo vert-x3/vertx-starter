@@ -17,7 +17,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
-  id("io.vertx.vertx-plugin") version "0.4.0"
+  id("io.vertx.vertx-plugin") version "1.0.2"
 }
 
 repositories {

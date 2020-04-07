@@ -1,11 +1,11 @@
 plugins {
 <#if language == "kotlin">
-  id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+  id "org.jetbrains.kotlin.jvm" version "1.3.71"
 <#else>
   id 'java'
 </#if>
   id 'application'
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 group = '${groupId}'
@@ -28,19 +28,15 @@ repositories {
 
 ext {
 <#if language == "kotlin">
-  kotlinVersion = '1.3.20'
+  kotlinVersion = '1.3.71'
 </#if>
   vertxVersion = '${vertxVersion}'
-  junitJupiterEngineVersion = '5.4.0'
+  junitJupiterEngineVersion = '5.6.0'
 }
 
 application {
   mainClassName = 'io.vertx.core.Launcher'
 }
-
-<#if language != "kotlin">
-sourceCompatibility = '${jdkVersion}'
-</#if>
 
 def mainVerticleName = '${packageName}.MainVerticle'
 def watchForChange = 'src/**/*'
@@ -53,7 +49,9 @@ dependencies {
 <#list vertxDependencies as dependency>
   implementation "io.vertx:${dependency}:$vertxVersion"
 </#list>
-
+<#if language == "kotlin">
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+</#if>
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterEngineVersion"
@@ -67,7 +65,11 @@ compileKotlin {
 compileTestKotlin {
   kotlinOptions.jvmTarget = '1.8'
 }
-
+<#else>
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
 </#if>
 
 shadowJar {
