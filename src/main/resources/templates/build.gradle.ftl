@@ -1,6 +1,6 @@
 plugins {
 <#if language == "kotlin">
-  id "org.jetbrains.kotlin.jvm" version "1.3.71"
+  id "org.jetbrains.kotlin.jvm" version "1.3.72"
 <#else>
   id 'java'
 </#if>
@@ -28,7 +28,7 @@ repositories {
 
 ext {
 <#if language == "kotlin">
-  kotlinVersion = '1.3.71'
+  kotlinVersion = '1.3.72'
 </#if>
   vertxVersion = '${vertxVersion}'
   junitJupiterEngineVersion = '5.6.0'
