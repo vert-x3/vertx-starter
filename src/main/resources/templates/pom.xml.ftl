@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 <#if language == "kotlin">
-    <kotlin.version>1.3.20</kotlin.version>
+    <kotlin.version>1.3.72</kotlin.version>
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
 <#else>
@@ -21,10 +21,10 @@
     <maven.compiler.target>${jdkVersion}</maven.compiler.target>
 
 </#if>
-    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 </#if>
     <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
-    <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     <exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
 
     <vertx.version>${vertxVersion}</vertx.version>
