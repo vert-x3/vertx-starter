@@ -1,7 +1,7 @@
 package ${packageName}
 
 import io.vertx.core.AbstractVerticle
-<#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8")>
+<#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8") && !vertxVersion?starts_with("3.9")>
 import io.vertx.core.Future
 <#else>
 import io.vertx.core.Promise
@@ -9,7 +9,7 @@ import io.vertx.core.Promise
 
 class MainVerticle : AbstractVerticle() {
 
-  <#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8")>
+  <#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8") && !vertxVersion?starts_with("3.9")>
   override fun start(startFuture: Future<Void>) {
   <#else>
   override fun start(startPromise: Promise<Void>) {
@@ -23,14 +23,14 @@ class MainVerticle : AbstractVerticle() {
       }
       .listen(8888) { http ->
         if (http.succeeded()) {
-      <#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8")>
+      <#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8") && !vertxVersion?starts_with("3.9")>
           startFuture.complete()
       <#else>
           startPromise.complete()
       </#if>
           println("HTTP server started on port 8888")
         } else {
-      <#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8")>
+      <#if vertxVersion?starts_with("3") && !vertxVersion?starts_with("3.8") && !vertxVersion?starts_with("3.9")>
           startFuture.fail(http.cause());
       <#else>
           startPromise.fail(http.cause());
