@@ -32,6 +32,11 @@ description = "A web application to generate Vert.x projects"
 val junitJupiterVersion = "5.4.1"
 val testContainersVersion = "1.11.1"
 
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 dependencies {
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-mongo-client")
