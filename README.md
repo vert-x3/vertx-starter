@@ -87,7 +87,7 @@ Note: you need MongoDB.
 You may run it using Docker:
 
 ```
-$ docker run --rm -d mongo -p 27017:27017
+$ docker run --rm -d -p 27017:27017 mongo
 ```
 
 ### Configuration
