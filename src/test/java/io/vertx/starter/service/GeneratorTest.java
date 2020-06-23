@@ -227,8 +227,8 @@ class GeneratorTest {
   }
 
   private void verifyGradleFiles(Language language) {
-    assertThat(workdir.resolve("build.gradle")).isRegularFile();
-    assertThat(workdir.resolve("settings.gradle")).isRegularFile();
+    assertThat(workdir.resolve("build.gradle.kts")).isRegularFile();
+    assertThat(workdir.resolve("settings.gradle.kts")).isRegularFile();
     if (language == KOTLIN) {
       assertThat(workdir.resolve("gradle.properties")).isRegularFile();
     }
