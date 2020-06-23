@@ -314,16 +314,16 @@ class GeneratorTest {
     Process process = Process.create(vertx, command, args, processOptions);
     cleanupTasks.add(() -> process.kill(true));
     Promise<Void> promise = Promise.promise();
-    promise.future().setHandler(handler);
+    promise.future().onComplete(handler);
     RecordParser parser = RecordParser.newDelimited("\n")
-      .exceptionHandler(promise::fail)
+      .exceptionHandler(promise::tryFail)
       .handler(buffer -> {
         String line = buffer.toString().trim();
         if (line.contains("HTTP server started on port 8888")) {
-          promise.complete();
+          promise.tryComplete();
         }
       });
-    process.stdout().exceptionHandler(promise::fail).handler(parser);
+    process.stdout().exceptionHandler(promise::tryFail).handler(parser);
     process.start();
   }
 
