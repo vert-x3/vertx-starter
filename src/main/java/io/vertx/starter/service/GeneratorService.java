@@ -141,8 +141,8 @@ public class GeneratorService {
       }
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jarr");
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.properties");
-      render(tempDir, ctx, ".", "build.gradle");
-      render(tempDir, ctx, ".", "settings.gradle");
+      render(tempDir, ctx, ".", "build.gradle.kts");
+      render(tempDir, ctx, ".", "settings.gradle.kts");
     } else if (project.getBuildTool() == MAVEN) {
       copy(tempDir, "files/maven", "mvnw");
       copy(tempDir, "files/maven", "mvnw.cmd");
