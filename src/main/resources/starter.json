@@ -11,15 +11,47 @@
   "versions": [
     {
       "number": "3.9.1",
-      "exclusions": []
+      "exclusions": [
+        "vertx-auth-htdigest",
+        "vertx-auth-properties",
+        "vertx-auth-ldap",
+        "vertx-auth-webauthn",
+        "vertx-auth-htpasswd",
+        "vertx-auth-sql-client",
+        "vertx-web-templ-rocker",
+        "vertx-web-templ-httl",
+        "vertx-web-sstore-cookie",
+        "vertx-web-sstore-redis",
+        "vertx-json-schema",
+        "vertx-web-validation",
+        "vertx-web-openapi",
+        "vertx-sql-client-templates"
+      ]
     },
     {
       "number": "3.8.5",
-      "exclusions": []
+      "exclusions": [
+        "vertx-auth-htdigest",
+        "vertx-auth-properties",
+        "vertx-auth-ldap",
+        "vertx-auth-webauthn",
+        "vertx-auth-htpasswd",
+        "vertx-auth-sql-client",
+        "vertx-web-templ-rocker",
+        "vertx-web-templ-httl",
+        "vertx-web-sstore-cookie",
+        "vertx-web-sstore-redis",
+        "vertx-json-schema",
+        "vertx-web-validation",
+        "vertx-web-openapi",
+        "vertx-sql-client-templates"
+      ]
     },
     {
       "number": "4.0.0-milestone5",
-      "exclusions": []
+      "exclusions": [
+        "vertx-sql-client-templates"
+      ]
     },
     {
       "number": "4.0.0-SNAPSHOT",
@@ -50,6 +82,56 @@
           "artifactId": "vertx-web-api-contract",
           "name": "Web API Contract",
           "description": "Web API Contract supports OpenApi 3 specification for a design first approach and provides a validation framework."
+        },
+        {
+          "artifactId": "vertx-web-templ-thymeleaf",
+          "name": "Thymeleaf template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-handlebars",
+          "name": "Handlebars template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-jade",
+          "name": "Jade template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-mvel",
+          "name": "MVEL template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-pebble",
+          "name": "Pebble template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-freemarker",
+          "name": "Apache FreeMarker template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-rocker",
+          "name": "Rocker template engine"
+        },
+        {
+          "artifactId": "vertx-web-templ-httl",
+          "name": "HTTL template engine"
+        },
+        {
+          "artifactId": "vertx-web-sstore-cookie",
+          "name": "Cookie session storage"
+        },
+        {
+          "artifactId": "vertx-web-sstore-redis",
+          "name": "Redis session storage"
+        },
+        {
+          "artifactId": "vertx-web-validation",
+          "name": "Web Validation",
+          "description": "A library to declaratively parse and validate incoming Vert.x Web HTTP requests."
+        },
+        {
+          "artifactId": "vertx-web-openapi",
+          "name": "Web OpenAPI",
+          "description": "Extends Vert.x Web to support OpenAPI 3, bringing a simple interface for building web routers that conform to OpenAPI contracts."
         }
       ]
     },
@@ -81,6 +163,11 @@
         {
           "artifactId": "vertx-cassandra-client",
           "name": "Cassandra client"
+        },
+        {
+          "artifactId": "vertx-sql-client-templates",
+          "name": "SQL Client Templates",
+          "description": "A small library designed to facilitate the execution and data manipulation of SQL queries."
         }
       ]
     },
@@ -182,7 +269,32 @@
         {
           "artifactId": "vertx-auth-htdigest",
           "name": ".htdigest Auth",
-          "description": ".htdigest file to query user information"
+          "description": "Authentication and authorization support based on .htdigest files."
+        },
+        {
+          "artifactId": "vertx-auth-properties",
+          "name": "Properties Auth",
+          "description": "Authentication and authorization support based on Java properties files."
+        },
+        {
+          "artifactId": "vertx-auth-ldap",
+          "name": "LDAP Auth",
+          "description": "Implementation using JDK built-in LDAP capabilities."
+        },
+        {
+          "artifactId": "vertx-auth-webauthn",
+          "name": "Webauthn Auth",
+          "description": "FIDO2 WebAuthn (password-less) implementation."
+        },
+        {
+          "artifactId": "vertx-auth-htpasswd",
+          "name": ".htpasswd Auth",
+          "description": "Authentication and authorization support based on .htpasswd files."
+        },
+        {
+          "artifactId": "vertx-auth-sql-client",
+          "name": "Sql Client Auth",
+          "description": "Authentication and authorization support based on the Vert.x SQL client and a relational database."
         }
       ]
     },
@@ -358,6 +470,17 @@
           "name": "HTTP Service Factory",
           "artifactId": "vertx-http-service-factory",
           "description": "This lets you dynamically install and deploy services from an HTTP server (for example Bintray at run-time."
+        }
+      ]
+    },
+    {
+      "code": "standards",
+      "category": "Standards",
+      "items": [
+        {
+          "artifactId": "vertx-json-schema",
+          "name": "JSON Schema",
+          "description": "An extensible implementation of the Json Schema specification to validate every JSON data structure, asynchronously."
         }
       ]
     }
