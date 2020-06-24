@@ -57,8 +57,13 @@ dependencies {
 <#if language == "kotlin">
   implementation(kotlin("stdlib-jdk8"))
 </#if>
+<#if hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5:$vertxVersion")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+<#elseif hasVertxUnit>
+  testImplementation("io.vertx:vertx-unit:$vertxVersion")
+  testImplementation("junit:junit:4.13")
+</#if>
 }
 
 <#if language == "kotlin">
@@ -82,7 +87,11 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Test> {
+<#if hasVertxJUnit5>
   useJUnitPlatform()
+<#elseif hasVertxUnit>
+  useJUnit()
+</#if>
   testLogging {
     events = setOf(PASSED, SKIPPED, FAILED)
   }
