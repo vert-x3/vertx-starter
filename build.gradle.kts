@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
-  id("io.vertx.vertx-plugin") version "1.0.2"
+  id("io.vertx.vertx-plugin") version "1.1.0"
 }
 
 repositories {
@@ -26,11 +27,16 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.8"
+version = "2.0.9"
 description = "A web application to generate Vert.x projects"
 
-val junitJupiterVersion = "5.4.1"
-val testContainersVersion = "1.11.1"
+val junitJupiterVersion = "5.6.2"
+val testContainersVersion = "1.14.3"
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -52,8 +58,7 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
   testImplementation("com.julienviet:childprocess-vertx-ext:1.3.0")
 
-  testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-  testImplementation("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+  testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
   testImplementation("org.testcontainers:junit-jupiter:${testContainersVersion}")
 }
 
@@ -65,6 +70,9 @@ vertx {
 
 tasks.withType<Test> {
   useJUnitPlatform()
+  testLogging {
+    events = setOf(PASSED, SKIPPED, FAILED)
+  }
   failFast = true
   jvmArgs("-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory")
   environment("TESTCONTAINERS_RYUK_DISABLED", true)

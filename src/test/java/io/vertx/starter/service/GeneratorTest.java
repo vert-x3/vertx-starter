@@ -54,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
@@ -121,16 +122,23 @@ class GeneratorTest {
       .filter(version -> !version.endsWith("-SNAPSHOT"))
       .collect(toList());
 
+    List<Set<String>> testDeps = Stream.of("vertx-unit", "vertx-junit5")
+      .map(dep -> Stream.of(dep).collect(Collectors.toSet()))
+      .collect(toList());
+
     Stream.Builder<VertxProject> builder = Stream.builder();
     for (BuildTool buildTool : BuildTool.values()) {
       for (Language language : Language.values()) {
         for (String version : versions) {
-          VertxProject vertxProject = defaultProject()
-            .setBuildTool(buildTool)
-            .setLanguage(language)
-            .setVertxVersion(version)
-            .setPackageName("com.mycompany.project.special");
-          builder.add(vertxProject);
+          for (Set<String> vertxDependencies : testDeps) {
+            VertxProject vertxProject = defaultProject()
+              .setBuildTool(buildTool)
+              .setLanguage(language)
+              .setVertxVersion(version)
+              .setVertxDependencies(vertxDependencies)
+              .setPackageName("com.mycompany.project.special");
+            builder.add(vertxProject);
+          }
         }
       }
     }
@@ -227,8 +235,8 @@ class GeneratorTest {
   }
 
   private void verifyGradleFiles(Language language) {
-    assertThat(workdir.resolve("build.gradle")).isRegularFile();
-    assertThat(workdir.resolve("settings.gradle")).isRegularFile();
+    assertThat(workdir.resolve("build.gradle.kts")).isRegularFile();
+    assertThat(workdir.resolve("settings.gradle.kts")).isRegularFile();
     if (language == KOTLIN) {
       assertThat(workdir.resolve("gradle.properties")).isRegularFile();
     }
@@ -314,16 +322,16 @@ class GeneratorTest {
     Process process = Process.create(vertx, command, args, processOptions);
     cleanupTasks.add(() -> process.kill(true));
     Promise<Void> promise = Promise.promise();
-    promise.future().setHandler(handler);
+    promise.future().onComplete(handler);
     RecordParser parser = RecordParser.newDelimited("\n")
-      .exceptionHandler(promise::fail)
+      .exceptionHandler(promise::tryFail)
       .handler(buffer -> {
         String line = buffer.toString().trim();
         if (line.contains("HTTP server started on port 8888")) {
-          promise.complete();
+          promise.tryComplete();
         }
       });
-    process.stdout().exceptionHandler(promise::fail).handler(parser);
+    process.stdout().exceptionHandler(promise::tryFail).handler(parser);
     process.start();
   }
 

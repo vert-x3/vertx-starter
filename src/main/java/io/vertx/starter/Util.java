@@ -16,8 +16,8 @@
 
 package io.vertx.starter;
 
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.json.jackson.DatabindCodec;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ public class Util {
   @SuppressWarnings("unchecked")
   public static JsonObject loadStarterData() throws IOException {
     try (InputStream is = WebVerticle.class.getClassLoader().getResourceAsStream("starter.json")) {
-      return new JsonObject(Json.mapper.readValue(is, Map.class));
+      return new JsonObject(DatabindCodec.mapper().readValue(is, Map.class));
     }
   }
 }

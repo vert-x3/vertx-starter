@@ -48,24 +48,25 @@
   </dependencyManagement>
 
   <dependencies>
-    <#if !vertxDependencies?has_content>
-      <dependency>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-core</artifactId>
-      </dependency>
-    </#if>
+<#if !vertxDependencies?has_content>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+</#if>
 <#list vertxDependencies as dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>${dependency}</artifactId>
     </dependency>
 </#list>
+
+<#if hasVertxJUnit5>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -82,6 +83,19 @@
 </#noparse>
       <scope>test</scope>
     </dependency>
+<#elseif hasVertxUnit>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-unit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13</version>
+      <scope>test</scope>
+    </dependency>
+</#if>
   </dependencies>
 
   <build>

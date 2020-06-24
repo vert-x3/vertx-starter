@@ -62,7 +62,7 @@ class AnalyticsTest {
       .put("host", mongo.getContainerIpAddress())
       .put("port", mongo.getMappedPort(27017));
 
-    client = MongoClient.createNonShared(vertx, config);
+    client = MongoClient.create(vertx, config);
 
     DeploymentOptions options = new DeploymentOptions().setConfig(config);
     vertx.deployVerticle(new AnalyticsVerticle(), options, testContext.succeeding(id -> testContext.completeNow()));

@@ -121,6 +121,13 @@ public class GeneratorService {
     if (vertxDependencies == null) {
       vertxDependencies = new HashSet<>();
     }
+    boolean hasVertxUnit = vertxDependencies.remove("vertx-unit");
+    ctx.put("hasVertxUnit", hasVertxUnit);
+    boolean hasVertxJUnit5 = vertxDependencies.remove("vertx-junit5") || !hasVertxUnit;
+    ctx.put("hasVertxJUnit5", hasVertxJUnit5);
+    if (hasVertxUnit && hasVertxJUnit5) {
+      throw new RuntimeException("Cannot generate a project which depends on both vertx-unit and vertx-junit5");
+    }
     vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
     String packageName = packageName(project);
@@ -141,8 +148,8 @@ public class GeneratorService {
       }
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jarr");
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.properties");
-      render(tempDir, ctx, ".", "build.gradle");
-      render(tempDir, ctx, ".", "settings.gradle");
+      render(tempDir, ctx, ".", "build.gradle.kts");
+      render(tempDir, ctx, ".", "settings.gradle.kts");
     } else if (project.getBuildTool() == MAVEN) {
       copy(tempDir, "files/maven", "mvnw");
       copy(tempDir, "files/maven", "mvnw.cmd");
