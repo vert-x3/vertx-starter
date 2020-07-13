@@ -149,6 +149,10 @@
           "name": "Reactive MySQL client"
         },
         {
+          "artifactId": "vertx-db2-client",
+          "name": "Reactive DB2 client"
+        },
+        {
           "artifactId": "vertx-mongo-client",
           "name": "MongoDB client"
         },
