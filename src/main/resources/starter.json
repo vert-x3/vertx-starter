@@ -48,7 +48,7 @@
       ]
     },
     {
-      "number": "4.0.0-milestone5",
+      "number": "4.0.0.Beta1",
       "exclusions": [
         "vertx-sql-client-templates"
       ]
