@@ -48,10 +48,8 @@
       ]
     },
     {
-      "number": "4.0.0.Beta1",
-      "exclusions": [
-        "vertx-sql-client-templates"
-      ]
+      "number": "4.0.0.Beta3",
+      "exclusions": []
     },
     {
       "number": "4.0.0-SNAPSHOT",
