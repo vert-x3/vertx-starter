@@ -37,7 +37,7 @@
         "vertx-auth-webauthn",
         "vertx-auth-htpasswd",
         "vertx-auth-sql-client",
-		"vertx-db2-client",
+        "vertx-db2-client",
         "vertx-web-templ-rocker",
         "vertx-web-templ-httl",
         "vertx-web-sstore-cookie",
