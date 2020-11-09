@@ -44,7 +44,7 @@ val doOnChange = "./gradlew classes"
 val launcherClassName = "io.vertx.core.Launcher"
 
 application {
-  mainClassName = launcherClassName
+  mainClass.set(launcherClassName)
 }
 
 dependencies {
