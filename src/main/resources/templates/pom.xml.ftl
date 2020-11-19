@@ -166,10 +166,7 @@
 </#noparse>
                   </manifestEntries>
                 </transformer>
-                <transformer
-                  implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
-                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
               <artifactSet>
               </artifactSet>
