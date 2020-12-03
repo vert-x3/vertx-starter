@@ -1,6 +1,6 @@
 # Vertx.x Starter
 
-[![Build Status](https://travis-ci.org/vert-x3/vertx-starter.svg?branch=master)](https://travis-ci.org/vert-x3/vertx-starter)
+[![Build Status](https://github.com/vert-x3/vertx-starter/workflows/CI/badge.svg)](https://github.com/vert-x3/vertx-starter/actions?query=workflow%3ACI)
 
 [Vert.x Starter](http://start.vertx.io) is an open-source web application for creating [Vert.x](https://vertx.io/) applications.
 
