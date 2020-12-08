@@ -149,10 +149,8 @@
           <div class="col-sm-4">
             <label for="dependencies" class="col-form-label">Dependencies
               ({{vm.vertxProject.vertxDependencies.length}}/{{vm.availableVertxDependencies.length}})</label>
-            <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleDetailedOptions()"
-                    style="padding-left: 0px">
-              <i ng-class="vm.detailedOptionsCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i>
-              {{vm.detailedOptionsCollapsed?"Show dependencies panel":"Hide dependencies panel"}}
+            <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleDetailedOptions()" style="padding-left: 0px">
+              <i ng-class="vm.detailedOptionsCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i> {{vm.detailedOptionsCollapsed?"Show dependencies panel":"Hide dependencies panel"}}
             </button>
           </div>
 
@@ -212,8 +210,7 @@
         <div ng-class="form.packageName.$valid ? 'form-group row' : 'form-group row has-error'">
           <label for="packageName" class="col-sm-4 col-form-label control-label">Package</label>
           <div class="col-sm-8">
-            <input class="form-control" type="text" id="packageName" name="packageName"
-                   ng-model="vm.vertxProject.packageName"
+            <input class="form-control" type="text" id="packageName" name="packageName" ng-model="vm.vertxProject.packageName"
                    placeholder="Your project package name" ng-pattern="vm.packageNameRegexp">
             <span class="help-block" ng-hide="form.packageName.$valid">Invalid format</span>
           </div>
@@ -223,8 +220,7 @@
           <div class="col-sm-8">
             <div class="btn-group">
               <label class="btn btn-sm btn-default" ng-repeat="jdkVersion in vm.jdkVersions"
-                     ng-model="$parent.vm.vertxProject.jdkVersion" uib-btn-radio="jdkVersion">JDK {{ jdkVersion
-                }}</label>
+                     ng-model="$parent.vm.vertxProject.jdkVersion" uib-btn-radio="jdkVersion">JDK {{ jdkVersion }}</label>
             </div>
           </div>
         </div>
@@ -340,8 +336,7 @@
     <div class="row">
       <div class="col-sm-12">
         <p class="small pull-right">
-          <a href="https://how-to.vertx.io/"><i class="fa fa-arrow-right" aria-hidden="true"></i> Find a Vert.x
-            how-to</a>
+          <a href="https://how-to.vertx.io/"><i class="fa fa-arrow-right" aria-hidden="true"></i> Find a Vert.x how-to</a>
         </p>
       </div>
     </div>

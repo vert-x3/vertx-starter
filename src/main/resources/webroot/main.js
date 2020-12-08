@@ -203,13 +203,13 @@ angular
         vm.totalPackagesAvailable = filteredByVersion.length;
 
         if (!dependenciesSelected)
-        // if no dependencies has been selected yet return all of them
+          // if no dependencies has been selected yet return all of them
           vm.availableVertxDependencies = filteredByVersion;
         else
-        // if some of the dependencies has been already selected filter also by already selected dependencies so they are not available in typeahead
+          // if some of the dependencies has been already selected filter also by already selected dependencies so they are not available in typeahead
           vm.availableVertxDependencies = filteredByVersion.filter(function (value) {
-            return !vm.vertxProject.vertxDependencies.includes(value)
-          })
+          return !vm.vertxProject.vertxDependencies.includes(value)
+        })
       }
 
       function onDependencySelected($item, $model, $label, $event) {
@@ -387,7 +387,7 @@ angular
       function scrollTo(elementId) {
         setTimeout(function () {
           var elmnt = document.getElementById(elementId);
-          if (elmnt)
+          if(elmnt)
             elmnt.scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"});
         }, 150)
       }
