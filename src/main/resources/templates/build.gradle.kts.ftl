@@ -40,7 +40,9 @@ val junitJupiterVersion = "5.6.0"
 
 val mainVerticleName = "${packageName}.MainVerticle"
 val watchForChange = "src/**/*"
-val doOnChange = "./gradlew classes"
+<#noparse>
+val doOnChange = "${projectDir}/gradlew classes"
+</#noparse>
 val launcherClassName = "io.vertx.core.Launcher"
 
 application {

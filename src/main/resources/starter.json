@@ -4,32 +4,13 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "3.9.4",
+    "vertxVersion": "4.0.0",
     "archiveFormat": "zip",
     "jdkVersion": "11"
   },
   "versions": [
     {
       "number": "3.9.4",
-      "exclusions": [
-        "vertx-auth-htdigest",
-        "vertx-auth-properties",
-        "vertx-auth-ldap",
-        "vertx-auth-webauthn",
-        "vertx-auth-htpasswd",
-        "vertx-auth-sql-client",
-        "vertx-web-templ-rocker",
-        "vertx-web-templ-httl",
-        "vertx-web-sstore-cookie",
-        "vertx-web-sstore-redis",
-        "vertx-json-schema",
-        "vertx-web-validation",
-        "vertx-web-openapi",
-        "vertx-sql-client-templates"
-      ]
-    },
-    {
-      "number": "3.8.5",
       "exclusions": [
         "vertx-auth-htdigest",
         "vertx-auth-properties",

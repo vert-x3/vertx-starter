@@ -5,16 +5,10 @@ addons:
   ssh_known_hosts: start.vertx.io
 branches:
   only:
-    - master
     - prod
 jdk: openjdk11
 jobs:
   include:
-    - stage: test
-      install:
-        - ./gradlew assemble
-      script:
-        - ./gradlew check -i
     - stage: deploy
       if: type = push AND branch = prod
       before_install:

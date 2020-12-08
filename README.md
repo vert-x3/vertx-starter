@@ -1,6 +1,6 @@
 # Vertx.x Starter
 
-[![Build Status](https://travis-ci.org/vert-x3/vertx-starter.svg?branch=master)](https://travis-ci.org/vert-x3/vertx-starter)
+[![Build Status](https://github.com/vert-x3/vertx-starter/workflows/CI/badge.svg)](https://github.com/vert-x3/vertx-starter/actions?query=workflow%3ACI)
 
 [Vert.x Starter](http://start.vertx.io) is an open-source web application for creating [Vert.x](https://vertx.io/) applications.
 
@@ -11,7 +11,7 @@ Simply click on _Generate Project_ on the web interface to download a project ar
 If you are a CLI adept, you can use any http client (curl, [httpie](https://httpie.org/)) to invoke the API.
 
 ```
-$ curl -X GET http://start.vertx.io/starter.zip -d groupId=com.acme -d language=java -d vertxVersion=3.9.4 -o starter.zip
+$ curl -X GET http://start.vertx.io/starter.zip -d groupId=com.acme -d language=java -d vertxVersion=4.0.0 -o starter.zip
 ```
 
 ## API
@@ -38,7 +38,7 @@ Full example:
 
 ```
 curl -X GET \
-  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=3.9.4' \
+  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.0.0' \
   -o starter.zip
 ```
 
@@ -50,7 +50,7 @@ groupId==io.vertx \
 artitfactId==starter \
 language==java \
 buildTool==maven \
-vertxVersion==3.9.4 \
+vertxVersion==4.0.0 \
 vertxDependencies==vertx-web,vertx-web-client \
 -o starter.zip
 ```
