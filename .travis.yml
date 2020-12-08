@@ -5,7 +5,6 @@ addons:
   ssh_known_hosts: start.vertx.io
 branches:
   only:
-    - master
     - prod
 jdk: openjdk11
 jobs:
