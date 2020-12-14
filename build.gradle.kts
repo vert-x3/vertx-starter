@@ -50,6 +50,8 @@ dependencies {
 
   testImplementation("org.assertj:assertj-core:3.10.0")
   testImplementation("io.vertx:vertx-junit5")
+  testImplementation("io.vertx:vertx-rx-java") // to be removed when uprading to 3.9.6 or 4.0.0
+  testImplementation("io.vertx:vertx-rx-java2") // to be removed when uprading to 3.9.6 or 4.0.0
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
   testImplementation("com.julienviet:childprocess-vertx-ext:1.3.0")
 
@@ -58,7 +60,7 @@ dependencies {
 }
 
 vertx {
-  vertxVersion = "3.9.4"
+  vertxVersion = "3.9.5"
   mainVerticle = "io.github.jponge.vertx.boot.BootVerticle"
   jvmArgs = listOf("-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory")
 }
