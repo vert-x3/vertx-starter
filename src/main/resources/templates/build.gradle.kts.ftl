@@ -62,6 +62,12 @@ dependencies {
 <#if hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5:$vertxVersion")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+<#if vertxVersion == "3.9.5" && !vertxDependencies?seq_contains("vertx-rx-java")>
+  testImplementation("io.vertx:vertx-rx-java:3.9.5") // to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93
+</#if>
+<#if vertxVersion == "3.9.5" && !vertxDependencies?seq_contains("vertx-rx-java2")>
+  testImplementation("io.vertx:vertx-rx-java2:3.9.5") // to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93
+</#if>
 <#elseif hasVertxUnit>
   testImplementation("io.vertx:vertx-unit:$vertxVersion")
   testImplementation("junit:junit:4.13")
