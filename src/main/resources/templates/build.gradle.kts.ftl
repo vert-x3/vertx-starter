@@ -89,9 +89,7 @@ tasks.withType<ShadowJar> {
   manifest {
     attributes(mapOf("Main-Verticle" to mainVerticleName))
   }
-  mergeServiceFiles {
-    include("META-INF/services/io.vertx.core.spi.VerticleFactory")
-  }
+  mergeServiceFiles()
 }
 
 tasks.withType<Test> {
