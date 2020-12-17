@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 <#if language == "kotlin">
-  import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 </#if>
 
 plugins {
 <#if language == "kotlin">
-  kotlin ("jvm") version "1.3.72"
+  kotlin ("jvm") version "1.4.21"
 <#else>
   java
 </#if>
   application
-  id("com.github.johnrengelman.shadow") version "5.2.0"
+  id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 group = "${groupId}"
@@ -32,18 +32,16 @@ repositories {
 </#if>
 }
 
-<#if language == "kotlin">
-val kotlinVersion = "1.3.72"
-</#if>
 val vertxVersion = "${vertxVersion}"
-val junitJupiterVersion = "5.6.0"
+val junitJupiterVersion = "5.7.0"
 
 val mainVerticleName = "${packageName}.MainVerticle"
+val launcherClassName = "io.vertx.core.Launcher"
+
 val watchForChange = "src/**/*"
 <#noparse>
 val doOnChange = "${projectDir}/gradlew classes"
 </#noparse>
-val launcherClassName = "io.vertx.core.Launcher"
 
 application {
   mainClassName = launcherClassName
@@ -71,7 +69,7 @@ dependencies {
 </#if>
 <#elseif hasVertxUnit>
   testImplementation("io.vertx:vertx-unit")
-  testImplementation("junit:junit:4.13")
+  testImplementation("junit:junit:4.13.1")
 </#if>
 }
 
@@ -80,8 +78,8 @@ val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion}"
 <#else>
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
+  targetCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
 }
 </#if>
 

@@ -15,7 +15,6 @@
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
   id("io.vertx.vertx-plugin") version "1.1.0"
@@ -30,8 +29,8 @@ group = "io.vertx"
 version = "2.0.11"
 description = "A web application to generate Vert.x projects"
 
-val junitJupiterVersion = "5.6.2"
-val testContainersVersion = "1.14.3"
+val junitJupiterVersion = "5.7.0"
+val testContainersVersion = "1.15.1"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -66,7 +65,14 @@ vertx {
 }
 
 tasks.withType<Test> {
-  useJUnitPlatform()
+  useJUnitPlatform {
+    if (System.getProperty("includeTags") != null) {
+      includeTags = mutableSetOf(System.getProperty("includeTags"))
+    }
+    if (System.getProperty("excludeTags") != null) {
+      excludeTags = mutableSetOf(System.getProperty("excludeTags"))
+    }
+  }
   testLogging {
     events = setOf(PASSED, SKIPPED, FAILED)
   }
@@ -77,12 +83,6 @@ tasks.withType<Test> {
 
 tasks.withType<ShadowJar> {
   archiveFileName.set("${project.name}-${project.version}-fat.jar")
-}
-
-
-tasks.withType<Wrapper> {
-  gradleVersion = "5.2.1"
-  distributionType = ALL
 }
 
 apply(from = "gradle/docker.gradle")

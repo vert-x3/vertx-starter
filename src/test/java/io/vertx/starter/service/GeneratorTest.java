@@ -40,8 +40,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.junit.Assume;
+import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,23 +75,28 @@ import static org.assertj.core.api.Assumptions.assumeThat;
  */
 @ExtendWith(VertxExtension.class)
 @Timeout(value = 5, timeUnit = TimeUnit.MINUTES)
+@Tag("generator")
 class GeneratorTest {
 
   @TempDir
-  Path m2dir;
+  static Path m2dir;
   @TempDir
-  Path mavenRepository;
+  static Path mavenRepository;
+  static Path settingsFile;
+
   @TempDir
   Path workdir;
+  List<Runnable> cleanupTasks = new ArrayList<>();
 
-  private Path settingsFile;
-  private List<Runnable> cleanupTasks = new ArrayList<>();
+  @BeforeAll
+  static void beforeAll() throws Exception {
+    settingsFile = m2dir.resolve("settings.xml");
+    Files.copy(GeneratorTest.class.getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
+  }
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
-    settingsFile = m2dir.resolve("settings.xml");
-    Files.copy(getClass().getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
 
@@ -104,18 +113,18 @@ class GeneratorTest {
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
       .setVertxVersion("4.0.0")
-      .setVertxDependencies(new HashSet<>(Collections.singleton("vertx-web")))
       .setArchiveFormat(TGZ)
       .setJdkVersion(JdkVersion.JDK_1_8);
   }
 
   @ParameterizedTest
-  @MethodSource("testProjects")
+  @MethodSource("testProjectsJdk8")
+  @Tag("generator-8")
   void testProjectJdk8(VertxProject project, Vertx vertx, VertxTestContext testContext) {
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjects() throws IOException {
+  static Stream<VertxProject> testProjectsJdk8() throws IOException {
     List<String> versions = Util.loadStarterData().getJsonArray("versions").stream()
       .map(JsonObject.class::cast)
       .map(obj -> obj.getString("number"))
@@ -147,13 +156,36 @@ class GeneratorTest {
 
   @ParameterizedTest
   @MethodSource("testProjectsJdk11")
+  @Tag("generator-11")
   void testProjectJdk11(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(System.getProperty("java.specification.version")).isEqualTo("11");
+    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(11);
     testProject(project, vertx, testContext);
   }
 
   static Stream<VertxProject> testProjectsJdk11() throws IOException {
-    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
+    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
+  }
+
+  @ParameterizedTest
+  @MethodSource("testProjectsJdk15")
+  @Tag("generator-15")
+  void testProjectJdk15(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(15);
+    testProject(project, vertx, testContext);
+  }
+
+  static Stream<VertxProject> testProjectsJdk15() throws IOException {
+    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_15));
+  }
+
+  private int javaSpecVersion() {
+    String property = System.getProperty("java.specification.version");
+    Assume.assumeNotNull(property);
+    try {
+      return Integer.parseInt(property);
+    } catch (NumberFormatException e) {
+      throw new AssumptionViolatedException("Not a number", e);
+    }
   }
 
   private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
