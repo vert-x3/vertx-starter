@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 <#if language == "kotlin">
-    <kotlin.version>1.3.72</kotlin.version>
+    <kotlin.version>1.4.21</kotlin.version>
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
 <#else>
@@ -23,14 +23,17 @@
 </#if>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 </#if>
-    <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+    <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-    <exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
+    <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
 
     <vertx.version>${vertxVersion}</vertx.version>
-    <junit-jupiter.version>5.4.0</junit-jupiter.version>
+<#if hasVertxJUnit5>
+    <junit-jupiter.version>5.7.0</junit-jupiter.version>
+</#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
+    <launcher.class>io.vertx.core.Launcher</launcher.class>
   </properties>
 
   <dependencyManagement>
@@ -108,7 +111,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
 </#if>
@@ -130,7 +133,7 @@
         <version>${kotlin.version}</version>
 </#noparse>
         <configuration>
-          <jvmTarget>1.8</jvmTarget>
+          <jvmTarget>${jdkVersion}</jvmTarget>
         </configuration>
         <executions>
           <execution>
@@ -176,8 +179,8 @@
                 <transformer
                   implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Main-Class>io.vertx.core.Launcher</Main-Class>
 <#noparse>
+                    <Main-Class>${launcher.class}</Main-Class>
                     <Main-Verticle>${main.verticle}</Main-Verticle>
 </#noparse>
                   </manifestEntries>
