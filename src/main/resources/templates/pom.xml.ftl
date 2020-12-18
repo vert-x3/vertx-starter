@@ -34,6 +34,9 @@
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
     <launcher.class>io.vertx.core.Launcher</launcher.class>
+
+    <redeploy.watch>src/**/*</redeploy.watch>
+    <redeploy.action>mvn compile</redeploy.action>
   </properties>
 
   <dependencyManagement>
@@ -210,13 +213,8 @@
         <version>${exec-maven-plugin.version}</version>
 </#noparse>
         <configuration>
-          <mainClass>io.vertx.core.Launcher</mainClass>
-          <arguments>
-            <argument>run</argument>
-<#noparse>
-            <argument>${main.verticle}</argument>
-</#noparse>
-          </arguments>
+          <executable>java</executable>
+          <commandlineArgs>-cp %classpath <#noparse>${launcher.class}</#noparse> run --redeploy=<#noparse>"${redeploy.watch}"</#noparse> --on-redeploy=<#noparse>"${redeploy.action}"</#noparse> --launcher-class=<#noparse>${launcher.class}</#noparse> <#noparse>${main.verticle}</#noparse></commandlineArgs>
         </configuration>
       </plugin>
     </plugins>

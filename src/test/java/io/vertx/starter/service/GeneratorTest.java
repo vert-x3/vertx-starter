@@ -343,7 +343,7 @@ class GeneratorTest {
     List<String> args;
     if (buildTool == MAVEN) {
       command = "./mvnw";
-      args = Arrays.asList("clean", "compile", "exec:java");
+      args = Arrays.asList("clean", "compile", "exec:exec");
     } else if (buildTool == GRADLE) {
       command = "./gradlew";
       args = Arrays.asList("clean", "run");
