@@ -109,6 +109,11 @@ public class ValidationHandler implements Handler<RoutingContext> {
         return;
       }
 
+      if (vertxDependencies.contains("vertx-unit") && vertxDependencies.contains("vertx-junit5")) {
+        WebVerticle.fail(rc, 400, "You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
+        return;
+      }
+
       vertxProject.setVertxDependencies(vertxDependencies);
     }
 
