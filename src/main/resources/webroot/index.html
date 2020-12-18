@@ -226,11 +226,8 @@
       </div>
     </div>
     <div class="row">
-      <div uib-alert ng-repeat="alert in vm.alerts track by $index" class="alert-danger" close="vm.closeAlert($index)">
-        <p>
-          {{alert}}. Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a> an
-          issue.
-        </p>
+      <div uib-alert ng-repeat="alert in vm.alerts track by $index" ng-class="'alert-' + (alert.type || 'warning')" close="vm.closeAlert($index)">
+        {{alert.message}}<span ng-if="alert.type === 'danger'"><br>Please <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new">report</a> an issue.</span>
       </div>
       <div class="col-sm-12 text-center">
           <div class="btn-group fix-btn-lg" uib-dropdown auto-close="outsideClick" on-toggle="vm.generateCommands(open)" ng-switch on="vm.isWindows">
