@@ -103,7 +103,8 @@ To release the project, proceed as follows.
 First, tag the last commit in `master` branch:
 
 ```
-git tag -f -a x.y.z -m "Version x.y.z"
+export VERSION=x.y.z
+git tag -f -a ${VERSION} -m "Version ${VERSION}"
 git push upstream  --tags
 ```
 

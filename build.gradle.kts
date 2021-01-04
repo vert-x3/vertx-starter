@@ -15,10 +15,9 @@
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
-  id("io.vertx.vertx-plugin") version "1.1.0"
+  id("io.vertx.vertx-plugin") version "1.2.0"
 }
 
 repositories {
@@ -27,11 +26,11 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.10"
+version = "2.0.11"
 description = "A web application to generate Vert.x projects"
 
-val junitJupiterVersion = "5.6.2"
-val testContainersVersion = "1.14.3"
+val junitJupiterVersion = "5.7.0"
+val testContainersVersion = "1.15.1"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -44,9 +43,10 @@ dependencies {
   implementation("io.vertx:vertx-web-client")
   implementation("io.vertx:vertx-web-templ-freemarker")
 
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.12.0")
   implementation("org.apache.commons:commons-compress:1.18")
   implementation("ch.qos.logback:logback-classic:1.2.3")
-  implementation("io.github.jponge:vertx-boot:1.0.0")
+  implementation("io.github.jponge:vertx-boot:1.2.1")
 
   testImplementation("org.assertj:assertj-core:3.10.0")
   testImplementation("io.vertx:vertx-junit5")
@@ -60,29 +60,28 @@ dependencies {
 }
 
 vertx {
-  vertxVersion = "3.9.5"
+  vertxVersion = "4.0.0"
   mainVerticle = "io.github.jponge.vertx.boot.BootVerticle"
-  jvmArgs = listOf("-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory")
 }
 
 tasks.withType<Test> {
-  useJUnitPlatform()
+  useJUnitPlatform {
+    if (System.getProperty("includeTags") != null) {
+      includeTags = mutableSetOf(System.getProperty("includeTags"))
+    }
+    if (System.getProperty("excludeTags") != null) {
+      excludeTags = mutableSetOf(System.getProperty("excludeTags"))
+    }
+  }
   testLogging {
     events = setOf(PASSED, SKIPPED, FAILED)
   }
   failFast = true
-  jvmArgs("-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory")
   environment("TESTCONTAINERS_RYUK_DISABLED", true)
 }
 
 tasks.withType<ShadowJar> {
   archiveFileName.set("${project.name}-${project.version}-fat.jar")
-}
-
-
-tasks.withType<Wrapper> {
-  gradleVersion = "5.2.1"
-  distributionType = ALL
 }
 
 apply(from = "gradle/docker.gradle")

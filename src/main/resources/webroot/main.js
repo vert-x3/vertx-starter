@@ -338,15 +338,15 @@ angular
             reader.addEventListener("loadend", function () {
               var message = JSON.parse(reader.result).message;
               $scope.$apply(function () {
-                $scope.vm.addAlert(message);
+                $scope.vm.addAlert(message, error.status === 400?'warning':'danger');
               });
             });
             reader.readAsText(error.data, "utf8");
           });
       }
 
-      function addAlert(message) {
-        vm.alerts.push(message);
+      function addAlert(message, type) {
+        vm.alerts.push({message: message, type: type});
       }
 
       function closeAlert(index) {

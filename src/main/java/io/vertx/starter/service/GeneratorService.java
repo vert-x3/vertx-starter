@@ -126,7 +126,7 @@ public class GeneratorService {
     boolean hasVertxJUnit5 = vertxDependencies.remove("vertx-junit5") || !hasVertxUnit;
     ctx.put("hasVertxJUnit5", hasVertxJUnit5);
     if (hasVertxUnit && hasVertxJUnit5) {
-      throw new RuntimeException("Cannot generate a project which depends on both vertx-unit and vertx-junit5");
+      throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
     }
     vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);

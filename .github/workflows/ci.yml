@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        jdk: [11]
+        jdk: [8,11,15]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -23,5 +23,7 @@ jobs:
         uses: joschi/setup-jdk@v2
         with:
           java-version: ${{ matrix.jdk }}
-      - name: Run tests
-        run: ./gradlew check -i
+      - name: Run generator tests
+        run: ./gradlew check -i -DincludeTags=generator-${{ matrix.jdk }}
+      - name: Run other tests
+        run: ./gradlew check -i -DexcludeTags=generator

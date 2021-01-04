@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 <#if language == "kotlin">
-  import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 </#if>
 
 plugins {
 <#if language == "kotlin">
-  kotlin ("jvm") version "1.3.72"
+  kotlin ("jvm") version "1.4.21"
 <#else>
   java
 </#if>
   application
-  id("com.github.johnrengelman.shadow") version "5.2.0"
+  id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 group = "${groupId}"
@@ -32,56 +32,55 @@ repositories {
 </#if>
 }
 
-<#if language == "kotlin">
-val kotlinVersion = "1.3.72"
-</#if>
 val vertxVersion = "${vertxVersion}"
-val junitJupiterVersion = "5.6.0"
+val junitJupiterVersion = "5.7.0"
 
 val mainVerticleName = "${packageName}.MainVerticle"
+val launcherClassName = "io.vertx.core.Launcher"
+
 val watchForChange = "src/**/*"
 <#noparse>
 val doOnChange = "${projectDir}/gradlew classes"
 </#noparse>
-val launcherClassName = "io.vertx.core.Launcher"
 
 application {
   mainClassName = launcherClassName
 }
 
 dependencies {
+  implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
 <#if !vertxDependencies?has_content>
-  implementation("io.vertx:vertx-core:$vertxVersion")
+  implementation("io.vertx:vertx-core")
 </#if>
 <#list vertxDependencies as dependency>
-  implementation("io.vertx:${dependency}:$vertxVersion")
+  implementation("io.vertx:${dependency}")
 </#list>
 <#if language == "kotlin">
   implementation(kotlin("stdlib-jdk8"))
 </#if>
 <#if hasVertxJUnit5>
-  testImplementation("io.vertx:vertx-junit5:$vertxVersion")
+  testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 <#if vertxVersion == "3.9.5" && !vertxDependencies?seq_contains("vertx-rx-java")>
-  testImplementation("io.vertx:vertx-rx-java:3.9.5") // to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93
+  testImplementation("io.vertx:vertx-rx-java") // to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93
 </#if>
 <#if vertxVersion == "3.9.5" && !vertxDependencies?seq_contains("vertx-rx-java2")>
-  testImplementation("io.vertx:vertx-rx-java2:3.9.5") // to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93
+  testImplementation("io.vertx:vertx-rx-java2") // to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93
 </#if>
 <#elseif hasVertxUnit>
-  testImplementation("io.vertx:vertx-unit:$vertxVersion")
-  testImplementation("junit:junit:4.13")
+  testImplementation("io.vertx:vertx-unit")
+  testImplementation("junit:junit:4.13.1")
 </#if>
 }
 
 <#if language == "kotlin">
-  val compileKotlin: KotlinCompile by tasks
-  compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion}"
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion}"
 <#else>
-  java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
+java {
+  sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
+  targetCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
+}
 </#if>
 
 tasks.withType<ShadowJar> {
@@ -89,9 +88,7 @@ tasks.withType<ShadowJar> {
   manifest {
     attributes(mapOf("Main-Verticle" to mainVerticleName))
   }
-  mergeServiceFiles {
-    include("META-INF/services/io.vertx.core.spi.VerticleFactory")
-  }
+  mergeServiceFiles()
 }
 
 tasks.withType<Test> {
