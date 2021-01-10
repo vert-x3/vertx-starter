@@ -44,7 +44,7 @@ val doOnChange = "${projectDir}/gradlew classes"
 </#noparse>
 
 application {
-  mainClassName = launcherClassName
+  mainClass.set(launcherClassName)
 }
 
 dependencies {
