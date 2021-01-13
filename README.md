@@ -118,7 +118,7 @@ git merge master
 git push
 ```
 
-Travis will automatically redeploy the starter if the `prod` branch build passes.
+GitHub _Deploy_ job will automatically redeploy the starter if the `prod` branch build passes.
 
 Eventually, checkout `master` again and update the version property in the Gradle build file.
 For example:

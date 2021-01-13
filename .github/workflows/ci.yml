@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+      - prod
   pull_request:
     branches:
       - master
+      - prod
   schedule:
     - cron:  '0 4 * * *'
 jobs:
@@ -27,3 +29,28 @@ jobs:
         run: ./gradlew check -i -DincludeTags=generator-${{ matrix.jdk }}
       - name: Run other tests
         run: ./gradlew check -i -DexcludeTags=generator
+  Deploy:
+    name: Deploy to starter machine
+    if: ${{ github.repository_owner == 'vert-x3' && github.event_name == 'push' && github.ref == 'refs/heads/prod' }}
+    needs: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: maven-java-11
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install JDK
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 11
+      - name: Setup SSH
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.1.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-host: start.vertx.io
+      - name: Assemble
+        run: ./gradlew assemble
+      - name: Run deployment script
+        run: bash .gh.deploy.bash
