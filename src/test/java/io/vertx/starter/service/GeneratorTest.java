@@ -213,7 +213,6 @@ class GeneratorTest {
           }
 
           if (Utils.isWindows()) {
-            // For now, we won't test on Windows, it's tested on Travis anyway
             testContext.completeNow();
           } else {
 

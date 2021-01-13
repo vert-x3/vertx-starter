@@ -53,4 +53,4 @@ jobs:
       - name: Assemble
         run: ./gradlew assemble
       - name: Run deployment script
-        run: bash .travis.deploy.bash
+        run: bash .gh.deploy.bash
