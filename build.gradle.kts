@@ -26,7 +26,7 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.11"
+version = "2.0.12"
 description = "A web application to generate Vert.x projects"
 
 val junitJupiterVersion = "5.7.0"
@@ -58,7 +58,7 @@ dependencies {
 }
 
 vertx {
-  vertxVersion = "4.0.0"
+  vertxVersion = "4.0.1"
   mainVerticle = "io.github.jponge.vertx.boot.BootVerticle"
 }
 

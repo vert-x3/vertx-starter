@@ -112,7 +112,7 @@ class GeneratorTest {
       .setArtifactId("demo")
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
-      .setVertxVersion("4.0.0")
+      .setVertxVersion("4.0.1")
       .setArchiveFormat(TGZ)
       .setJdkVersion(JdkVersion.JDK_1_8);
   }
@@ -213,7 +213,6 @@ class GeneratorTest {
           }
 
           if (Utils.isWindows()) {
-            // For now, we won't test on Windows, it's tested on Travis anyway
             testContext.completeNow();
           } else {
 
