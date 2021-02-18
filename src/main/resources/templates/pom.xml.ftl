@@ -187,8 +187,6 @@
                 </transformer>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
-              <artifactSet>
-              </artifactSet>
 <#noparse>
               <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
 </#noparse>
