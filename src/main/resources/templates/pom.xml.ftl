@@ -227,7 +227,7 @@
     <repository>
       <id>sonatype-oss-snapshots</id>
       <name>Sonatype OSSRH Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
       <layout>default</layout>
       <releases>
         <enabled>false</enabled>
