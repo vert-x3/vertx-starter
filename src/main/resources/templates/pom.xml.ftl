@@ -86,22 +86,6 @@
 </#noparse>
       <scope>test</scope>
     </dependency>
-<#if vertxVersion == "3.9.5" && !vertxDependencies?seq_contains("vertx-rx-java")>
-    <dependency>
-      <!-- to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93 -->
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-rx-java</artifactId>
-      <scope>test</scope>
-    </dependency>
-</#if>
-<#if vertxVersion == "3.9.5" && !vertxDependencies?seq_contains("vertx-rx-java2")>
-    <dependency>
-      <!-- to be removed when uprading to 3.9.6 or 4.0.0, see https://github.com/vert-x3/vertx-junit5/issues/93 -->
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-rx-java2</artifactId>
-      <scope>test</scope>
-    </dependency>
-</#if>
 <#elseif hasVertxUnit>
     <dependency>
       <groupId>io.vertx</groupId>
