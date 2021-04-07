@@ -27,6 +27,8 @@
         "vertx-web-validation",
         "vertx-web-openapi",
         "vertx-sql-client-templates",
+        "vertx-zipkin",
+        "vertx-opentracing",
         "vertx-opentelemetry"
       ]
     },
@@ -378,6 +380,16 @@
           "artifactId": "vertx-health-check",
           "name": "Vert.x Health Check",
           "description": "This component provides a simple way to expose health checks."
+        },
+        {
+          "artifactId": "vertx-zipkin",
+          "name": "Zipkin",
+          "description": "Distributed tracing with Zipkin."
+        },
+        {
+          "artifactId": "vertx-opentracing",
+          "name": "OpenTracing",
+          "description": "Distributed tracing with OpenTracing."
         },
         {
           "artifactId": "vertx-opentelemetry",
