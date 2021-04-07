@@ -351,8 +351,8 @@
       ]
     },
     {
-      "code": "devops",
-      "category": "DevOps",
+      "code": "monitoring",
+      "category": "Monitoring",
       "description": "Vert.x offers various component to keep your Vert.x application on track when running in production",
       "items": [
         {
@@ -369,11 +369,6 @@
           "artifactId": "vertx-health-check",
           "name": "Vert.x Health Check",
           "description": "This component provides a simple way to expose health checks."
-        },
-        {
-          "artifactId": "vertx-shell",
-          "name": "Shell",
-          "description": "This component lets you interact with your Vert.x application using a CLI interface."
         }
       ]
     },
@@ -464,6 +459,17 @@
           "artifactId": "vertx-json-schema",
           "name": "JSON Schema",
           "description": "An extensible implementation of the Json Schema specification to validate every JSON data structure, asynchronously."
+        }
+      ]
+    },
+    {
+      "code": "devops",
+      "category": "Devops",
+      "items": [
+        {
+          "artifactId": "vertx-shell",
+          "name": "Shell",
+          "description": "This component lets you interact with your Vert.x application using a CLI interface."
         }
       ]
     }
