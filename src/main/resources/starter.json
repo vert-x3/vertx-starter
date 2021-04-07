@@ -22,18 +22,25 @@
         "vertx-web-templ-httl",
         "vertx-web-sstore-cookie",
         "vertx-web-sstore-redis",
+        "vertx-web-sstore-infinispan",
         "vertx-json-schema",
         "vertx-web-validation",
         "vertx-web-openapi",
-        "vertx-sql-client-templates"
+        "vertx-sql-client-templates",
+        "vertx-zipkin",
+        "vertx-opentracing",
+        "vertx-opentelemetry"
       ]
     },
     {
       "number": "4.0.3",
-      "exclusions": []
+      "exclusions": [
+        "vertx-web-sstore-infinispan",
+        "vertx-opentelemetry"
+      ]
     },
     {
-      "number": "4.0.4-SNAPSHOT",
+      "number": "4.1.0-SNAPSHOT",
       "exclusions": []
     }
   ],
@@ -101,6 +108,10 @@
         {
           "artifactId": "vertx-web-sstore-redis",
           "name": "Redis session storage"
+        },
+        {
+          "artifactId": "vertx-web-sstore-infinispan",
+          "name": "Session storage with Infinispan Client"
         },
         {
           "artifactId": "vertx-web-validation",
@@ -351,8 +362,8 @@
       ]
     },
     {
-      "code": "devops",
-      "category": "DevOps",
+      "code": "monitoring",
+      "category": "Monitoring",
       "description": "Vert.x offers various component to keep your Vert.x application on track when running in production",
       "items": [
         {
@@ -371,9 +382,19 @@
           "description": "This component provides a simple way to expose health checks."
         },
         {
-          "artifactId": "vertx-shell",
-          "name": "Shell",
-          "description": "This component lets you interact with your Vert.x application using a CLI interface."
+          "artifactId": "vertx-zipkin",
+          "name": "Zipkin",
+          "description": "Distributed tracing with Zipkin."
+        },
+        {
+          "artifactId": "vertx-opentracing",
+          "name": "OpenTracing",
+          "description": "Distributed tracing with OpenTracing."
+        },
+        {
+          "artifactId": "vertx-opentelemetry",
+          "name": "Tracing using OpenTelemetry",
+          "description": "Distributed tracing with OpenTelemetry."
         }
       ]
     },
@@ -464,6 +485,17 @@
           "artifactId": "vertx-json-schema",
           "name": "JSON Schema",
           "description": "An extensible implementation of the Json Schema specification to validate every JSON data structure, asynchronously."
+        }
+      ]
+    },
+    {
+      "code": "devops",
+      "category": "Devops",
+      "items": [
+        {
+          "artifactId": "vertx-shell",
+          "name": "Shell",
+          "description": "This component lets you interact with your Vert.x application using a CLI interface."
         }
       ]
     }
