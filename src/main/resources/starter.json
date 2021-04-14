@@ -10,7 +10,7 @@
   },
   "versions": [
     {
-      "number": "3.9.6",
+      "number": "3.9.7",
       "exclusions": [
         "vertx-auth-htdigest",
         "vertx-auth-properties",
