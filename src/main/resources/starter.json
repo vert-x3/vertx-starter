@@ -29,14 +29,16 @@
         "vertx-sql-client-templates",
         "vertx-zipkin",
         "vertx-opentracing",
-        "vertx-opentelemetry"
+        "vertx-opentelemetry",
+        "vertx-mssql-client"
       ]
     },
     {
       "number": "4.0.3",
       "exclusions": [
         "vertx-web-sstore-infinispan",
-        "vertx-opentelemetry"
+        "vertx-opentelemetry",
+        "vertx-mssql-client"
       ]
     },
     {
@@ -141,6 +143,10 @@
         {
           "artifactId": "vertx-db2-client",
           "name": "Reactive DB2 client"
+        },
+        {
+          "artifactId": "vertx-mssql-client",
+          "name": "Reactive MSSQL client"
         },
         {
           "artifactId": "vertx-mongo-client",
