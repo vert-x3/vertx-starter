@@ -20,7 +20,7 @@ version = "1.0.0-SNAPSHOT"
 repositories {
 <#if vertxVersion?ends_with("-SNAPSHOT")>
   maven {
-    url "https://s01.oss.sonatype.org/content/repositories/snapshots"
+    url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
     mavenContent {
       snapshotsOnly()
     }
