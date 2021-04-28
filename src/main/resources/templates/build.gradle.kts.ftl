@@ -27,9 +27,6 @@ repositories {
   }
 </#if>
   mavenCentral()
-<#if language == "kotlin">
-  jcenter()
-</#if>
 }
 
 val vertxVersion = "${vertxVersion}"
