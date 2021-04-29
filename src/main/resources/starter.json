@@ -29,14 +29,16 @@
         "vertx-sql-client-templates",
         "vertx-zipkin",
         "vertx-opentracing",
-        "vertx-opentelemetry"
+        "vertx-opentelemetry",
+        "vertx-mssql-client"
       ]
     },
     {
       "number": "4.0.3",
       "exclusions": [
         "vertx-web-sstore-infinispan",
-        "vertx-opentelemetry"
+        "vertx-opentelemetry",
+        "vertx-mssql-client"
       ]
     },
     {
@@ -141,6 +143,10 @@
         {
           "artifactId": "vertx-db2-client",
           "name": "Reactive DB2 client"
+        },
+        {
+          "artifactId": "vertx-mssql-client",
+          "name": "Reactive MSSQL client"
         },
         {
           "artifactId": "vertx-mongo-client",
@@ -383,12 +389,12 @@
         },
         {
           "artifactId": "vertx-zipkin",
-          "name": "Zipkin",
+          "name": "Tracing using Zipkin",
           "description": "Distributed tracing with Zipkin."
         },
         {
           "artifactId": "vertx-opentracing",
-          "name": "OpenTracing",
+          "name": "Tracing using OpenTracing",
           "description": "Distributed tracing with OpenTracing."
         },
         {
@@ -416,25 +422,25 @@
     {
       "code": "cluster",
       "category": "Clustering",
-      "description": "Vert.x supports clustering and HA out of the box. Cluster group management is implemented in cluster managers which are pluggable. The default cluster manager uses Hazelcast.",
+      "description": "Vert.x supports clustering and HA out of the box. Cluster group management is implemented in cluster managers which are pluggable.",
       "items": [
         {
-          "name": "Hazelcast",
+          "name": "Hazelcast Cluster Manager",
           "artifactId": "vertx-hazelcast",
-          "description": "Cluster manager implementation that uses Hazelcast. This is the default."
+          "description": "Cluster manager implementation that uses Hazelcast."
         },
         {
-          "name": "Infinispan",
+          "name": "Infinispan Cluster Manager",
           "artifactId": "vertx-infinispan",
           "description": "Cluster manager implementation that uses Infinispan."
         },
         {
-          "name": "Apache Ignite",
+          "name": "Apache Ignite Cluster Manager",
           "artifactId": "vertx-ignite",
           "description": "Cluster manager implementation that uses Apache Ignite."
         },
         {
-          "name": "Apache Zookeper",
+          "name": "Apache Zookeper Cluster Manager",
           "artifactId": "vertx-zookeeper",
           "description": "Cluster manager implementation that uses Apache Zookeeper."
         }
