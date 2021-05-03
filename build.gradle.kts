@@ -21,12 +21,17 @@ plugins {
 }
 
 repositories {
-  jcenter()
-  mavenLocal()
+  maven {
+    url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+    mavenContent {
+      snapshotsOnly()
+    }
+  }
+  mavenCentral()
 }
 
 group = "io.vertx"
-version = "2.0.14"
+version = "2.0.15"
 description = "A web application to generate Vert.x projects"
 
 val junitJupiterVersion = "5.7.0"
