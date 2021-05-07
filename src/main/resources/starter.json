@@ -42,6 +42,10 @@
       ]
     },
     {
+      "number": "4.1.0.Beta1",
+      "exclusions": []
+    },
+    {
       "number": "4.1.0-SNAPSHOT",
       "exclusions": []
     }
