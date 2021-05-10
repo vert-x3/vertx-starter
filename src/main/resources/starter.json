@@ -30,7 +30,8 @@
         "vertx-zipkin",
         "vertx-opentracing",
         "vertx-opentelemetry",
-        "vertx-mssql-client"
+        "vertx-mssql-client",
+        "vertx-rx-java3"
       ]
     },
     {
@@ -38,7 +39,8 @@
       "exclusions": [
         "vertx-web-sstore-infinispan",
         "vertx-opentelemetry",
-        "vertx-mssql-client"
+        "vertx-mssql-client",
+        "vertx-rx-java3"
       ]
     },
     {
@@ -183,12 +185,17 @@
         {
           "artifactId": "vertx-rx-java",
           "name": "Vert.x RxJava v1",
-          "description": "Don't like callback-style APIs? Vert.x provides Rx-ified (using RxJava) versions for most of its APIs so you can use those if you prefer. RxJava is a great choice when you want to perform complex operations on multiple asynchronous streams of data."
+          "description": "Vert.x API for RxJava 1."
         },
         {
           "artifactId": "vertx-rx-java2",
           "name": "Vert.x RxJava v2",
-          "description": "Don't like callback-style APIs? Vert.x provides Rx-ified (using RxJava) versions for most of its APIs so you can use those if you prefer. RxJava is a great choice when you want to perform complex operations on multiple asynchronous streams of data."
+          "description": "Vert.x API for RxJava 2."
+        },
+        {
+          "artifactId": "vertx-rx-java3",
+          "name": "Vert.x RxJava v3",
+          "description": "Vert.x API for RxJava 3."
         },
         {
           "artifactId": "vertx-reactive-streams",
