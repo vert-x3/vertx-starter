@@ -78,27 +78,28 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 class GeneratorTest {
 
   @TempDir
+  static Path tempDir;
   static Path m2dir;
-  @TempDir
   static Path mavenRepository;
   static Path settingsFile;
 
-  @TempDir
   Path workdir;
   List<Runnable> cleanupTasks;
 
   @BeforeAll
   static void beforeAll() throws Exception {
+    m2dir = tempDir.resolve("m2");
+    Files.createDirectories(m2dir);
+    mavenRepository = tempDir.resolve("repository");
+    Files.createDirectories(mavenRepository);
     settingsFile = m2dir.resolve("settings.xml");
     Files.copy(GeneratorTest.class.getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
   }
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
-    Files.walk(workdir)
-      .sorted(Comparator.reverseOrder())
-      .map(Path::toFile)
-      .forEach(File::delete);
+    workdir = tempDir.resolve(UUID.randomUUID().toString());
+    Files.createDirectories(workdir);
     cleanupTasks = new ArrayList<>();
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
