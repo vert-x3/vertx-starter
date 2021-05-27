@@ -58,7 +58,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
@@ -86,7 +85,7 @@ class GeneratorTest {
 
   @TempDir
   Path workdir;
-  List<Runnable> cleanupTasks = new ArrayList<>();
+  List<Runnable> cleanupTasks;
 
   @BeforeAll
   static void beforeAll() throws Exception {
@@ -96,6 +95,11 @@ class GeneratorTest {
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
+    Files.walk(workdir)
+      .sorted(Comparator.reverseOrder())
+      .map(Path::toFile)
+      .forEach(File::delete);
+    cleanupTasks = new ArrayList<>();
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
@@ -131,9 +135,7 @@ class GeneratorTest {
       .filter(version -> !version.endsWith("-SNAPSHOT"))
       .collect(toList());
 
-    List<Set<String>> testDeps = Stream.of("vertx-unit", "vertx-junit5")
-      .map(dep -> Stream.of(dep).collect(Collectors.toSet()))
-      .collect(toList());
+    List<Set<String>> testDeps = Arrays.asList(Collections.singleton("vertx-unit"), Collections.singleton("vertx-junit5"));
 
     Stream.Builder<VertxProject> builder = Stream.builder();
     for (BuildTool buildTool : BuildTool.values()) {
@@ -144,7 +146,7 @@ class GeneratorTest {
               .setBuildTool(buildTool)
               .setLanguage(language)
               .setVertxVersion(version)
-              .setVertxDependencies(vertxDependencies)
+              .setVertxDependencies(new HashSet<>(vertxDependencies))
               .setPackageName("com.mycompany.project.special");
             builder.add(vertxProject);
           }
