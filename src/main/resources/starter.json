@@ -45,7 +45,7 @@
       ]
     },
     {
-      "number": "4.1.0.CR1",
+      "number": "4.1.0.CR2",
       "exclusions": [
         "vertx-sync"
       ]
