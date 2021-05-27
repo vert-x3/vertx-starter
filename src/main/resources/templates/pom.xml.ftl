@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 <#if language == "kotlin">
-    <kotlin.version>1.4.21</kotlin.version>
+    <kotlin.version>1.5.0</kotlin.version>
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
 <#else>
