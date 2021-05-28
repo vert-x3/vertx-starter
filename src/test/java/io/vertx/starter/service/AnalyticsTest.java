@@ -20,6 +20,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.AnalyticsVerticle;
@@ -30,7 +31,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -38,9 +39,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.stream.Stream;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static java.time.temporal.ChronoUnit.MINUTES;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Thomas Segismont
@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class AnalyticsTest {
 
   @Container
-  GenericContainer mongo = new GenericContainer<>("library/mongo:3.4").withExposedPorts(27017);
+  MongoDBContainer mongo = new MongoDBContainer("mongo:3.4");
 
   private MongoClient client;
 
@@ -76,30 +76,29 @@ class AnalyticsTest {
 
   @Test
   void projectPersisted(Vertx vertx, VertxTestContext testContext) {
+    Instant createdOn = Instant.now().truncatedTo(MINUTES);
     VertxProject vertxProject = new VertxProject()
       .setId("should-not-persist")
       .setGroupId("should-not-persist")
       .setArtifactId("should-not-persist")
       .setPackageName("should-not-persist")
-      .setCreatedOn(Instant.now())
+      .setCreatedOn(createdOn)
       .setOperatingSystem("Other");
     vertx.eventBus().publish(Topics.PROJECT_CREATED, vertxProject);
-    vertx.setTimer(500, l -> {
+    Checkpoint checkpoint = testContext.laxCheckpoint();
+    vertx.setPeriodic(20, id -> {
       JsonObject query = new JsonObject();
       client.find(AnalyticsService.COLLECTION_NAME, query, testContext.succeeding(list -> {
-        Stream<JsonObject> stream = list.stream().map(json -> {
-          JsonObject copy = json.copy();
-          copy.remove("_id");
-          return copy;
-        });
         testContext.verify(() -> {
-          assertEquals(1, list.size());
-          JsonObject document = list.get(0);
-          assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-          Instant createdOn = document.getJsonObject("createdOn").getInstant("$date").truncatedTo(MILLIS);
-          assertEquals(vertxProject.getCreatedOn().truncatedTo(MILLIS), createdOn);
-          assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
-          testContext.completeNow();
+          assertTrue(list.size() <= 1);
+          if (list.size() == 1) {
+            JsonObject document = list.get(0);
+            assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
+            assertEquals(createdOn, document.getJsonObject("createdOn").getInstant("$date"));
+            assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
+            checkpoint.flag();
+            assertTrue(vertx.cancelTimer(id));
+          }
         });
       }));
     });
