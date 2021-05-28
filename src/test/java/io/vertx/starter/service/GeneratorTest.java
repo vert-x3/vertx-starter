@@ -42,12 +42,8 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.Assume;
 import org.junit.AssumptionViolatedException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -77,7 +73,6 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 @Tag("generator")
 class GeneratorTest {
 
-  @TempDir
   static Path tempDir;
   static Path m2dir;
   static Path mavenRepository;
@@ -88,6 +83,7 @@ class GeneratorTest {
 
   @BeforeAll
   static void beforeAll() throws Exception {
+    tempDir = Files.createTempDirectory(GeneratorTest.class.getName());
     m2dir = tempDir.resolve("m2");
     Files.createDirectories(m2dir);
     mavenRepository = tempDir.resolve("repository");
@@ -108,6 +104,14 @@ class GeneratorTest {
   @AfterEach
   void afterEach() {
     cleanupTasks.forEach(Runnable::run);
+  }
+
+  @AfterAll
+  static void afterAll() throws Exception {
+    Files.walk(tempDir)
+      .sorted(Comparator.reverseOrder())
+      .map(Path::toFile)
+      .forEach(File::delete);
   }
 
   static VertxProject defaultProject() {
