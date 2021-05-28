@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 <#if language == "kotlin">
-  kotlin ("jvm") version "1.5.0"
+  kotlin ("jvm") version "1.5.10"
 <#else>
   java
 </#if>
