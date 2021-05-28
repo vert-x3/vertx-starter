@@ -11,7 +11,7 @@ plugins {
   java
 </#if>
   application
-  id("com.github.johnrengelman.shadow") version "6.1.0"
+  id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "${groupId}"
@@ -41,7 +41,7 @@ val doOnChange = "${projectDir}/gradlew classes"
 </#noparse>
 
 application {
-  mainClassName = launcherClassName
+  mainClass.set(launcherClassName)
 }
 
 dependencies {
