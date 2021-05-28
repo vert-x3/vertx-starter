@@ -42,12 +42,8 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.Assume;
 import org.junit.AssumptionViolatedException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -58,7 +54,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
@@ -78,24 +73,30 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 @Tag("generator")
 class GeneratorTest {
 
-  @TempDir
+  static Path tempDir;
   static Path m2dir;
-  @TempDir
   static Path mavenRepository;
   static Path settingsFile;
 
-  @TempDir
   Path workdir;
-  List<Runnable> cleanupTasks = new ArrayList<>();
+  List<Runnable> cleanupTasks;
 
   @BeforeAll
   static void beforeAll() throws Exception {
+    tempDir = Files.createTempDirectory(GeneratorTest.class.getName());
+    m2dir = tempDir.resolve("m2");
+    Files.createDirectories(m2dir);
+    mavenRepository = tempDir.resolve("repository");
+    Files.createDirectories(mavenRepository);
     settingsFile = m2dir.resolve("settings.xml");
     Files.copy(GeneratorTest.class.getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
   }
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
+    workdir = tempDir.resolve(UUID.randomUUID().toString());
+    Files.createDirectories(workdir);
+    cleanupTasks = new ArrayList<>();
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
     vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
@@ -103,6 +104,14 @@ class GeneratorTest {
   @AfterEach
   void afterEach() {
     cleanupTasks.forEach(Runnable::run);
+  }
+
+  @AfterAll
+  static void afterAll() throws Exception {
+    Files.walk(tempDir)
+      .sorted(Comparator.reverseOrder())
+      .map(Path::toFile)
+      .forEach(File::delete);
   }
 
   static VertxProject defaultProject() {
@@ -131,9 +140,7 @@ class GeneratorTest {
       .filter(version -> !version.endsWith("-SNAPSHOT"))
       .collect(toList());
 
-    List<Set<String>> testDeps = Stream.of("vertx-unit", "vertx-junit5")
-      .map(dep -> Stream.of(dep).collect(Collectors.toSet()))
-      .collect(toList());
+    List<Set<String>> testDeps = Arrays.asList(Collections.singleton("vertx-unit"), Collections.singleton("vertx-junit5"));
 
     Stream.Builder<VertxProject> builder = Stream.builder();
     for (BuildTool buildTool : BuildTool.values()) {
@@ -144,7 +151,7 @@ class GeneratorTest {
               .setBuildTool(buildTool)
               .setLanguage(language)
               .setVertxVersion(version)
-              .setVertxDependencies(vertxDependencies)
+              .setVertxDependencies(new HashSet<>(vertxDependencies))
               .setPackageName("com.mycompany.project.special");
             builder.add(vertxProject);
           }
@@ -167,15 +174,15 @@ class GeneratorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("testProjectsJdk15")
-  @Tag("generator-15")
-  void testProjectJdk15(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(15);
+  @MethodSource("testProjectsJdk16")
+  @Tag("generator-16")
+  void testProjectJdk16(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(16);
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjectsJdk15() throws IOException {
-    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_15));
+  static Stream<VertxProject> testProjectsJdk16() throws IOException {
+    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_16));
   }
 
   private int javaSpecVersion() {

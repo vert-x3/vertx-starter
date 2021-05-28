@@ -6,12 +6,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 <#if language == "kotlin">
-  kotlin ("jvm") version "1.4.21"
+  kotlin ("jvm") version "1.5.10"
 <#else>
   java
 </#if>
   application
-  id("com.github.johnrengelman.shadow") version "6.1.0"
+  id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "${groupId}"
@@ -41,7 +41,7 @@ val doOnChange = "${projectDir}/gradlew classes"
 </#noparse>
 
 application {
-  mainClassName = launcherClassName
+  mainClass.set(launcherClassName)
 }
 
 dependencies {

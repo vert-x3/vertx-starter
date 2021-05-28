@@ -31,11 +31,11 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.14"
+version = "2.0.15"
 description = "A web application to generate Vert.x projects"
 
 val junitJupiterVersion = "5.7.0"
-val testContainersVersion = "1.15.1"
+val testContainersVersion = "1.15.3"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -56,6 +56,7 @@ dependencies {
   testImplementation("org.assertj:assertj-core:3.10.0")
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
+  testImplementation("org.testcontainers:mongodb:${testContainersVersion}")
   testImplementation("com.julienviet:childprocess-vertx-ext:1.3.0")
 
   testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
