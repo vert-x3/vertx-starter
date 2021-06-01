@@ -4,7 +4,7 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "4.0.3",
+    "vertxVersion": "4.1.0",
     "archiveFormat": "zip",
     "jdkVersion": "11"
   },
@@ -35,23 +35,13 @@
       ]
     },
     {
-      "number": "4.0.3",
-      "exclusions": [
-        "vertx-web-sstore-infinispan",
-        "vertx-opentelemetry",
-        "vertx-mssql-client",
-        "vertx-rx-java3",
-        "vertx-sync"
-      ]
-    },
-    {
-      "number": "4.1.0.CR2",
+      "number": "4.1.0",
       "exclusions": [
         "vertx-sync"
       ]
     },
     {
-      "number": "4.1.0-SNAPSHOT",
+      "number": "4.1.1-SNAPSHOT",
       "exclusions": [
         "vertx-sync"
       ]
