@@ -12,8 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 <#if language == "kotlin">
-    <kotlin.version>1.4.21</kotlin.version>
-    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+    <kotlin.version>1.5.10</kotlin.version>
 
 <#else>
 <#if jdkVersion == "1.8">
@@ -63,6 +62,15 @@
       <artifactId>${dependency}</artifactId>
     </dependency>
 </#list>
+<#if language == "kotlin">
+<#noparse>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+</#noparse>
+</#if>
 
 <#if hasVertxJUnit5>
     <dependency>
