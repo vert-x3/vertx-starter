@@ -29,4 +29,7 @@ public interface ProjectConstants {
   String ARCHIVE_FORMAT = "archiveFormat";
   String PACKAGE_NAME = "packageName";
   String JDK_VERSION = "jdkVersion";
+  String FLAVOR = "flavor";
+  String MUTINY_FLAVOR = "mutiny";
+  String VERTX_FLAVOR = "vert.x";
 }

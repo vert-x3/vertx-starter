@@ -21,6 +21,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
 import io.vertx.starter.model.Language;
+import io.vertx.starter.model.ProjectFlavor;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -120,6 +121,10 @@ public class GeneratorService {
     Set<String> vertxDependencies = project.getVertxDependencies();
     if (vertxDependencies == null) {
       vertxDependencies = new HashSet<>();
+    } else if (project.getFlavor() != ProjectFlavor.VERTX) {
+      vertxDependencies = vertxDependencies.stream()
+        .map(dependency -> project.getFlavor().getArtifactIdPrefix() + dependency)
+        .collect(toSet());
     }
     boolean hasVertxUnit = vertxDependencies.remove("vertx-unit");
     ctx.put("hasVertxUnit", hasVertxUnit);
@@ -128,14 +133,14 @@ public class GeneratorService {
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
     }
-    vertxDependencies.addAll(language.getLanguageDependencies());
+    ctx.put("languageDependencies", language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
+    ctx.put("flavor", project.getFlavor().getId());
+    ctx.put("groupId", project.getFlavor().getGroupId());
+    ctx.put("artifactIdPrefix", project.getFlavor().getArtifactIdPrefix());
     String packageName = packageName(project);
     ctx.put("packageName", packageName);
     ctx.put("jdkVersion", project.getJdkVersion().getValue());
-
-    Path tempDirPath = tempDir.path();
-    String tempDirPathStr = tempDirPath.toString();
 
     copy(tempDir, "files", "_editorconfig");
     copy(tempDir, "files", "_gitignore");

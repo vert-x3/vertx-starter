@@ -30,6 +30,9 @@ repositories {
 }
 
 val vertxVersion = "${vertxVersion}"
+<#if flavor == "mutiny">
+val mutinyVersion = "2.6.0"
+</#if>
 val junitJupiterVersion = "5.7.0"
 
 val mainVerticleName = "${packageName}.MainVerticle"
@@ -47,14 +50,21 @@ application {
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
 <#if !vertxDependencies?has_content>
-  implementation("io.vertx:vertx-core")
+  implementation("${groupId}:${artifactIdPrefix}vertx-core")
 </#if>
 <#list vertxDependencies as dependency>
-  implementation("io.vertx:${dependency}")
+  <#if flavor == "mutiny">
+  implementation("${groupId}:${dependency}:$mutinyVersion")
+  <#else>
+  implementation("${groupId}:${dependency}")
+  </#if>
 </#list>
 <#if language == "kotlin">
   implementation(kotlin("stdlib-jdk8"))
 </#if>
+<#list languageDependencies as dependency>
+  implementation("io.vertx:${dependency}")
+</#list>
 <#if hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")

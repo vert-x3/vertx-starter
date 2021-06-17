@@ -6,7 +6,8 @@
     "buildTool": "maven",
     "vertxVersion": "4.1.0",
     "archiveFormat": "zip",
-    "jdkVersion": "11"
+    "jdkVersion": "11",
+    "flavor": "vert.x"
   },
   "versions": [
     {

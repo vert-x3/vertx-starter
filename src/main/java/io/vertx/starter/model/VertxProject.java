@@ -33,6 +33,7 @@ public class VertxProject {
   private JdkVersion jdkVersion;
   private String operatingSystem;
   private Instant createdOn;
+  private ProjectFlavor flavor;
 
   public String getId() {
     return id;
@@ -139,6 +140,15 @@ public class VertxProject {
 
   public VertxProject setCreatedOn(Instant createdOn) {
     this.createdOn = createdOn;
+    return this;
+  }
+
+  public ProjectFlavor getFlavor() {
+    return flavor;
+  }
+
+  public VertxProject setFlavor(ProjectFlavor flavor) {
+    this.flavor = flavor;
     return this;
   }
 

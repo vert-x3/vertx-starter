@@ -30,6 +30,9 @@
 <#if hasVertxJUnit5>
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
 </#if>
+<#if flavor == "mutiny">
+    <mutiny.version>2.6.0</mutiny.version>
+</#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
     <launcher.class>io.vertx.core.Launcher</launcher.class>
@@ -52,15 +55,23 @@
   <dependencies>
 <#if !vertxDependencies?has_content>
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
+      <groupId>${groupId}</groupId>
+      <artifactId>${artifactIdPrefix}vertx-core</artifactId>
     </dependency>
 </#if>
 <#list vertxDependencies as dependency>
+    <#if flavor == "mutiny">
     <dependency>
-      <groupId>io.vertx</groupId>
+      <groupId>${groupId}</groupId>
+      <artifactId>${dependency}</artifactId>
+      <#noparse><version>${mutiny.version}</version></#noparse>
+    </dependency>
+    <#else>
+    <dependency>
+      <groupId>${groupId}</groupId>
       <artifactId>${dependency}</artifactId>
     </dependency>
+    </#if>
 </#list>
 <#if language == "kotlin">
 <#noparse>
@@ -71,6 +82,12 @@
     </dependency>
 </#noparse>
 </#if>
+<#list languageDependencies as dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${dependency}</artifactId>
+    </dependency>
+</#list>
 
 <#if hasVertxJUnit5>
     <dependency>

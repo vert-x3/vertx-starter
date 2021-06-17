@@ -48,7 +48,8 @@ angular
             vertxVersion: vertxProject.vertxVersion,
             vertxDependencies: vertxProject.vertxDependencies,
             packageName: vertxProject.packageName,
-            jdkVersion: vertxProject.jdkVersion
+            jdkVersion: vertxProject.jdkVersion,
+            flavor: vertxProject.flavor
           }
         });
       },
@@ -80,7 +81,7 @@ angular
         argSeparator: "; "
       }
     },
-    args: ["groupId", "artifactId", "packageName", "vertxVersion", "vertxDependencies", "language", "jdkVersion", "buildTool"]
+    args: ["groupId", "artifactId", "packageName", "vertxVersion", "vertxDependencies", "language", "jdkVersion", "buildTool", "flavor"]
    })
   .filter('capitalize', function () {
     return function (input) {
@@ -100,6 +101,7 @@ angular
       vm.languages = [];
       vm.buildTools = [];
       vm.jdkVersions = [];
+      vm.flavors = [];
       vm.advancedCollapsed = true;
       vm.isWindows = bowser.windows;
 
@@ -169,6 +171,7 @@ angular
         vm.buildTools = data.buildTools;
         vm.languages = data.languages;
         vm.jdkVersions = data.jdkVersions;
+        vm.flavors = data.flavors;
         vm.selectedPanel = data.stack && data.stack.length > 0 ? data.stack[0].code : 'none';
         vm.vertxVersions = data.versions.map(function (version) {
           return version.number;
@@ -186,6 +189,7 @@ angular
         vm.vertxProject.vertxDependencies = [];
         vm.vertxProject.packageName = "";
         vm.vertxProject.jdkVersion = defaults.jdkVersion;
+        vm.vertxProject.flavor = defaults.flavor;
 
         vm.disableDependencies(defaults.vertxVersion);
         refreshAvailableDependencies(defaults.vertxVersion, false);

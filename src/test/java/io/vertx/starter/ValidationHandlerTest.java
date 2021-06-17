@@ -137,6 +137,11 @@ class ValidationHandlerTest {
   }
 
   @Test
+  void testUnknownFlavor(Vertx vertx, VertxTestContext testContext) {
+    expectFailure(vertx, testContext, validator, params.add(FLAVOR, "RxJava"), ZIP.getFileExtension(), JDK_VERSION);
+  }
+
+  @Test
   void testTwoJunitVersions(Vertx vertx, VertxTestContext testContext) {
     MultiMap params = this.params.add(VERTX_DEPENDENCIES, "vertx-unit,vertx-junit5");
     expectFailure(vertx, testContext, validator, params, ZIP.getFileExtension(), VERTX_DEPENDENCIES);

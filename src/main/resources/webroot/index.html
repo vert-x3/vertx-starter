@@ -108,6 +108,15 @@
             </div>
           </div>
         </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Flavor</label>
+          <div class="col-sm-8">
+            <div class="btn-group">
+              <label class="btn btn-sm btn-default" ng-repeat="flavor in vm.flavors"
+                     ng-model="$parent.vm.vertxProject.flavor" uib-btn-radio="flavor">{{ flavor | capitalize }}</label>
+            </div>
+          </div>
+        </div>
         <div ng-class="form.groupId.$valid ? 'form-group row' : 'form-group row has-error'">
           <label for="groupId" class="col-sm-4 col-form-label control-label">Group Id</label>
           <div class="col-sm-8">

@@ -32,10 +32,7 @@ import io.vertx.starter.GeneratorVerticle;
 import io.vertx.starter.Util;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
-import io.vertx.starter.model.BuildTool;
-import io.vertx.starter.model.JdkVersion;
-import io.vertx.starter.model.Language;
-import io.vertx.starter.model.VertxProject;
+import io.vertx.starter.model.*;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -123,7 +120,8 @@ class GeneratorTest {
       .setBuildTool(MAVEN)
       .setVertxVersion("4.1.0")
       .setArchiveFormat(TGZ)
-      .setJdkVersion(JdkVersion.JDK_1_8);
+      .setJdkVersion(JdkVersion.JDK_1_8)
+      .setFlavor(ProjectFlavor.VERTX);
   }
 
   @ParameterizedTest

@@ -25,6 +25,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.starter.model.BuildTool;
 import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
+import io.vertx.starter.model.ProjectFlavor;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -44,6 +45,7 @@ public class MetadataHandler implements Handler<RoutingContext> {
       .put("buildTools", values(BuildTool.values(), BuildTool::getValue))
       .put("languages", values(Language.values(), Language::getName))
       .put("jdkVersions", values(JdkVersion.values(), JdkVersion::getValue))
+      .put("flavors", values(ProjectFlavor.values(), ProjectFlavor::getId))
       .put("vertxDependencies", stack) // deprecated
       .put("vertxVersions", versions.stream() // deprecated
         .map(JsonObject.class::cast)

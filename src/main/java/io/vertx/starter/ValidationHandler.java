@@ -86,6 +86,10 @@ public class ValidationHandler implements Handler<RoutingContext> {
       return;
     }
 
+    if (!validateAndSetEnum(rc, FLAVOR, ProjectFlavor::fromId, vertxProject::setFlavor)) {
+      return;
+    }
+
     String vertxVersion = getQueryParam(rc, VERTX_VERSION);
     if (isNotBlank(vertxVersion)) {
       if (!versions.contains(vertxVersion)) {
