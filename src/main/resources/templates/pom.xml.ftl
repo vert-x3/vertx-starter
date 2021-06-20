@@ -31,7 +31,7 @@
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
 </#if>
 <#if flavor == "mutiny">
-    <mutiny.version>2.6.0</mutiny.version>
+    <mutiny.version>2.7.0</mutiny.version>
 </#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
@@ -53,23 +53,29 @@
   </dependencyManagement>
 
   <dependencies>
-<#if !vertxDependencies?has_content>
+<#if flavor == "vertx" && !vertxDependencies?has_content>
     <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${artifactIdPrefix}vertx-core</artifactId>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+<#elseif flavor == "mutiny" && !vertxDependencies?has_content>
+    <dependency>
+      <groupId>io.smallrye.reactive</groupId>
+      <artifactId>smallrye-mutiny-vertx-core</artifactId>
+      <#noparse><version>${mutiny.version}</version></#noparse>
     </dependency>
 </#if>
 <#list vertxDependencies as dependency>
     <#if flavor == "mutiny">
     <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${dependency}</artifactId>
+      <groupId>${dependency.groupId}</groupId>
+      <artifactId>${dependency.artifactId}</artifactId>
       <#noparse><version>${mutiny.version}</version></#noparse>
     </dependency>
     <#else>
     <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${dependency}</artifactId>
+      <groupId>${dependency.groupId}</groupId>
+      <artifactId>${dependency.artifactId}</artifactId>
     </dependency>
     </#if>
 </#list>
@@ -84,7 +90,7 @@
 </#if>
 <#list languageDependencies as dependency>
     <dependency>
-      <groupId>${groupId}</groupId>
+      <groupId>io.vertx</groupId>
       <artifactId>${dependency}</artifactId>
     </dependency>
 </#list>

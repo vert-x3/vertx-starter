@@ -20,8 +20,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
+import io.vertx.starter.model.Dependency;
 import io.vertx.starter.model.Language;
-import io.vertx.starter.model.ProjectFlavor;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -118,17 +118,15 @@ public class GeneratorService {
     Language language = project.getLanguage();
     ctx.put("language", language.name().toLowerCase());
     ctx.put("vertxVersion", project.getVertxVersion());
-    Set<String> vertxDependencies = project.getVertxDependencies();
+    Set<Dependency> vertxDependencies = project.getVertxDependencies();
     if (vertxDependencies == null) {
       vertxDependencies = new HashSet<>();
-    } else if (project.getFlavor() != ProjectFlavor.VERTX) {
-      vertxDependencies = vertxDependencies.stream()
-        .map(dependency -> project.getFlavor().getArtifactIdPrefix() + dependency)
-        .collect(toSet());
     }
-    boolean hasVertxUnit = vertxDependencies.remove("vertx-unit");
+    boolean hasVertxUnit = vertxDependencies
+      .removeIf(dependency -> dependency.getArtifactId().equals("vertx-unit"));
     ctx.put("hasVertxUnit", hasVertxUnit);
-    boolean hasVertxJUnit5 = vertxDependencies.remove("vertx-junit5") || !hasVertxUnit;
+    boolean hasVertxJUnit5 = vertxDependencies
+      .removeIf(dependency -> dependency.getArtifactId().equals("vertx-junit5")) || !hasVertxUnit;
     ctx.put("hasVertxJUnit5", hasVertxJUnit5);
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");

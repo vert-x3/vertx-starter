@@ -138,13 +138,16 @@ class GeneratorTest {
       .filter(version -> !version.endsWith("-SNAPSHOT"))
       .collect(toList());
 
-    List<Set<String>> testDeps = Arrays.asList(Collections.singleton("vertx-unit"), Collections.singleton("vertx-junit5"));
+    List<Set<Dependency>> testDeps = Arrays.asList(
+      Collections.singleton(new Dependency().setArtifactId("vertx-unit")),
+      Collections.singleton(new Dependency().setArtifactId("vertx-junit5"))
+    );
 
     Stream.Builder<VertxProject> builder = Stream.builder();
     for (BuildTool buildTool : BuildTool.values()) {
       for (Language language : Language.values()) {
         for (String version : versions) {
-          for (Set<String> vertxDependencies : testDeps) {
+          for (Set<Dependency> vertxDependencies : testDeps) {
             VertxProject vertxProject = defaultProject()
               .setBuildTool(buildTool)
               .setLanguage(language)

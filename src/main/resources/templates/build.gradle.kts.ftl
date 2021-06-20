@@ -31,7 +31,7 @@ repositories {
 
 val vertxVersion = "${vertxVersion}"
 <#if flavor == "mutiny">
-val mutinyVersion = "2.6.0"
+val mutinyVersion = "2.7.0"
 </#if>
 val junitJupiterVersion = "5.7.0"
 
@@ -49,14 +49,16 @@ application {
 
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-<#if !vertxDependencies?has_content>
-  implementation("${groupId}:${artifactIdPrefix}vertx-core")
+<#if flavor == "vertx" && !vertxDependencies?has_content>
+  implementation("io.vertx:vertx-core")
+<#elseif flavor == "mutiny" && !vertxDependencies?has_content>
+  implementation("io.smallrye.reactive:smallrye-mutiny-vertx-core:$mutinyVersion")
 </#if>
 <#list vertxDependencies as dependency>
   <#if flavor == "mutiny">
-  implementation("${groupId}:${dependency}:$mutinyVersion")
+  implementation("${dependency.groupId}:${dependency.artifactId}:$mutinyVersion")
   <#else>
-  implementation("${groupId}:${dependency}")
+  implementation("${dependency.groupId}:${dependency.artifactId}")
   </#if>
 </#list>
 <#if language == "kotlin">

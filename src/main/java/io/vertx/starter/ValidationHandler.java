@@ -43,9 +43,10 @@ public class ValidationHandler implements Handler<RoutingContext> {
   private final JsonObject defaults;
   private final Set<String> versions;
   private final Map<String, List<String>> exclusions;
-  private final Set<String> dependencies;
+  private final Map<String, Dependency> vertxStackDependencies;
+  private final Map<String, Dependency> mutinyStackDependencies;
 
-  public ValidationHandler(JsonObject defaults, JsonArray versions, JsonArray stack) {
+  public ValidationHandler(JsonObject defaults, JsonArray versions, JsonArray vertxStack, JsonArray mutinyStack) {
     this.defaults = defaults;
     this.versions = versions.stream()
       .map(JsonObject.class::cast)
@@ -57,12 +58,26 @@ public class ValidationHandler implements Handler<RoutingContext> {
         obj -> obj.getString("number"),
         obj -> obj.getJsonArray("exclusions", new JsonArray()).stream().map(String.class::cast).collect(toList()))
       );
-    dependencies = stack.stream()
+    vertxStackDependencies = vertxStack.stream()
       .map(JsonObject.class::cast)
       .flatMap(category -> category.getJsonArray("items").stream())
       .map(JsonObject.class::cast)
-      .map(item -> item.getString("artifactId"))
-      .collect(toSet());
+      .collect(toMap(
+        item -> item.getString("artifactId"),
+        item -> new Dependency()
+          .setGroupId(item.getString("groupId"))
+          .setArtifactId(item.getString("artifactId")))
+      );
+    mutinyStackDependencies = mutinyStack.stream()
+      .map(JsonObject.class::cast)
+      .flatMap(category -> category.getJsonArray("items").stream())
+      .map(JsonObject.class::cast)
+      .collect(toMap(
+        item -> item.getString("artifactId"),
+        item -> new Dependency()
+          .setGroupId(item.getString("groupId"))
+          .setArtifactId(item.getString("artifactId")))
+      );
   }
 
   @Override
@@ -107,7 +122,16 @@ public class ValidationHandler implements Handler<RoutingContext> {
         .map(String::toLowerCase)
         .collect(toSet());
 
-      if (!dependencies.containsAll(vertxDependencies) ||
+      Set<String> stackDependencies;
+      if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
+        stackDependencies = vertxStackDependencies.keySet();
+      } else if (vertxProject.getFlavor() == ProjectFlavor.MUTINY) {
+        stackDependencies = mutinyStackDependencies.keySet();
+      } else {
+        throw new IllegalArgumentException("There's no stack for flavor " + vertxProject.getFlavor());
+      }
+
+      if (vertxProject.getFlavor() == ProjectFlavor.VERTX && !stackDependencies.containsAll(vertxDependencies) ||
         !Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
         fail(rc, VERTX_DEPENDENCIES, deps);
         return;
@@ -118,7 +142,23 @@ public class ValidationHandler implements Handler<RoutingContext> {
         return;
       }
 
-      vertxProject.setVertxDependencies(vertxDependencies);
+      Set<Dependency> flavoredDependencies = new HashSet<>(vertxDependencies.size());
+      if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
+        flavoredDependencies = vertxDependencies.stream()
+          .map(vertxStackDependencies::get)
+          .collect(toSet());
+      } else if (vertxProject.getFlavor() == ProjectFlavor.MUTINY) {
+        flavoredDependencies = vertxDependencies.stream()
+          .map(dependency -> mutinyStackDependencies.keySet().stream()
+            .filter(mutinyDependency -> mutinyDependency.endsWith(dependency))
+            .findFirst())
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .map(mutinyStackDependencies::get)
+          .collect(toSet());
+      }
+
+      vertxProject.setVertxDependencies(flavoredDependencies);
     }
 
     ArchiveFormat archiveFormat = ArchiveFormat.fromFilename(rc.request().path());

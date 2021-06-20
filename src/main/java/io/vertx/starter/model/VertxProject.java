@@ -27,7 +27,7 @@ public class VertxProject {
   private Language language;
   private BuildTool buildTool;
   private String vertxVersion;
-  private Set<String> vertxDependencies;
+  private Set<Dependency> vertxDependencies;
   private ArchiveFormat archiveFormat;
   private String packageName;
   private JdkVersion jdkVersion;
@@ -89,11 +89,11 @@ public class VertxProject {
     return this;
   }
 
-  public Set<String> getVertxDependencies() {
+  public Set<Dependency> getVertxDependencies() {
     return vertxDependencies;
   }
 
-  public VertxProject setVertxDependencies(Set<String> vertxDependencies) {
+  public VertxProject setVertxDependencies(Set<Dependency> vertxDependencies) {
     this.vertxDependencies = vertxDependencies;
     return this;
   }

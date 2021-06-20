@@ -31,6 +31,7 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import io.vertx.starter.model.Dependency;
 import io.vertx.starter.model.VertxProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Set;
 
 import static io.vertx.starter.config.ProjectConstants.*;
 import static io.vertx.starter.model.ArchiveFormat.ZIP;
@@ -51,7 +53,8 @@ class ValidationHandlerTest {
 
   private JsonObject defaults;
   private JsonArray versions;
-  private JsonArray stack;
+  private JsonArray vertxStack;
+  private JsonArray mutinyStack;
   private ValidationHandler validator;
   private MultiMap params;
 
@@ -60,8 +63,9 @@ class ValidationHandlerTest {
     JsonObject starterData = Util.loadStarterData();
     defaults = starterData.getJsonObject("defaults");
     versions = starterData.getJsonArray("versions");
-    stack = starterData.getJsonArray("stack");
-    validator = new ValidationHandler(defaults, versions, stack);
+    vertxStack = starterData.getJsonArray("vertxStack");
+    mutinyStack = starterData.getJsonArray("mutinyStack");
+    validator = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
     params = MultiMap.caseInsensitiveMultiMap();
   }
 
@@ -102,8 +106,9 @@ class ValidationHandlerTest {
 
   @Test
   void testDependencyIncluded(Vertx vertx, VertxTestContext testContext) {
-    validator = new ValidationHandler(defaults, versions, stack);
-    VertxProject expected = defaults.mapTo(VertxProject.class).setVertxDependencies(Collections.singleton("vertx-web"));
+    validator = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
+    Set<Dependency> dependencies = Collections.singleton(new Dependency().setGroupId("io.vertx").setArtifactId("vertx-web"));
+    VertxProject expected = defaults.mapTo(VertxProject.class).setVertxDependencies(dependencies);
     expectSuccess(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web"), ZIP.getFileExtension(), expected);
   }
 
@@ -112,12 +117,12 @@ class ValidationHandlerTest {
     defaults.put("vertxVersion", "3.6.3");
     versions = new JsonArray()
       .add(new JsonObject().put("number", "3.6.3").put("exclusions", new JsonArray().add("vertx-web-graphql")));
-    stack = new JsonArray()
+    vertxStack = new JsonArray()
       .add(new JsonObject()
         .put("category", "Web")
         .put("items", new JsonArray().add(new JsonObject().put("artifactId", "vertx-web-graphql")))
       );
-    validator = new ValidationHandler(defaults, versions, stack);
+    validator = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
     expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web-graphql"), ZIP.getFileExtension(), VERTX_DEPENDENCIES);
   }
 

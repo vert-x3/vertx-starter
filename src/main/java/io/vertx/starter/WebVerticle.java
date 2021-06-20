@@ -56,11 +56,12 @@ public class WebVerticle extends AbstractVerticle {
 
       JsonObject defaults = starterData.getJsonObject("defaults");
       JsonArray versions = starterData.getJsonArray("versions");
-      JsonArray stack = starterData.getJsonArray("stack");
+      JsonArray vertxStack = starterData.getJsonArray("vertxStack");
+      JsonArray mutinyStack = starterData.getJsonArray("mutinyStack");
 
-      validationHandler = new ValidationHandler(defaults, versions, stack);
+      validationHandler = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
       generationHandler = new GenerationHandler();
-      metadataHandler = new MetadataHandler(defaults, versions, stack);
+      metadataHandler = new MetadataHandler(defaults, versions, vertxStack, mutinyStack);
 
     } catch (IOException e) {
       throw new RuntimeException(e);
