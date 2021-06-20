@@ -9,18 +9,16 @@ import static io.vertx.starter.config.ProjectConstants.VERTX_FLAVOR;
 
 public enum ProjectFlavor {
   @JsonProperty(VERTX_FLAVOR)
-  VERTX(VERTX_FLAVOR, "io.vertx", ""),
+  VERTX(VERTX_FLAVOR, "io.vertx"),
   @JsonProperty(MUTINY_FLAVOR)
-  MUTINY(MUTINY_FLAVOR, "io.smallrye.reactive", "smallrye-mutiny-");
+  MUTINY(MUTINY_FLAVOR, "io.smallrye.reactive");
 
   private final String id;
   private final String groupId;
-  private final String artifactIdPrefix;
 
-  ProjectFlavor(String id, String groupId, String artifactIdPrefix) {
+  ProjectFlavor(String id, String groupId) {
     this.id = id;
     this.groupId = groupId;
-    this.artifactIdPrefix = artifactIdPrefix;
   }
 
   public String getId() {
@@ -29,10 +27,6 @@ public enum ProjectFlavor {
 
   public String getGroupId() {
     return groupId;
-  }
-
-  public String getArtifactIdPrefix() {
-    return artifactIdPrefix;
   }
 
   public static ProjectFlavor fromId(String id) {
