@@ -33,13 +33,13 @@ You can provide the following query parameters to customize the project
 - `vertxDependencies`: a comma separated list of artifactIds of the vert.x modules
 - `packageName`: code package name, derived from `groupId` and `artifactId` by default
 - `jdkVersion`: which version of the JDK to use, defaults to `1.8`
-- `flavor`: `vert.x` (default) or `mutiny`
+- `flavor`: `vert.x` or `mutiny`
 
 Full example:
 
 ```
 curl -X GET \
-  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.1.0' \
+  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.1.0&flavor=vert.x' \
   -o starter.zip
 ```
 
@@ -52,6 +52,7 @@ artitfactId==starter \
 language==java \
 buildTool==maven \
 vertxVersion==4.1.0 \
+flavor==vert.x \
 vertxDependencies==vertx-web,vertx-web-client \
 -o starter.zip
 ```
