@@ -24,6 +24,10 @@ public class Dependency {
     return this;
   }
 
+  public boolean isVertxDependency() {
+    return ProjectFlavor.VERTX.getGroupId().equals(groupId);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

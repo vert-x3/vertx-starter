@@ -66,7 +66,7 @@
     </dependency>
 </#if>
 <#list vertxDependencies as dependency>
-    <#if flavor == "mutiny">
+    <#if flavor == "mutiny" && !dependency.vertxDependency>
     <dependency>
       <groupId>${dependency.groupId}</groupId>
       <artifactId>${dependency.artifactId}</artifactId>

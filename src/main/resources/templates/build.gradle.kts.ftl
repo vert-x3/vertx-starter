@@ -55,7 +55,7 @@ dependencies {
   implementation("io.smallrye.reactive:smallrye-mutiny-vertx-core:$mutinyVersion")
 </#if>
 <#list vertxDependencies as dependency>
-  <#if flavor == "mutiny">
+  <#if flavor == "mutiny" && !dependency.vertxDependency>
   implementation("${dependency.groupId}:${dependency.artifactId}:$mutinyVersion")
   <#else>
   implementation("${dependency.groupId}:${dependency.artifactId}")
