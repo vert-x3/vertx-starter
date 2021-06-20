@@ -122,16 +122,21 @@ public class ValidationHandler implements Handler<RoutingContext> {
         .map(String::toLowerCase)
         .collect(toSet());
 
-      Set<String> stackDependencies;
+      boolean areAllDependenciesSatisfiable;
       if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
-        stackDependencies = vertxStackDependencies.keySet();
+        areAllDependenciesSatisfiable = vertxStackDependencies.keySet()
+          .containsAll(vertxDependencies);
       } else if (vertxProject.getFlavor() == ProjectFlavor.MUTINY) {
-        stackDependencies = mutinyStackDependencies.keySet();
+        areAllDependenciesSatisfiable = vertxDependencies.stream()
+          .allMatch(dependency ->
+            mutinyStackDependencies.keySet().stream()
+              .anyMatch(mutinyDependency -> mutinyDependency.endsWith(dependency))
+          );
       } else {
         throw new IllegalArgumentException("There's no stack for flavor " + vertxProject.getFlavor());
       }
 
-      if (!stackDependencies.containsAll(vertxDependencies) ||
+      if (!areAllDependenciesSatisfiable ||
         !Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
         fail(rc, VERTX_DEPENDENCIES, deps);
         return;
