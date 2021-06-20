@@ -1,5 +1,7 @@
 package io.vertx.starter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 
 public class Dependency {
@@ -24,6 +26,7 @@ public class Dependency {
     return this;
   }
 
+  @JsonIgnore
   public boolean isVertxDependency() {
     return ProjectFlavor.VERTX.getGroupId().equals(groupId);
   }
