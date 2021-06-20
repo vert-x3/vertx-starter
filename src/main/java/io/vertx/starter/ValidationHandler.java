@@ -131,7 +131,7 @@ public class ValidationHandler implements Handler<RoutingContext> {
         throw new IllegalArgumentException("There's no stack for flavor " + vertxProject.getFlavor());
       }
 
-      if (vertxProject.getFlavor() == ProjectFlavor.VERTX && !stackDependencies.containsAll(vertxDependencies) ||
+      if (!stackDependencies.containsAll(vertxDependencies) ||
         !Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
         fail(rc, VERTX_DEPENDENCIES, deps);
         return;
