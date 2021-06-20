@@ -33,6 +33,7 @@ You can provide the following query parameters to customize the project
 - `vertxDependencies`: a comma separated list of artifactIds of the vert.x modules
 - `packageName`: code package name, derived from `groupId` and `artifactId` by default
 - `jdkVersion`: which version of the JDK to use, defaults to `1.8`
+- `flavor`: `vert.x` (default) or `mutiny`
 
 Full example:
 
