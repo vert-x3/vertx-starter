@@ -53,7 +53,7 @@
   </dependencyManagement>
 
   <dependencies>
-<#if flavor == "vertx" && !vertxDependencies?has_content>
+<#if flavor == "vert.x" && !vertxDependencies?has_content>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>

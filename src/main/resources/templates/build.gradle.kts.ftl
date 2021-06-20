@@ -49,7 +49,7 @@ application {
 
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-<#if flavor == "vertx" && !vertxDependencies?has_content>
+<#if flavor == "vert.x" && !vertxDependencies?has_content>
   implementation("io.vertx:vertx-core")
 <#elseif flavor == "mutiny" && !vertxDependencies?has_content>
   implementation("io.smallrye.reactive:smallrye-mutiny-vertx-core:$mutinyVersion")
