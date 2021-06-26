@@ -134,7 +134,6 @@ public class GeneratorService {
     ctx.put("languageDependencies", language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
     ctx.put("flavor", project.getFlavor().getId());
-    ctx.put("groupId", project.getFlavor().getGroupId());
     String packageName = packageName(project);
     ctx.put("packageName", packageName);
     ctx.put("jdkVersion", project.getJdkVersion().getValue());
