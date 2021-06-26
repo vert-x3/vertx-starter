@@ -147,7 +147,7 @@ public class ValidationHandler implements Handler<RoutingContext> {
         return;
       }
 
-      Set<Dependency> flavoredDependencies = new HashSet<>(vertxDependencies.size());
+      Set<Dependency> flavoredDependencies;
       if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
         flavoredDependencies = vertxDependencies.stream()
           .map(vertxStackDependencies::get)
@@ -161,6 +161,8 @@ public class ValidationHandler implements Handler<RoutingContext> {
           .map(Optional::get)
           .map(mutinyStackDependencies::get)
           .collect(toSet());
+      } else {
+        throw new IllegalArgumentException("Unknown project flavor " + vertxProject.getFlavor());
       }
 
       vertxProject.setVertxDependencies(flavoredDependencies);
