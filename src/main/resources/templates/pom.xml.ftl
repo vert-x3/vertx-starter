@@ -31,7 +31,14 @@
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
 </#if>
 
+<#if language == "scala">
+    <scala.version>2.13.6</scala.version>
+</#if>
+<#if language == "scala">
+    <main.verticle>scala:${packageName}.MainVerticle</main.verticle>
+<#else>
     <main.verticle>${packageName}.MainVerticle</main.verticle>
+</#if>
     <launcher.class>io.vertx.core.Launcher</launcher.class>
   </properties>
 
@@ -50,6 +57,30 @@
   </dependencyManagement>
 
   <dependencies>
+<#if language == "scala">
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-lang-scala-test_2.13</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+<#noparse>
+      <version>${scala.version}</version>
+</#noparse>
+    </dependency>
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_2.13</artifactId>
+      <version>3.2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>co.helmethair</groupId>
+      <artifactId>scalatest-junit-runner</artifactId>
+      <version>0.1.9</version>
+      <scope>test</scope>
+    </dependency>
+</#if>
 <#if !vertxDependencies?has_content>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -192,6 +223,16 @@
 <#noparse>
         <version>${maven-surefire-plugin.version}</version>
 </#noparse>
+<#if language == "scala">
+        <configuration>
+          <includes>
+            <include>*</include>
+          </includes>
+          <excludes>
+            <exclude/>
+          </excludes>
+        </configuration>
+</#if>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -209,9 +250,22 @@
           </arguments>
         </configuration>
       </plugin>
+<#if language == "scala">
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+</#if>
     </plugins>
   </build>
-
 <#if vertxVersion?ends_with("-SNAPSHOT")>
   <repositories>
     <repository>
