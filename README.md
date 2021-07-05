@@ -39,7 +39,7 @@ Full example:
 
 ```
 curl -X GET \
-  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.1.1&flavor=vert.x' \
+  'http://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.1.1' \
   -o starter.zip
 ```
 
@@ -52,7 +52,6 @@ artitfactId==starter \
 language==java \
 buildTool==maven \
 vertxVersion==4.1.1 \
-flavor==vert.x \
 vertxDependencies==vertx-web,vertx-web-client \
 -o starter.zip
 ```
