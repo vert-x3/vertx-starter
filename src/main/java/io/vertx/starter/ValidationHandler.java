@@ -46,7 +46,7 @@ public class ValidationHandler implements Handler<RoutingContext> {
   private final Map<String, Dependency> vertxStackDependencies;
   private final Map<String, Dependency> mutinyStackDependencies;
 
-  public ValidationHandler(JsonObject defaults, JsonArray versions, JsonArray vertxStack, JsonArray mutinyStack) {
+  public ValidationHandler(JsonObject defaults, JsonArray versions, JsonArray stack) {
     this.defaults = defaults;
     this.versions = versions.stream()
       .map(JsonObject.class::cast)
@@ -58,7 +58,7 @@ public class ValidationHandler implements Handler<RoutingContext> {
         obj -> obj.getString("number"),
         obj -> obj.getJsonArray("exclusions", new JsonArray()).stream().map(String.class::cast).collect(toList()))
       );
-    vertxStackDependencies = vertxStack.stream()
+    vertxStackDependencies = stack.stream()
       .map(JsonObject.class::cast)
       .flatMap(category -> category.getJsonArray("items").stream())
       .map(JsonObject.class::cast)
@@ -68,15 +68,16 @@ public class ValidationHandler implements Handler<RoutingContext> {
           .setGroupId(item.getString("groupId"))
           .setArtifactId(item.getString("artifactId")))
       );
-    mutinyStackDependencies = mutinyStack.stream()
+    mutinyStackDependencies = stack.stream()
       .map(JsonObject.class::cast)
       .flatMap(category -> category.getJsonArray("items").stream())
       .map(JsonObject.class::cast)
+      .filter(item -> item.getBoolean("mutinyBindings"))
       .collect(toMap(
         item -> item.getString("artifactId"),
         item -> new Dependency()
-          .setGroupId(item.getString("groupId"))
-          .setArtifactId(item.getString("artifactId")))
+          .setGroupId("io.smallrye.reactive")
+          .setArtifactId("smallrye-mutiny-" + item.getString("artifactId")))
       );
   }
 

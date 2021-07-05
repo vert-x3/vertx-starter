@@ -37,17 +37,16 @@ public class MetadataHandler implements Handler<RoutingContext> {
 
   private final Buffer metadata;
 
-  public MetadataHandler(JsonObject defaults, JsonArray versions, JsonArray vertxStack, JsonArray mutinyStack) {
+  public MetadataHandler(JsonObject defaults, JsonArray versions, JsonArray stack) {
     metadata = new JsonObject()
       .put("defaults", defaults)
       .put("versions", versions)
-      .put("stack", vertxStack)
+      .put("stack", stack)
       .put("buildTools", values(BuildTool.values(), BuildTool::getValue))
       .put("languages", values(Language.values(), Language::getName))
       .put("jdkVersions", values(JdkVersion.values(), JdkVersion::getValue))
       .put("flavors", values(ProjectFlavor.values(), ProjectFlavor::getId))
-      .put("vertxDependencies", vertxStack) // deprecated
-      .put("mutinyDependencies", mutinyStack) // deprecated
+      .put("vertxDependencies", stack) // deprecated
       .put("vertxVersions", versions.stream() // deprecated
         .map(JsonObject.class::cast)
         .map(obj -> obj.getString("number"))

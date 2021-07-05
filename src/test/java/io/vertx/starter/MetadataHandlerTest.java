@@ -46,11 +46,10 @@ public class MetadataHandlerTest {
 
     JsonObject defaults = starterData.getJsonObject("defaults");
     JsonArray versions = starterData.getJsonArray("versions");
-    JsonArray vertxStack = starterData.getJsonArray("vertxStack");
-    JsonArray mutinyStack = starterData.getJsonArray("mutinyStack");
+    JsonArray stack = starterData.getJsonArray("stack");
 
     Router router = Router.router(vertx);
-    router.route().handler(new MetadataHandler(defaults, versions, vertxStack, mutinyStack));
+    router.route().handler(new MetadataHandler(defaults, versions, stack));
 
     vertx.createHttpServer(new HttpServerOptions().setPort(0))
       .requestHandler(router)
@@ -65,13 +64,12 @@ public class MetadataHandlerTest {
             JsonObject metadata = response.bodyAsJsonObject();
             assertThat(metadata.getJsonObject("defaults")).isEqualTo(defaults);
             assertThat(metadata.getJsonArray("versions")).isEqualTo(versions);
-            assertThat(metadata.getJsonArray("stack")).isEqualTo(vertxStack);
+            assertThat(metadata.getJsonArray("stack")).isEqualTo(stack);
             assertThat(metadata.getJsonArray("buildTools")).contains("maven", "gradle");
             assertThat(metadata.getJsonArray("languages")).contains("java", "kotlin");
             assertThat(metadata.getJsonArray("jdkVersions")).contains("1.8", "11", "16");
             assertThat(metadata.getJsonArray("flavors")).contains("vert.x", "mutiny");
-            assertThat(metadata.getJsonArray("vertxDependencies")).isEqualTo(vertxStack);
-            assertThat(metadata.getJsonArray("mutinyDependencies")).isEqualTo(mutinyStack);
+            assertThat(metadata.getJsonArray("vertxDependencies")).isEqualTo(stack);
             assertThat(metadata.getJsonArray("vertxVersions")).isEqualTo(versions.stream()
               .map(JsonObject.class::cast)
               .map(obj -> obj.getString("number"))

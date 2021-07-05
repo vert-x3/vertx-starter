@@ -53,8 +53,7 @@ class ValidationHandlerTest {
 
   private JsonObject defaults;
   private JsonArray versions;
-  private JsonArray vertxStack;
-  private JsonArray mutinyStack;
+  private JsonArray stack;
   private ValidationHandler validator;
   private MultiMap params;
 
@@ -63,9 +62,8 @@ class ValidationHandlerTest {
     JsonObject starterData = Util.loadStarterData();
     defaults = starterData.getJsonObject("defaults");
     versions = starterData.getJsonArray("versions");
-    vertxStack = starterData.getJsonArray("vertxStack");
-    mutinyStack = starterData.getJsonArray("mutinyStack");
-    validator = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
+    stack = starterData.getJsonArray("stack");
+    validator = new ValidationHandler(defaults, versions, stack);
     params = MultiMap.caseInsensitiveMultiMap();
   }
 
@@ -106,7 +104,7 @@ class ValidationHandlerTest {
 
   @Test
   void testDependencyIncluded(Vertx vertx, VertxTestContext testContext) {
-    validator = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
+    validator = new ValidationHandler(defaults, versions, stack);
     Set<Dependency> dependencies = Collections.singleton(new Dependency().setGroupId("io.vertx").setArtifactId("vertx-web"));
     VertxProject expected = defaults.mapTo(VertxProject.class).setVertxDependencies(dependencies);
     expectSuccess(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web"), ZIP.getFileExtension(), expected);
@@ -117,12 +115,12 @@ class ValidationHandlerTest {
     defaults.put("vertxVersion", "3.6.3");
     versions = new JsonArray()
       .add(new JsonObject().put("number", "3.6.3").put("exclusions", new JsonArray().add("vertx-web-graphql")));
-    vertxStack = new JsonArray()
+    stack = new JsonArray()
       .add(new JsonObject()
         .put("category", "Web")
-        .put("items", new JsonArray().add(new JsonObject().put("artifactId", "vertx-web-graphql")))
+        .put("items", new JsonArray().add(new JsonObject().put("artifactId", "vertx-web-graphql").put("mutinyBindings", true)))
       );
-    validator = new ValidationHandler(defaults, versions, vertxStack, mutinyStack);
+    validator = new ValidationHandler(defaults, versions, stack);
     expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web-graphql"), ZIP.getFileExtension(), VERTX_DEPENDENCIES);
   }
 
