@@ -148,13 +148,16 @@ class GeneratorTest {
       for (Language language : Language.values()) {
         for (String version : versions) {
           for (Set<Dependency> vertxDependencies : testDeps) {
-            VertxProject vertxProject = defaultProject()
-              .setBuildTool(buildTool)
-              .setLanguage(language)
-              .setVertxVersion(version)
-              .setVertxDependencies(new HashSet<>(vertxDependencies))
-              .setPackageName("com.mycompany.project.special");
-            builder.add(vertxProject);
+            for (ProjectFlavor flavor : ProjectFlavor.values()) {
+              VertxProject vertxProject = defaultProject()
+                .setBuildTool(buildTool)
+                .setLanguage(language)
+                .setVertxVersion(version)
+                .setVertxDependencies(new HashSet<>(vertxDependencies))
+                .setPackageName("com.mycompany.project.special")
+                .setFlavor(flavor);
+              builder.add(vertxProject);
+            }
           }
         }
       }
