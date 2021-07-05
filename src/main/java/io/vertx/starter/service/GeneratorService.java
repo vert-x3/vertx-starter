@@ -47,6 +47,7 @@ import java.util.stream.Stream;
 import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.Language.KOTLIN;
+import static io.vertx.starter.model.Language.SCALA;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 
@@ -163,6 +164,7 @@ public class GeneratorService {
 
     String packageDir = packageName.replace('.', '/');
     String srcDir = "src/main/" + language.getName();
+
     render(tempDir, ctx, srcDir, "MainVerticle" + language.getExtension(), srcDir + "/" + packageDir);
     String testSrcDir = "src/test/" + language.getName();
     render(tempDir, ctx, testSrcDir, "TestMainVerticle" + language.getExtension(), testSrcDir + "/" + packageDir);
