@@ -31,7 +31,7 @@
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
 </#if>
 <#if flavor == "mutiny">
-    <mutiny.version>2.8.0</mutiny.version>
+    <mutiny.version>2.9.0</mutiny.version>
 </#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>

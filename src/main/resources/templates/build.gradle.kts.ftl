@@ -31,7 +31,7 @@ repositories {
 
 val vertxVersion = "${vertxVersion}"
 <#if flavor == "mutiny">
-val mutinyVersion = "2.8.0"
+val mutinyVersion = "2.9.0"
 </#if>
 val junitJupiterVersion = "5.7.0"
 
