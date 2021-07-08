@@ -22,6 +22,7 @@ import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
 import io.vertx.starter.model.Dependency;
 import io.vertx.starter.model.Language;
+import io.vertx.starter.model.ProjectFlavor;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -126,7 +127,7 @@ public class GeneratorService {
       .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-unit"));
     ctx.put("hasVertxUnit", hasVertxUnit);
     boolean hasVertxJUnit5 = vertxDependencies
-      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-junit5")) || !hasVertxUnit;
+      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-junit5")) || !hasVertxUnit || project.getFlavor() == ProjectFlavor.MUTINY;
     ctx.put("hasVertxJUnit5", hasVertxJUnit5);
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
