@@ -127,8 +127,8 @@ public class GeneratorService {
       .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-unit"));
     ctx.put("hasVertxUnit", hasVertxUnit);
     boolean hasVertxJUnit5 = vertxDependencies
-      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-junit5")) || !hasVertxUnit || project.getFlavor() == ProjectFlavor.MUTINY;
-    ctx.put("hasVertxJUnit5", hasVertxJUnit5);
+      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-junit5")) || !hasVertxUnit;
+    ctx.put("hasVertxJUnit5", hasVertxJUnit5 || project.getFlavor() == ProjectFlavor.MUTINY);
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
     }
