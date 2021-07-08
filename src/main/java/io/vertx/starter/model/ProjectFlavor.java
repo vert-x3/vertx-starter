@@ -1,5 +1,6 @@
 package io.vertx.starter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Locale;
@@ -23,6 +24,11 @@ public enum ProjectFlavor {
 
   public String getGroupId() {
     return groupId;
+  }
+
+  @JsonIgnore
+  public String capitalizedId() {
+    return id.substring(0, 1).toUpperCase(Locale.ROOT) + id.substring(1);
   }
 
   public static ProjectFlavor fromId(String id) {

@@ -123,22 +123,26 @@ public class ValidationHandler implements Handler<RoutingContext> {
         .map(String::toLowerCase)
         .collect(toSet());
 
-      boolean areAllDependenciesSatisfiable;
+      Set<String> unsatisfiableDependencies;
       if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
-        areAllDependenciesSatisfiable = vertxStackDependencies.keySet()
-          .containsAll(vertxDependencies);
+        unsatisfiableDependencies = vertxDependencies.stream()
+          .filter(dependency -> !vertxStackDependencies.containsKey(dependency))
+          .collect(toSet());
       } else if (vertxProject.getFlavor() == ProjectFlavor.MUTINY) {
-        areAllDependenciesSatisfiable = vertxDependencies.stream()
-          .allMatch(dependency ->
-            mutinyStackDependencies.keySet().stream()
-              .anyMatch(mutinyDependency -> mutinyDependency.endsWith(dependency))
-          );
+        unsatisfiableDependencies = vertxDependencies.stream()
+          .filter(artifactId -> !isArtifactAvailableForMutinyFlavor(artifactId))
+          .collect(toSet());
       } else {
         throw new IllegalArgumentException("There's no stack for flavor " + vertxProject.getFlavor());
       }
 
-      if (!areAllDependenciesSatisfiable ||
-        !Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
+      if (!unsatisfiableDependencies.isEmpty()) {
+        String capitalizedProjectFlavor = vertxProject.getFlavor().capitalizedId();
+        String message = "The following artifacts are not available for the Vert.x API '" + capitalizedProjectFlavor + "': " + unsatisfiableDependencies;
+        WebVerticle.fail(rc, 400, message);
+      }
+
+      if (!Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
         fail(rc, VERTX_DEPENDENCIES, deps);
         return;
       }
@@ -191,6 +195,11 @@ public class ValidationHandler implements Handler<RoutingContext> {
 
     rc.put(WebVerticle.VERTX_PROJECT_KEY, vertxProject);
     rc.next();
+  }
+
+  private boolean isArtifactAvailableForMutinyFlavor(String artifactId) {
+    return mutinyStackDependencies.keySet().stream()
+      .anyMatch(dependency -> dependency.endsWith(artifactId));
   }
 
   private boolean validateAndSetId(RoutingContext rc, String name, Consumer<String> setter) {
