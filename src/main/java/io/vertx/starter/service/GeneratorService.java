@@ -123,10 +123,10 @@ public class GeneratorService {
       vertxDependencies = new HashSet<>();
     }
     boolean hasVertxUnit = vertxDependencies
-      .removeIf(dependency -> dependency.getArtifactId().equals("vertx-unit"));
+      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-unit"));
     ctx.put("hasVertxUnit", hasVertxUnit);
     boolean hasVertxJUnit5 = vertxDependencies
-      .removeIf(dependency -> dependency.getArtifactId().equals("vertx-junit5")) || !hasVertxUnit;
+      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-junit5")) || !hasVertxUnit;
     ctx.put("hasVertxJUnit5", hasVertxJUnit5);
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
@@ -164,9 +164,11 @@ public class GeneratorService {
 
     String packageDir = packageName.replace('.', '/');
     String srcDir = "src/main/" + language.getName();
-    render(tempDir, ctx, srcDir, "MainVerticle" + language.getExtension(), srcDir + "/" + packageDir);
+    String srcFile = "MainVerticle." + project.getFlavor().getId() + language.getExtension();
+    render(tempDir, ctx, srcDir, srcFile, srcDir + "/" + packageDir, "MainVerticle" + language.getExtension());
     String testSrcDir = "src/test/" + language.getName();
-    render(tempDir, ctx, testSrcDir, "TestMainVerticle" + language.getExtension(), testSrcDir + "/" + packageDir);
+    String testSrcFile = "TestMainVerticle." + project.getFlavor().getId() + language.getExtension();
+    render(tempDir, ctx, testSrcDir, testSrcFile, testSrcDir + "/" + packageDir, "TestMainVerticle" + language.getExtension());
 
     render(tempDir, ctx, ".", "README.adoc");
   }
@@ -192,14 +194,14 @@ public class GeneratorService {
   }
 
   private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename) throws IOException {
-    render(tempDir, ctx, sourceDir, filename, sourceDir);
+    render(tempDir, ctx, sourceDir, filename, sourceDir, filename);
   }
 
-  private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename, String destDir) throws IOException {
+  private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename, String destDir, String destFilename) throws IOException {
     Path dest = tempDir.path().resolve(destDir);
     Files.createDirectories(dest);
     Buffer data = renderBlocking(ctx, "templates/" + sourceDir + "/" + filename + ".ftl");
-    vertx.fileSystem().writeFileBlocking(dest.resolve(filename).toString(), data);
+    vertx.fileSystem().writeFileBlocking(dest.resolve(destFilename).toString(), data);
   }
 
   private Buffer renderBlocking(Map<String, Object> context, String templateFileName) {

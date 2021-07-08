@@ -95,7 +95,22 @@
     </dependency>
 </#list>
 
-<#if hasVertxJUnit5>
+<#if flavor == "mutiny">
+  <dependency>
+    <groupId>io.smallrye.reactive</groupId>
+    <artifactId>smallrye-mutiny-vertx-junit5</artifactId>
+    <#noparse><version>${mutiny.version}</version></#noparse>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+<#noparse>
+    <version>${junit-jupiter.version}</version>
+</#noparse>
+    <scope>test</scope>
+  </dependency>
+<#elseif hasVertxJUnit5>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-junit5</artifactId>

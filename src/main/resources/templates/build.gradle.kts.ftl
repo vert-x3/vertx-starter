@@ -67,7 +67,10 @@ dependencies {
 <#list languageDependencies as dependency>
   implementation("io.vertx:${dependency}")
 </#list>
-<#if hasVertxJUnit5>
+<#if flavor == "mutiny">
+  testImplementation("io.smallrye.reactive:smallrye-mutiny-vertx-junit5:$mutinyVersion")
+  testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+<#elseif hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 <#elseif hasVertxUnit>
