@@ -38,6 +38,7 @@
     <launcher.class>io.vertx.core.Launcher</launcher.class>
   </properties>
 
+<#if flavor == "vert.x">
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -51,6 +52,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+</#if>
 
   <dependencies>
 <#if flavor == "vert.x" && !vertxDependencies?has_content>
@@ -92,6 +94,7 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>${dependency}</artifactId>
+      <#if flavor != "vert.x"><version>${vertxVersion}</version></#if>
     </dependency>
 </#list>
 

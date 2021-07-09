@@ -48,7 +48,9 @@ application {
 }
 
 dependencies {
+<#if flavor == "vert.x">
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
+</#if>
 <#if flavor == "vert.x" && !vertxDependencies?has_content>
   implementation("io.vertx:vertx-core")
 <#elseif flavor == "mutiny" && !vertxDependencies?has_content>
@@ -65,7 +67,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 </#if>
 <#list languageDependencies as dependency>
-  implementation("io.vertx:${dependency}")
+  implementation("io.vertx:${dependency}<#if flavor != "vert.x">:$vertxVersion</#if>")
 </#list>
 <#if flavor == "mutiny">
   testImplementation("io.smallrye.reactive:smallrye-mutiny-vertx-junit5:$mutinyVersion")
