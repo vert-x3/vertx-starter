@@ -165,6 +165,7 @@ public class VertxProject {
       ", jdkVersion=" + jdkVersion +
       ", operatingSystem=" + operatingSystem +
       ", createdOn=" + createdOn +
+      ", flavor='" + flavor + '\'' +
       '}';
   }
 }
