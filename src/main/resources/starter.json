@@ -41,6 +41,12 @@
       ]
     },
     {
+      "number": "4.2.0.Beta1",
+      "exclusions": [
+        "vertx-sync"
+      ]
+    },
+    {
       "number": "4.2.0-SNAPSHOT",
       "exclusions": [
         "vertx-sync"
