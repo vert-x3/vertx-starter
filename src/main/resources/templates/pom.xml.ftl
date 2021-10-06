@@ -30,11 +30,15 @@
 <#if hasVertxJUnit5>
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
 </#if>
+<#if flavor == "mutiny">
+    <mutiny.version>2.9.0</mutiny.version>
+</#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
     <launcher.class>io.vertx.core.Launcher</launcher.class>
   </properties>
 
+<#if flavor == "vert.x">
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -48,19 +52,34 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+</#if>
 
   <dependencies>
-<#if !vertxDependencies?has_content>
+<#if flavor == "vert.x" && !vertxDependencies?has_content>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
     </dependency>
+<#elseif flavor == "mutiny" && !vertxDependencies?has_content>
+    <dependency>
+      <groupId>io.smallrye.reactive</groupId>
+      <artifactId>smallrye-mutiny-vertx-core</artifactId>
+      <#noparse><version>${mutiny.version}</version></#noparse>
+    </dependency>
 </#if>
 <#list vertxDependencies as dependency>
+    <#if flavor == "mutiny" && !dependency.vertxDependency>
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>${dependency}</artifactId>
+      <groupId>${dependency.groupId}</groupId>
+      <artifactId>${dependency.artifactId}</artifactId>
+      <#noparse><version>${mutiny.version}</version></#noparse>
     </dependency>
+    <#else>
+    <dependency>
+      <groupId>${dependency.groupId}</groupId>
+      <artifactId>${dependency.artifactId}</artifactId>
+    </dependency>
+    </#if>
 </#list>
 <#if language == "kotlin">
 <#noparse>
@@ -71,8 +90,30 @@
     </dependency>
 </#noparse>
 </#if>
+<#list languageDependencies as dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>${dependency}</artifactId>
+      <#if flavor != "vert.x"><version>${vertxVersion}</version></#if>
+    </dependency>
+</#list>
 
-<#if hasVertxJUnit5>
+<#if flavor == "mutiny">
+  <dependency>
+    <groupId>io.smallrye.reactive</groupId>
+    <artifactId>smallrye-mutiny-vertx-junit5</artifactId>
+    <#noparse><version>${mutiny.version}</version></#noparse>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+<#noparse>
+    <version>${junit-jupiter.version}</version>
+</#noparse>
+    <scope>test</scope>
+  </dependency>
+<#elseif hasVertxJUnit5>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-junit5</artifactId>

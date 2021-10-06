@@ -30,6 +30,9 @@ repositories {
 }
 
 val vertxVersion = "${vertxVersion}"
+<#if flavor == "mutiny">
+val mutinyVersion = "2.9.0"
+</#if>
 val junitJupiterVersion = "5.7.0"
 
 val mainVerticleName = "${packageName}.MainVerticle"
@@ -45,17 +48,31 @@ application {
 }
 
 dependencies {
+<#if flavor == "vert.x">
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-<#if !vertxDependencies?has_content>
+</#if>
+<#if flavor == "vert.x" && !vertxDependencies?has_content>
   implementation("io.vertx:vertx-core")
+<#elseif flavor == "mutiny" && !vertxDependencies?has_content>
+  implementation("io.smallrye.reactive:smallrye-mutiny-vertx-core:$mutinyVersion")
 </#if>
 <#list vertxDependencies as dependency>
-  implementation("io.vertx:${dependency}")
+  <#if flavor == "mutiny" && !dependency.vertxDependency>
+  implementation("${dependency.groupId}:${dependency.artifactId}:$mutinyVersion")
+  <#else>
+  implementation("${dependency.groupId}:${dependency.artifactId}")
+  </#if>
 </#list>
 <#if language == "kotlin">
   implementation(kotlin("stdlib-jdk8"))
 </#if>
-<#if hasVertxJUnit5>
+<#list languageDependencies as dependency>
+  implementation("io.vertx:${dependency}<#if flavor != "vert.x">:$vertxVersion</#if>")
+</#list>
+<#if flavor == "mutiny">
+  testImplementation("io.smallrye.reactive:smallrye-mutiny-vertx-junit5:$mutinyVersion")
+  testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+<#elseif hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 <#elseif hasVertxUnit>

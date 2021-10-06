@@ -31,6 +31,7 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import io.vertx.starter.model.Dependency;
 import io.vertx.starter.model.VertxProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Set;
 
 import static io.vertx.starter.config.ProjectConstants.*;
 import static io.vertx.starter.model.ArchiveFormat.ZIP;
@@ -103,7 +105,8 @@ class ValidationHandlerTest {
   @Test
   void testDependencyIncluded(Vertx vertx, VertxTestContext testContext) {
     validator = new ValidationHandler(defaults, versions, stack);
-    VertxProject expected = defaults.mapTo(VertxProject.class).setVertxDependencies(Collections.singleton("vertx-web"));
+    Set<Dependency> dependencies = Collections.singleton(new Dependency().setGroupId("io.vertx").setArtifactId("vertx-web"));
+    VertxProject expected = defaults.mapTo(VertxProject.class).setVertxDependencies(dependencies);
     expectSuccess(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web"), ZIP.getFileExtension(), expected);
   }
 
@@ -115,7 +118,7 @@ class ValidationHandlerTest {
     stack = new JsonArray()
       .add(new JsonObject()
         .put("category", "Web")
-        .put("items", new JsonArray().add(new JsonObject().put("artifactId", "vertx-web-graphql")))
+        .put("items", new JsonArray().add(new JsonObject().put("artifactId", "vertx-web-graphql").put("mutinyBindings", true)))
       );
     validator = new ValidationHandler(defaults, versions, stack);
     expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web-graphql"), ZIP.getFileExtension(), VERTX_DEPENDENCIES);
@@ -134,6 +137,11 @@ class ValidationHandlerTest {
   @Test
   void testUnknownJdkVersion(Vertx vertx, VertxTestContext testContext) {
     expectFailure(vertx, testContext, validator, params.add(JDK_VERSION, "9"), ZIP.getFileExtension(), JDK_VERSION);
+  }
+
+  @Test
+  void testUnknownFlavor(Vertx vertx, VertxTestContext testContext) {
+    expectFailure(vertx, testContext, validator, params.add(FLAVOR, "RxJava"), ZIP.getFileExtension(), JDK_VERSION);
   }
 
   @Test

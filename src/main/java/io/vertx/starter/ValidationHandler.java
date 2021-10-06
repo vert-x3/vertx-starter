@@ -43,7 +43,8 @@ public class ValidationHandler implements Handler<RoutingContext> {
   private final JsonObject defaults;
   private final Set<String> versions;
   private final Map<String, List<String>> exclusions;
-  private final Set<String> dependencies;
+  private final Map<String, Dependency> vertxStackDependencies;
+  private final Map<String, Dependency> mutinyStackDependencies;
 
   public ValidationHandler(JsonObject defaults, JsonArray versions, JsonArray stack) {
     this.defaults = defaults;
@@ -57,12 +58,27 @@ public class ValidationHandler implements Handler<RoutingContext> {
         obj -> obj.getString("number"),
         obj -> obj.getJsonArray("exclusions", new JsonArray()).stream().map(String.class::cast).collect(toList()))
       );
-    dependencies = stack.stream()
+    vertxStackDependencies = stack.stream()
       .map(JsonObject.class::cast)
       .flatMap(category -> category.getJsonArray("items").stream())
       .map(JsonObject.class::cast)
-      .map(item -> item.getString("artifactId"))
-      .collect(toSet());
+      .collect(toMap(
+        item -> item.getString("artifactId"),
+        item -> new Dependency()
+          .setGroupId(item.getString("groupId"))
+          .setArtifactId(item.getString("artifactId")))
+      );
+    mutinyStackDependencies = stack.stream()
+      .map(JsonObject.class::cast)
+      .flatMap(category -> category.getJsonArray("items").stream())
+      .map(JsonObject.class::cast)
+      .filter(item -> item.getBoolean("mutinyBindings"))
+      .collect(toMap(
+        item -> item.getString("artifactId"),
+        item -> new Dependency()
+          .setGroupId("io.smallrye.reactive")
+          .setArtifactId("smallrye-mutiny-" + item.getString("artifactId")))
+      );
   }
 
   @Override
@@ -86,6 +102,10 @@ public class ValidationHandler implements Handler<RoutingContext> {
       return;
     }
 
+    if (!validateAndSetEnum(rc, FLAVOR, ProjectFlavor::fromId, vertxProject::setFlavor)) {
+      return;
+    }
+
     String vertxVersion = getQueryParam(rc, VERTX_VERSION);
     if (isNotBlank(vertxVersion)) {
       if (!versions.contains(vertxVersion)) {
@@ -103,8 +123,26 @@ public class ValidationHandler implements Handler<RoutingContext> {
         .map(String::toLowerCase)
         .collect(toSet());
 
-      if (!dependencies.containsAll(vertxDependencies) ||
-        !Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
+      Set<String> unsatisfiableDependencies;
+      if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
+        unsatisfiableDependencies = vertxDependencies.stream()
+          .filter(dependency -> !vertxStackDependencies.containsKey(dependency))
+          .collect(toSet());
+      } else if (vertxProject.getFlavor() == ProjectFlavor.MUTINY) {
+        unsatisfiableDependencies = vertxDependencies.stream()
+          .filter(artifactId -> !isArtifactAvailableForMutinyFlavor(artifactId))
+          .collect(toSet());
+      } else {
+        throw new IllegalArgumentException("There's no stack for flavor " + vertxProject.getFlavor());
+      }
+
+      if (!unsatisfiableDependencies.isEmpty()) {
+        String capitalizedProjectFlavor = vertxProject.getFlavor().capitalizedId();
+        String message = "The following artifacts are not available for the Vert.x API '" + capitalizedProjectFlavor + "': " + unsatisfiableDependencies;
+        WebVerticle.fail(rc, 400, message);
+      }
+
+      if (!Collections.disjoint(exclusions.get(vertxProject.getVertxVersion()), vertxDependencies)) {
         fail(rc, VERTX_DEPENDENCIES, deps);
         return;
       }
@@ -114,7 +152,25 @@ public class ValidationHandler implements Handler<RoutingContext> {
         return;
       }
 
-      vertxProject.setVertxDependencies(vertxDependencies);
+      Set<Dependency> flavoredDependencies;
+      if (vertxProject.getFlavor() == ProjectFlavor.VERTX) {
+        flavoredDependencies = vertxDependencies.stream()
+          .map(vertxStackDependencies::get)
+          .collect(toSet());
+      } else if (vertxProject.getFlavor() == ProjectFlavor.MUTINY) {
+        flavoredDependencies = vertxDependencies.stream()
+          .map(dependency -> mutinyStackDependencies.keySet().stream()
+            .filter(mutinyDependency -> mutinyDependency.endsWith(dependency))
+            .findFirst())
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .map(mutinyStackDependencies::get)
+          .collect(toSet());
+      } else {
+        throw new IllegalArgumentException("Unknown project flavor " + vertxProject.getFlavor());
+      }
+
+      vertxProject.setVertxDependencies(flavoredDependencies);
     }
 
     ArchiveFormat archiveFormat = ArchiveFormat.fromFilename(rc.request().path());
@@ -139,6 +195,11 @@ public class ValidationHandler implements Handler<RoutingContext> {
 
     rc.put(WebVerticle.VERTX_PROJECT_KEY, vertxProject);
     rc.next();
+  }
+
+  private boolean isArtifactAvailableForMutinyFlavor(String artifactId) {
+    return mutinyStackDependencies.keySet().stream()
+      .anyMatch(dependency -> dependency.endsWith(artifactId));
   }
 
   private boolean validateAndSetId(RoutingContext rc, String name, Consumer<String> setter) {

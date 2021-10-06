@@ -27,12 +27,13 @@ public class VertxProject {
   private Language language;
   private BuildTool buildTool;
   private String vertxVersion;
-  private Set<String> vertxDependencies;
+  private Set<Dependency> vertxDependencies;
   private ArchiveFormat archiveFormat;
   private String packageName;
   private JdkVersion jdkVersion;
   private String operatingSystem;
   private Instant createdOn;
+  private ProjectFlavor flavor;
 
   public String getId() {
     return id;
@@ -88,11 +89,11 @@ public class VertxProject {
     return this;
   }
 
-  public Set<String> getVertxDependencies() {
+  public Set<Dependency> getVertxDependencies() {
     return vertxDependencies;
   }
 
-  public VertxProject setVertxDependencies(Set<String> vertxDependencies) {
+  public VertxProject setVertxDependencies(Set<Dependency> vertxDependencies) {
     this.vertxDependencies = vertxDependencies;
     return this;
   }
@@ -142,6 +143,15 @@ public class VertxProject {
     return this;
   }
 
+  public ProjectFlavor getFlavor() {
+    return flavor;
+  }
+
+  public VertxProject setFlavor(ProjectFlavor flavor) {
+    this.flavor = flavor;
+    return this;
+  }
+
   @Override
   public String toString() {
     // DO NOT RETURN USER RELATED-DATA (groupId, artifactId, packageName)
@@ -155,6 +165,7 @@ public class VertxProject {
       ", jdkVersion=" + jdkVersion +
       ", operatingSystem=" + operatingSystem +
       ", createdOn=" + createdOn +
+      ", flavor='" + flavor + '\'' +
       '}';
   }
 }

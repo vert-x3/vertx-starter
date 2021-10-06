@@ -6,7 +6,8 @@
     "buildTool": "maven",
     "vertxVersion": "4.1.4",
     "archiveFormat": "zip",
-    "jdkVersion": "11"
+    "jdkVersion": "11",
+    "flavor": "vert.x"
   },
   "versions": [
     {
@@ -62,77 +63,111 @@
       "category": "Web",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web",
           "name": "Vert.x Web",
+          "mutinyBindings": true,
           "description": "Vert.x-Web is a tool-kit for writing sophisticated modern web applications and HTTP microservices."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-client",
           "name": "Vert.x Web Client",
+          "mutinyBindings": true,
           "description": "Vert.x Web Client is an easy to use advanced HTTP client."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-graphql",
           "name": "Web GraphQL Handler",
+          "mutinyBindings": true,
           "description": "Create GraphQL servers with Vert.x Web and the GraphQL-Java library."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-api-contract",
           "name": "Web API Contract",
+          "mutinyBindings": false,
           "description": "Web API Contract supports OpenApi 3 specification for a design first approach and provides a validation framework."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-thymeleaf",
-          "name": "Thymeleaf template engine"
+          "name": "Thymeleaf template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-handlebars",
-          "name": "Handlebars template engine"
+          "name": "Handlebars template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-jade",
-          "name": "Jade template engine"
+          "name": "Jade template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-mvel",
-          "name": "MVEL template engine"
+          "name": "MVEL template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-pebble",
-          "name": "Pebble template engine"
+          "name": "Pebble template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-freemarker",
-          "name": "Apache FreeMarker template engine"
+          "name": "Apache FreeMarker template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-rocker",
-          "name": "Rocker template engine"
+          "name": "Rocker template engine",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-templ-httl",
-          "name": "HTTL template engine"
+          "name": "HTTL template engine",
+          "mutinyBindings": false
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-sstore-cookie",
-          "name": "Cookie session storage"
+          "name": "Cookie session storage",
+          "mutinyBindings": false
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-sstore-redis",
-          "name": "Redis session storage"
+          "name": "Redis session storage",
+          "mutinyBindings": false
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-sstore-infinispan",
-          "name": "Session storage with Infinispan Client"
+          "name": "Session storage with Infinispan Client",
+          "mutinyBindings": false
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-validation",
           "name": "Web Validation",
+          "mutinyBindings": true,
           "description": "A library to declaratively parse and validate incoming Vert.x Web HTTP requests."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-web-openapi",
           "name": "Web OpenAPI",
+          "mutinyBindings": true,
           "description": "Extends Vert.x Web to support OpenAPI 3, bringing a simple interface for building web routers that conform to OpenAPI contracts."
         }
       ]
@@ -143,40 +178,58 @@
       "description": "Vert.x provides a few different asynchronous clients for accessing various data stores from your application. You don't have to use these clients - you could use clients direct from the vendor if you prefer (e.g. MongoDB provide their own cool async and reactive clients), but these provide a simple async API which is available in various languages.",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-pg-client",
-          "name": "Reactive PostgreSQL client"
+          "name": "Reactive PostgreSQL client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-mysql-client",
-          "name": "Reactive MySQL client"
+          "name": "Reactive MySQL client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-db2-client",
-          "name": "Reactive DB2 client"
+          "name": "Reactive DB2 client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-mssql-client",
-          "name": "Reactive MSSQL client"
+          "name": "Reactive MSSQL client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-mongo-client",
-          "name": "MongoDB client"
+          "name": "MongoDB client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-jdbc-client",
-          "name": "JDBC client"
+          "name": "JDBC client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-redis-client",
-          "name": "Redis client"
+          "name": "Redis client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-cassandra-client",
-          "name": "Cassandra client"
+          "name": "Cassandra client",
+          "mutinyBindings": true
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-sql-client-templates",
           "name": "SQL Client Templates",
+          "mutinyBindings": true,
           "description": "A small library designed to facilitate the execution and data manipulation of SQL queries."
         }
       ]
@@ -187,33 +240,45 @@
       "description": "Vert.x provides a few components to make your applications more reactive.",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-rx-java",
           "name": "Vert.x RxJava v1",
+          "mutinyBindings": false,
           "description": "Vert.x API for RxJava 1."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-rx-java2",
           "name": "Vert.x RxJava v2",
+          "mutinyBindings": false,
           "description": "Vert.x API for RxJava 2."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-rx-java3",
           "name": "Vert.x RxJava v3",
+          "mutinyBindings": false,
           "description": "Vert.x API for RxJava 3."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-reactive-streams",
           "name": "Reactive streams",
+          "mutinyBindings": false,
           "description": "Vert.x supports reactive streams so your applications can interoperate with other reactive systems such as Akka or Project Reactor."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-sync",
           "name": "Vert.x Sync",
+          "mutinyBindings": false,
           "description": "Vertx-sync allows you to deploy verticles that run using fibers. Fibers are very lightweight threads that can be blocked without blocking a kernel thread. This enables you to write your verticle code in a familiar synchronous style."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-lang-kotlin-coroutines",
           "name": "Vert.x Kotlin coroutines",
+          "mutinyBindings": false,
           "description": "Kotlin coroutines for Vert.x, gives you super powers such as async/await or Go-like channels. This enables you to write your verticle code in a familiar sequential style."
         }
       ]
@@ -224,18 +289,24 @@
       "description": "Vert.x offers various component to build microservice-based applications.",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-service-discovery",
           "name": "Vert.x Service Discovery",
+          "mutinyBindings": true,
           "description": "This component lets you publish, lookup and bind to any type of services."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-circuit-breaker",
           "name": "Vert.x Circuit Breaker",
+          "mutinyBindings": true,
           "description": "This component provides an implementation of the circuit breaker pattern for Vert.x"
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-config",
           "name": "Vert.x Config",
+          "mutinyBindings": true,
           "description": "This component provides an extensible way to configure Vert.x applications."
         }
       ]
@@ -245,8 +316,10 @@
       "category": "IoT",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-mqtt",
           "name": "MQTT",
+          "mutinyBindings": true,
           "description": "Vert.x MQTT (client and server) is able to handle connections, communication and messages exchange with remote MQTT clients. Its API provides a bunch of events related to protocol messages received by clients and exposes allow to send messages to them."
         }
       ]
@@ -257,58 +330,80 @@
       "description": "Vert.x provides simple APIs for auth in your applications. We also provide a few out of the box implementations.",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-jdbc",
           "name": "JDBC auth",
+          "mutinyBindings": true,
           "description": "Auth implementation backed by JDBC"
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-jwt",
           "name": "JWT auth",
+          "mutinyBindings": true,
           "description": "Auth implementation using JSON web tokens (JWT)"
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-shiro",
           "name": "Shiro auth",
+          "mutinyBindings": true,
           "description": "Auth implementation using Apache Shiro"
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-mongo",
           "name": "MongoDB auth",
+          "mutinyBindings": true,
           "description": "Auth implementation using MongoDB"
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-oauth2",
           "name": "OAuth 2",
+          "mutinyBindings": true,
           "description": "Auth implementation for OAuth2"
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-htdigest",
           "name": ".htdigest Auth",
+          "mutinyBindings": true,
           "description": "Authentication and authorization support based on .htdigest files."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-properties",
           "name": "Properties Auth",
+          "mutinyBindings": true,
           "description": "Authentication and authorization support based on Java properties files."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-ldap",
           "name": "LDAP Auth",
+          "mutinyBindings": true,
           "description": "Implementation using JDK built-in LDAP capabilities."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-webauthn",
           "name": "Webauthn Auth",
+          "mutinyBindings": true,
           "description": "FIDO2 WebAuthn (password-less) implementation."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-htpasswd",
           "name": ".htpasswd Auth",
+          "mutinyBindings": true,
           "description": "Authentication and authorization support based on .htpasswd files."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-auth-sql-client",
           "name": "Sql Client Auth",
+          "mutinyBindings": true,
           "description": "Authentication and authorization support based on the Vert.x SQL client and a relational database."
         },
         {
@@ -323,23 +418,31 @@
       "category": "Messaging",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-amqp-client",
           "name": "AMQP Client",
+          "mutinyBindings": true,
           "description": "A client for interacting with an AMQP 1.0 broker or router."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-stomp",
           "name": "STOMP Client and Server",
+          "mutinyBindings": true,
           "description": "Vert.x provides an implementation of the STOMP protocol."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-rabbitmq-client",
           "name": "RabbitMQ Client",
+          "mutinyBindings": true,
           "description": "A client to interact with RabbitMQ."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-amqp-bridge",
           "name": "AMQP Bridge",
+          "mutinyBindings": false,
           "description": "A bridge for interacting with an AMQP 1.0 broker or router."
         }
       ]
@@ -349,23 +452,31 @@
       "category": "Integration",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-mail-client",
           "name": "Mail Client",
+          "mutinyBindings": true,
           "description": "Vert.x provides a simple SMTP mail client so you can send emails from your applications."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-jca",
           "name": "JCA Adaptor",
+          "mutinyBindings": false,
           "description": "Vert.x provides a Java Connector Architecture (JCA) adaptor which allows it to interoperate with any JavaEE application server."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-kafka-client",
           "name": "Kafka Client",
+          "mutinyBindings": true,
           "description": "A client to interact with Apache Kafka."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-consul-client",
           "name": "Consul Client",
+          "mutinyBindings": true,
           "description": "A client to interact with Consul."
         }
       ]
@@ -376,13 +487,17 @@
       "description": "Vert.x offers various bridges to extend the Event Bus beyond the JVM",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-tcp-eventbus-bridge",
           "name": "TCP Eventbus Bridge",
+          "mutinyBindings": true,
           "description": "An eventbus bridge that lets you interact with Vert.x from any application thanks to a TCP socket."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-camel-bridge",
           "name": "Camel Bridge",
+          "mutinyBindings": false,
           "description": "An eventbus bridge that lets you interact with Apache Camel endpoints and routes"
         }
       ]
@@ -393,33 +508,45 @@
       "description": "Vert.x offers various component to keep your Vert.x application on track when running in production",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-dropwizard-metrics",
           "name": "Metrics using Dropwizard",
+          "mutinyBindings": false,
           "description": "This component captures metrics from Vert.x core components and exposes them using Dropwizard."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-micrometer-metrics",
           "name": "Metrics using Micrometer",
+          "mutinyBindings": true,
           "description": "This component captures metrics from Vert.x core components and exposes them using Micrometer."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-health-check",
           "name": "Vert.x Health Check",
+          "mutinyBindings": false,
           "description": "This component provides a simple way to expose health checks."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-zipkin",
           "name": "Tracing using Zipkin",
+          "mutinyBindings": false,
           "description": "Distributed tracing with Zipkin."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-opentracing",
           "name": "Tracing using OpenTracing",
+          "mutinyBindings": false,
           "description": "Distributed tracing with OpenTracing."
         },
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-opentelemetry",
           "name": "Tracing using OpenTelemetry",
+          "mutinyBindings": false,
           "description": "Distributed tracing with OpenTelemetry."
         }
       ]
@@ -430,11 +557,15 @@
       "description": "Vert.x-Unit is an unit testing tool-kit especially design to work well with asynchronous code.",
       "items": [
         {
+          "groupId": "io.vertx",
           "name": "Vert.x Unit",
+          "mutinyBindings": false,
           "artifactId": "vertx-unit"
         },
         {
+          "groupId": "io.vertx",
           "name": "Vert.x JUnit5",
+          "mutinyBindings": true,
           "artifactId": "vertx-junit5"
         }
       ]
@@ -445,22 +576,30 @@
       "description": "Vert.x supports clustering and HA out of the box. Cluster group management is implemented in cluster managers which are pluggable.",
       "items": [
         {
+          "groupId": "io.vertx",
           "name": "Hazelcast Cluster Manager",
+          "mutinyBindings": false,
           "artifactId": "vertx-hazelcast",
           "description": "Cluster manager implementation that uses Hazelcast."
         },
         {
+          "groupId": "io.vertx",
           "name": "Infinispan Cluster Manager",
+          "mutinyBindings": false,
           "artifactId": "vertx-infinispan",
           "description": "Cluster manager implementation that uses Infinispan."
         },
         {
+          "groupId": "io.vertx",
           "name": "Apache Ignite Cluster Manager",
+          "mutinyBindings": false,
           "artifactId": "vertx-ignite",
           "description": "Cluster manager implementation that uses Apache Ignite."
         },
         {
+          "groupId": "io.vertx",
           "name": "Apache Zookeper Cluster Manager",
+          "mutinyBindings": false,
           "artifactId": "vertx-zookeeper",
           "description": "Cluster manager implementation that uses Apache Zookeeper."
         }
@@ -472,32 +611,44 @@
       "description": "Vert.x services are a simple and effective way to encapsulate reusable functionality for use elsewhere. Services are deployed using a service identifier which decouples the user from details of the implementation.",
       "items": [
         {
+          "groupId": "io.vertx",
           "name": "Service Proxies",
+          "mutinyBindings": false,
           "artifactId": "vertx-service-proxy",
           "description": "Proxies allow remote event bus services to be called as if they were local."
         },
         {
+          "groupId": "io.vertx",
           "name": "SockJS Service Proxies",
+          "mutinyBindings": false,
           "artifactId": "vertx-sockjs-service-proxy",
           "description": "Allow event bus services to be called from JavaScript (browser or Node.js)."
         },
         {
+          "groupId": "io.vertx",
           "name": "gRPC",
+          "mutinyBindings": false,
           "artifactId": "vertx-grpc",
           "description": "Implement gRPC Clients and Servers for Vert.x."
         },
         {
+          "groupId": "io.vertx",
           "name": "Service Factories",
+          "mutinyBindings": false,
           "artifactId": "vertx-service-factory",
           "description": "How to package and deploy Vert.x independent services."
         },
         {
+          "groupId": "io.vertx",
           "name": "Maven Service Factory",
+          "mutinyBindings": false,
           "artifactId": "vertx-maven-service-factory",
           "description": "This lets you dynamically install and deploy services from Maven at run-time."
         },
         {
+          "groupId": "io.vertx",
           "name": "HTTP Service Factory",
+          "mutinyBindings": false,
           "artifactId": "vertx-http-service-factory",
           "description": "This lets you dynamically install and deploy services from an HTTP server (for example Bintray at run-time."
         }
@@ -508,8 +659,10 @@
       "category": "Standards",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-json-schema",
           "name": "JSON Schema",
+          "mutinyBindings": true,
           "description": "An extensible implementation of the Json Schema specification to validate every JSON data structure, asynchronously."
         }
       ]
@@ -519,8 +672,10 @@
       "category": "Devops",
       "items": [
         {
+          "groupId": "io.vertx",
           "artifactId": "vertx-shell",
           "name": "Shell",
+          "mutinyBindings": true,
           "description": "This component lets you interact with your Vert.x application using a CLI interface."
         }
       ]

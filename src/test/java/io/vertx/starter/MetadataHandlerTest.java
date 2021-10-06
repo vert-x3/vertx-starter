@@ -68,6 +68,7 @@ public class MetadataHandlerTest {
             assertThat(metadata.getJsonArray("buildTools")).contains("maven", "gradle");
             assertThat(metadata.getJsonArray("languages")).contains("java", "kotlin");
             assertThat(metadata.getJsonArray("jdkVersions")).contains("1.8", "11", "16");
+            assertThat(metadata.getJsonArray("flavors")).contains("vert.x", "mutiny");
             assertThat(metadata.getJsonArray("vertxDependencies")).isEqualTo(stack);
             assertThat(metadata.getJsonArray("vertxVersions")).isEqualTo(versions.stream()
               .map(JsonObject.class::cast)

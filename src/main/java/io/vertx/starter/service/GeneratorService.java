@@ -20,7 +20,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
+import io.vertx.starter.model.Dependency;
 import io.vertx.starter.model.Language;
+import io.vertx.starter.model.ProjectFlavor;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -117,25 +119,25 @@ public class GeneratorService {
     Language language = project.getLanguage();
     ctx.put("language", language.name().toLowerCase());
     ctx.put("vertxVersion", project.getVertxVersion());
-    Set<String> vertxDependencies = project.getVertxDependencies();
+    Set<Dependency> vertxDependencies = project.getVertxDependencies();
     if (vertxDependencies == null) {
       vertxDependencies = new HashSet<>();
     }
-    boolean hasVertxUnit = vertxDependencies.remove("vertx-unit");
+    boolean hasVertxUnit = vertxDependencies
+      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-unit"));
     ctx.put("hasVertxUnit", hasVertxUnit);
-    boolean hasVertxJUnit5 = vertxDependencies.remove("vertx-junit5") || !hasVertxUnit;
-    ctx.put("hasVertxJUnit5", hasVertxJUnit5);
+    boolean hasVertxJUnit5 = vertxDependencies
+      .removeIf(dependency -> dependency.getArtifactId().endsWith("vertx-junit5")) || !hasVertxUnit;
+    ctx.put("hasVertxJUnit5", hasVertxJUnit5 || project.getFlavor() == ProjectFlavor.MUTINY);
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
     }
-    vertxDependencies.addAll(language.getLanguageDependencies());
+    ctx.put("languageDependencies", language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
+    ctx.put("flavor", project.getFlavor().getId());
     String packageName = packageName(project);
     ctx.put("packageName", packageName);
     ctx.put("jdkVersion", project.getJdkVersion().getValue());
-
-    Path tempDirPath = tempDir.path();
-    String tempDirPathStr = tempDirPath.toString();
 
     copy(tempDir, "files", "_editorconfig");
     copy(tempDir, "files", "_gitignore");
@@ -163,9 +165,11 @@ public class GeneratorService {
 
     String packageDir = packageName.replace('.', '/');
     String srcDir = "src/main/" + language.getName();
-    render(tempDir, ctx, srcDir, "MainVerticle" + language.getExtension(), srcDir + "/" + packageDir);
+    String srcFile = "MainVerticle." + project.getFlavor().getId() + language.getExtension();
+    render(tempDir, ctx, srcDir, srcFile, srcDir + "/" + packageDir, "MainVerticle" + language.getExtension());
     String testSrcDir = "src/test/" + language.getName();
-    render(tempDir, ctx, testSrcDir, "TestMainVerticle" + language.getExtension(), testSrcDir + "/" + packageDir);
+    String testSrcFile = "TestMainVerticle." + project.getFlavor().getId() + language.getExtension();
+    render(tempDir, ctx, testSrcDir, testSrcFile, testSrcDir + "/" + packageDir, "TestMainVerticle" + language.getExtension());
 
     render(tempDir, ctx, ".", "README.adoc");
   }
@@ -191,14 +195,14 @@ public class GeneratorService {
   }
 
   private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename) throws IOException {
-    render(tempDir, ctx, sourceDir, filename, sourceDir);
+    render(tempDir, ctx, sourceDir, filename, sourceDir, filename);
   }
 
-  private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename, String destDir) throws IOException {
+  private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename, String destDir, String destFilename) throws IOException {
     Path dest = tempDir.path().resolve(destDir);
     Files.createDirectories(dest);
     Buffer data = renderBlocking(ctx, "templates/" + sourceDir + "/" + filename + ".ftl");
-    vertx.fileSystem().writeFileBlocking(dest.resolve(filename).toString(), data);
+    vertx.fileSystem().writeFileBlocking(dest.resolve(destFilename).toString(), data);
   }
 
   private Buffer renderBlocking(Map<String, Object> context, String templateFileName) {

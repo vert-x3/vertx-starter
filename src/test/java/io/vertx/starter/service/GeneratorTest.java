@@ -32,10 +32,7 @@ import io.vertx.starter.GeneratorVerticle;
 import io.vertx.starter.Util;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
-import io.vertx.starter.model.BuildTool;
-import io.vertx.starter.model.JdkVersion;
-import io.vertx.starter.model.Language;
-import io.vertx.starter.model.VertxProject;
+import io.vertx.starter.model.*;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -123,7 +120,8 @@ class GeneratorTest {
       .setBuildTool(MAVEN)
       .setVertxVersion("4.1.4")
       .setArchiveFormat(TGZ)
-      .setJdkVersion(JdkVersion.JDK_1_8);
+      .setJdkVersion(JdkVersion.JDK_1_8)
+      .setFlavor(ProjectFlavor.VERTX);
   }
 
   @ParameterizedTest
@@ -140,20 +138,26 @@ class GeneratorTest {
       .filter(version -> !version.endsWith("-SNAPSHOT"))
       .collect(toList());
 
-    List<Set<String>> testDeps = Arrays.asList(Collections.singleton("vertx-unit"), Collections.singleton("vertx-junit5"));
+    List<Set<Dependency>> testDeps = Arrays.asList(
+      Collections.singleton(new Dependency().setArtifactId("vertx-unit")),
+      Collections.singleton(new Dependency().setArtifactId("vertx-junit5"))
+    );
 
     Stream.Builder<VertxProject> builder = Stream.builder();
     for (BuildTool buildTool : BuildTool.values()) {
       for (Language language : Language.values()) {
         for (String version : versions) {
-          for (Set<String> vertxDependencies : testDeps) {
-            VertxProject vertxProject = defaultProject()
-              .setBuildTool(buildTool)
-              .setLanguage(language)
-              .setVertxVersion(version)
-              .setVertxDependencies(new HashSet<>(vertxDependencies))
-              .setPackageName("com.mycompany.project.special");
-            builder.add(vertxProject);
+          for (Set<Dependency> vertxDependencies : testDeps) {
+            for (ProjectFlavor flavor : ProjectFlavor.values()) {
+              VertxProject vertxProject = defaultProject()
+                .setBuildTool(buildTool)
+                .setLanguage(language)
+                .setVertxVersion(version)
+                .setVertxDependencies(new HashSet<>(vertxDependencies))
+                .setPackageName("com.mycompany.project.special")
+                .setFlavor(flavor);
+              builder.add(vertxProject);
+            }
           }
         }
       }
