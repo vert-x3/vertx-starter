@@ -174,15 +174,15 @@ class GeneratorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("testProjectsJdk16")
-  @Tag("generator-16")
-  void testProjectJdk16(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(16);
+  @MethodSource("testProjectsJdk17")
+  @Tag("generator-17")
+  void testProjectJdk17(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(17);
     testProject(project, vertx, testContext);
   }
 
-  static Stream<VertxProject> testProjectsJdk16() throws IOException {
-    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_16));
+  static Stream<VertxProject> testProjectsJdk17() throws IOException {
+    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_17));
   }
 
   private int javaSpecVersion() {
