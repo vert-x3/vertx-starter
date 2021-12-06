@@ -18,6 +18,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   id("io.vertx.vertx-plugin") version "1.2.0"
+  id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 repositories {
