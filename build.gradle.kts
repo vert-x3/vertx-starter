@@ -64,7 +64,7 @@ dependencies {
 }
 
 vertx {
-  vertxVersion = "4.2.1"
+  vertxVersion = "4.2.2"
   mainVerticle = "io.github.jponge.vertx.boot.BootVerticle"
 }
 
