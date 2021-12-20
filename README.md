@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/vert-x3/vertx-starter/workflows/CI/badge.svg)](https://github.com/vert-x3/vertx-starter/actions?query=workflow%3ACI)
 
-[Vert.x Starter](http://start.vertx.io) is an open-source web application for creating [Vert.x](https://vertx.io/) applications.
+[Vert.x Starter](https://start.vertx.io) is an open-source web application for creating [Vert.x](https://vertx.io/) applications.
 
 ## Quickstart
 
@@ -19,7 +19,7 @@ $ curl -X GET https://start.vertx.io/starter.zip -d groupId=com.acme -d language
 ## Generating a Vert.x application
 
 ```
-http://start.vertx.io/starter.{archiveFormat}
+https://start.vertx.io/starter.{archiveFormat}
 ```
 
 *Note*: `{archiveFormat}` can be `zip`, `tgz`, `tar.gz`, etc. if the project generator can handle the format, it will use the appropriate compression tool.
@@ -45,7 +45,7 @@ curl -X GET \
 The HTTPie equivalent:
 
 ```
-$ http http://start.vertx.io/starter.zip \
+$ http https://start.vertx.io/starter.zip \
 groupId==io.vertx \
 artitfactId==starter \
 language==java \
@@ -60,7 +60,7 @@ vertxDependencies==vertx-web,vertx-web-client \
 The vert.x starter metadata lists all the capabilities proposed by the API. The metadata is used to build the Web UI is exposed to ease the creation of third-party clients (IDE integration, CLI, etc).
 
 ```
-http://start.vertx.io/metadata
+https://start.vertx.io/metadata
 ```
 
 ## Running your own starter
@@ -132,4 +132,4 @@ git push
 
 ## License
 
-Vert.x Starter is Open Source software released under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
+Vert.x Starter is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).
