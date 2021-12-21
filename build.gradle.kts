@@ -53,7 +53,7 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:1.2.3")
   implementation("io.github.jponge:vertx-boot:1.2.1")
 
-  testImplementation("org.assertj:assertj-core:3.10.0")
+  testImplementation("org.assertj:assertj-core:3.21.0")
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
   testImplementation("org.testcontainers:mongodb:${testContainersVersion}")
