@@ -31,6 +31,7 @@
         "vertx-opentracing",
         "vertx-opentelemetry",
         "vertx-mssql-client",
+        "vertx-oracle-client",
         "vertx-rx-java3",
         "vertx-auth-otp"
       ]
@@ -150,6 +151,10 @@
         {
           "artifactId": "vertx-mssql-client",
           "name": "Reactive MSSQL client"
+        },
+        {
+          "artifactId": "vertx-oracle-client",
+          "name": "Reactive Oracle client"
         },
         {
           "artifactId": "vertx-mongo-client",
