@@ -17,7 +17,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
-  id("io.vertx.vertx-plugin") version "1.2.0"
+  id("io.vertx.vertx-plugin") version "1.3.0"
 }
 
 repositories {
@@ -31,11 +31,11 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.15"
+version = "2.0.16"
 description = "A web application to generate Vert.x projects"
 
-val junitJupiterVersion = "5.7.0"
-val testContainersVersion = "1.15.3"
+val junitJupiterVersion = "5.8.2"
+val testContainersVersion = "1.16.2"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -48,12 +48,12 @@ dependencies {
   implementation("io.vertx:vertx-web-client")
   implementation("io.vertx:vertx-web-templ-freemarker")
 
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.12.0")
-  implementation("org.apache.commons:commons-compress:1.18")
-  implementation("ch.qos.logback:logback-classic:1.2.3")
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
+  implementation("org.apache.commons:commons-compress:1.21")
+  implementation("ch.qos.logback:logback-classic:1.2.9")
   implementation("io.github.jponge:vertx-boot:1.2.1")
 
-  testImplementation("org.assertj:assertj-core:3.10.0")
+  testImplementation("org.assertj:assertj-core:3.21.0")
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
   testImplementation("org.testcontainers:mongodb:${testContainersVersion}")
@@ -87,5 +87,3 @@ tasks.withType<Test> {
 tasks.withType<ShadowJar> {
   archiveFileName.set("${project.name}-${project.version}-fat.jar")
 }
-
-apply(from = "gradle/docker.gradle")

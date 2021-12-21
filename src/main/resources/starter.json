@@ -31,7 +31,9 @@
         "vertx-opentracing",
         "vertx-opentelemetry",
         "vertx-mssql-client",
-        "vertx-rx-java3"
+        "vertx-oracle-client",
+        "vertx-rx-java3",
+        "vertx-auth-otp"
       ]
     },
     {
@@ -148,6 +150,10 @@
         {
           "artifactId": "vertx-mssql-client",
           "name": "Reactive MSSQL client"
+        },
+        {
+          "artifactId": "vertx-oracle-client",
+          "name": "Reactive Oracle client"
         },
         {
           "artifactId": "vertx-mongo-client",
@@ -301,6 +307,11 @@
           "artifactId": "vertx-auth-sql-client",
           "name": "Sql Client Auth",
           "description": "Authentication and authorization support based on the Vert.x SQL client and a relational database."
+        },
+        {
+          "artifactId": "vertx-auth-otp",
+          "name": "OTP Auth",
+          "description": "OTP (One Time Password Multi-Factor) implementation."
         }
       ]
     },
