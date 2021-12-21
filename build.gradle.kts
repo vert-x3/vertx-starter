@@ -35,7 +35,7 @@ version = "2.0.16"
 description = "A web application to generate Vert.x projects"
 
 val junitJupiterVersion = "5.7.0"
-val testContainersVersion = "1.15.3"
+val testContainersVersion = "1.16.2"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
