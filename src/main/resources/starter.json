@@ -4,13 +4,13 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "4.2.1",
+    "vertxVersion": "4.2.3",
     "archiveFormat": "zip",
     "jdkVersion": "11"
   },
   "versions": [
     {
-      "number": "3.9.10",
+      "number": "3.9.11",
       "exclusions": [
         "vertx-auth-htdigest",
         "vertx-auth-properties",
@@ -31,19 +31,20 @@
         "vertx-opentracing",
         "vertx-opentelemetry",
         "vertx-mssql-client",
+        "vertx-oracle-client",
         "vertx-rx-java3",
         "vertx-auth-otp"
       ]
     },
     {
-      "number": "4.2.1",
+      "number": "4.2.3",
       "exclusions": [
         "vertx-sync",
         "vertx-auth-otp"
       ]
     },
     {
-      "number": "4.2.2-SNAPSHOT",
+      "number": "4.2.4-SNAPSHOT",
       "exclusions": [
         "vertx-sync"
       ]
@@ -150,6 +151,10 @@
         {
           "artifactId": "vertx-mssql-client",
           "name": "Reactive MSSQL client"
+        },
+        {
+          "artifactId": "vertx-oracle-client",
+          "name": "Reactive Oracle client"
         },
         {
           "artifactId": "vertx-mongo-client",
