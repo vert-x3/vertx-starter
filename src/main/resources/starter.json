@@ -41,7 +41,7 @@
       ]
     },
     {
-      "number": "4.2.3-SNAPSHOT",
+      "number": "4.2.4-SNAPSHOT",
       "exclusions": [
         "vertx-sync"
       ]
