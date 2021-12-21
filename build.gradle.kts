@@ -87,5 +87,3 @@ tasks.withType<Test> {
 tasks.withType<ShadowJar> {
   archiveFileName.set("${project.name}-${project.version}-fat.jar")
 }
-
-apply(from = "gradle/docker.gradle")
