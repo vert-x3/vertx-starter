@@ -34,7 +34,7 @@ group = "io.vertx"
 version = "2.0.16"
 description = "A web application to generate Vert.x projects"
 
-val junitJupiterVersion = "5.7.0"
+val junitJupiterVersion = "5.8.2"
 val testContainersVersion = "1.16.2"
 
 java {
