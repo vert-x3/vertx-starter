@@ -39,8 +39,7 @@
     {
       "number": "4.2.3",
       "exclusions": [
-        "vertx-sync",
-        "vertx-auth-otp"
+        "vertx-sync"
       ]
     },
     {
