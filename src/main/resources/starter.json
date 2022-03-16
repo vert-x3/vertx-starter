@@ -33,13 +33,15 @@
         "vertx-mssql-client",
         "vertx-oracle-client",
         "vertx-rx-java3",
-        "vertx-auth-otp"
+        "vertx-auth-otp",
+        "vertx-uri-template"
       ]
     },
     {
       "number": "4.2.5",
       "exclusions": [
-        "vertx-sync"
+        "vertx-sync",
+        "vertx-uri-template"
       ]
     },
     {
@@ -127,6 +129,11 @@
           "artifactId": "vertx-web-openapi",
           "name": "Web OpenAPI",
           "description": "Extends Vert.x Web to support OpenAPI 3, bringing a simple interface for building web routers that conform to OpenAPI contracts."
+        },
+        {
+          "artifactId": "vertx-uri-template",
+          "name": "Vert.x URI Template",
+          "description": "RFC 6570 URI Template implementation for Vert.x."
         }
       ]
     },
