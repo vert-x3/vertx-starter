@@ -31,11 +31,11 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.16"
+version = "2.0.17"
 description = "A web application to generate Vert.x projects"
 
 val junitJupiterVersion = "5.8.2"
-val testContainersVersion = "1.16.2"
+val testContainersVersion = "1.16.3"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -48,12 +48,12 @@ dependencies {
   implementation("io.vertx:vertx-web-client")
   implementation("io.vertx:vertx-web-templ-freemarker")
 
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2")
   implementation("org.apache.commons:commons-compress:1.21")
-  implementation("ch.qos.logback:logback-classic:1.2.9")
+  implementation("ch.qos.logback:logback-classic:1.2.11")
   implementation("io.github.jponge:vertx-boot:1.2.1")
 
-  testImplementation("org.assertj:assertj-core:3.21.0")
+  testImplementation("org.assertj:assertj-core:3.22.0")
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
   testImplementation("org.testcontainers:mongodb:${testContainersVersion}")
