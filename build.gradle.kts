@@ -31,7 +31,7 @@ repositories {
 }
 
 group = "io.vertx"
-version = "2.0.18"
+version = "2.0.19"
 description = "A web application to generate Vert.x projects"
 
 val junitJupiterVersion = "5.8.2"
