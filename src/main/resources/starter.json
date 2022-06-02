@@ -12,7 +12,6 @@
     {
       "number": "4.3.1",
       "exclusions": [
-        "vertx-uri-template"
       ]
     },
     {
