@@ -450,9 +450,19 @@
           "description": "Allow event bus services to be called from JavaScript (browser or Node.js)."
         },
         {
-          "name": "gRPC",
+          "name": "Vert.x gRPC Netty (deprecated)",
           "artifactId": "vertx-grpc",
-          "description": "Implement gRPC Clients and Servers for Vert.x."
+          "description": "Implement gRPC Clients and Servers with Vert.x gRPC Netty."
+        },
+        {
+          "name": "Vert.x gRPC Server",
+          "artifactId": "vertx-grpc-server",
+          "description": "Implement gRPC servers powered by the Vert.x HTTP Server."
+        },
+        {
+          "name": "Vert.x gRPC Client",
+          "artifactId": "vertx-grpc-client",
+          "description": "Implement gRPC clients powered by the Vert.x HTTP Client."
         },
         {
           "name": "Service Factories",
