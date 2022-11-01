@@ -49,7 +49,7 @@ dependencies {
   implementation("io.vertx:vertx-web-templ-freemarker")
 
   implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
-  implementation("org.apache.commons:commons-compress:1.21")
+  implementation("org.apache.commons:commons-compress:1.22")
   implementation("ch.qos.logback:logback-classic:1.4.4")
   implementation("io.github.jponge:vertx-boot:1.2.1")
 
