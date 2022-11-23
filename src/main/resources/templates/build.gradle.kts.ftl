@@ -60,7 +60,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 <#elseif hasVertxUnit>
   testImplementation("io.vertx:vertx-unit")
-  testImplementation("junit:junit:4.13.1")
+  testImplementation("junit:junit:4.13.2")
 </#if>
 }
 
