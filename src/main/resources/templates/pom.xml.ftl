@@ -28,7 +28,7 @@
 
     <vertx.version>${vertxVersion}</vertx.version>
 <#if hasVertxJUnit5>
-    <junit-jupiter.version>5.7.0</junit-jupiter.version>
+    <junit-jupiter.version>5.9.1</junit-jupiter.version>
 </#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>

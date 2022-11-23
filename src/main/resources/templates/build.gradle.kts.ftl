@@ -30,7 +30,7 @@ repositories {
 }
 
 val vertxVersion = "${vertxVersion}"
-val junitJupiterVersion = "5.7.0"
+val junitJupiterVersion = "5.9.1"
 
 val mainVerticleName = "${packageName}.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
