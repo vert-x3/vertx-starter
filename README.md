@@ -50,7 +50,7 @@ groupId==io.vertx \
 artitfactId==starter \
 language==java \
 buildTool==maven \
-vertxVersion==4.3.6 \
+vertxVersion==4.3.7 \
 vertxDependencies==vertx-web,vertx-web-client \
 -o starter.zip
 ```
