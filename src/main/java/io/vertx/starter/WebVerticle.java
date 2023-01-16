@@ -16,16 +16,21 @@
 
 package io.vertx.starter;
 
+import io.netty.util.AsciiString;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.CSPHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.ext.web.handler.HSTSHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.handler.XFrameHandler;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.MetadataHandler;
 import org.slf4j.Logger;
@@ -33,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
+import static io.vertx.starter.config.VerticleConfigurationConstants.Web.*;
 
 /**
  * @author Daniel Petisme
@@ -42,6 +47,9 @@ import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PO
 public class WebVerticle extends AbstractVerticle {
 
   private static final Logger log = LoggerFactory.getLogger(WebVerticle.class);
+
+  private static final AsciiString X_CONTENT_TYPE_OPTIONS_HEADER = AsciiString.cached("x-content-type-options");
+  private static final AsciiString NOSNIFF = AsciiString.cached("nosniff");
 
   public static final String VERTX_PROJECT_KEY = "vertxProject";
 
@@ -71,7 +79,27 @@ public class WebVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
-    Router router = Router.router(vertx);
+    Router router = Router.router(vertx).allowForward(AllowForwardHeaders.X_FORWARD);
+
+    router.route()
+      .handler(HSTSHandler.create())
+      .handler(XFrameHandler.create(XFrameHandler.DENY))
+      .handler(CSPHandler.create()
+        .addDirective("style-src", "self")
+        .addDirective("style-src", "unsafe-inline")
+        .addDirective("style-src", "cdnjs.cloudflare.com")
+        .addDirective("style-src", "maxcdn.bootstrapcdn.com")
+        .addDirective("style-src", "fonts.googleapis.com")
+        .addDirective("font-src", "self")
+        .addDirective("font-src", "maxcdn.bootstrapcdn.com")
+        .addDirective("font-src", "fonts.googleapis.com")
+        .addDirective("font-src", "fonts.gstatic.com")
+        .addDirective("script-src", "self")
+        .addDirective("script-src", "cdnjs.cloudflare.com"))
+      .handler(rc -> {
+        rc.response().putHeader(X_CONTENT_TYPE_OPTIONS_HEADER, NOSNIFF);
+        rc.next();
+      });
 
     CorsHandler corsHandler = CorsHandler.create("*")
       .allowedMethod(HttpMethod.GET)
