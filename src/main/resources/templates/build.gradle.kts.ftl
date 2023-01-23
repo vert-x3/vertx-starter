@@ -55,6 +55,9 @@ dependencies {
 <#if language == "kotlin">
   implementation(kotlin("stdlib-jdk8"))
 </#if>
+<#if hasPgClient>
+  implementation("com.ongres.scram:client:2.1")
+</#if>
 <#if hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")

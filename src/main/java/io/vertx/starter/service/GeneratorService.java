@@ -38,17 +38,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static io.vertx.starter.model.BuildTool.GRADLE;
-import static io.vertx.starter.model.BuildTool.MAVEN;
-import static io.vertx.starter.model.Language.KOTLIN;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toSet;
+import static io.vertx.starter.model.BuildTool.*;
+import static io.vertx.starter.model.Language.*;
+import static java.util.stream.Collectors.*;
 
 public class GeneratorService {
 
@@ -128,6 +130,8 @@ public class GeneratorService {
     if (hasVertxUnit && hasVertxJUnit5) {
       throw new RuntimeException("You cannot generate a project which depends on both vertx-unit and vertx-junit5.");
     }
+    boolean hasPgClient = vertxDependencies.contains("vertx-pg-client");
+    ctx.put("hasPgClient", hasPgClient);
     vertxDependencies.addAll(language.getLanguageDependencies());
     ctx.put("vertxDependencies", vertxDependencies);
     String packageName = packageName(project);
