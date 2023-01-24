@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 <#if language == "kotlin">
-    <kotlin.version>1.6.10</kotlin.version>
+    <kotlin.version>1.7.21</kotlin.version>
 
 <#else>
 <#if jdkVersion == "1.8">
@@ -28,7 +28,7 @@
 
     <vertx.version>${vertxVersion}</vertx.version>
 <#if hasVertxJUnit5>
-    <junit-jupiter.version>5.7.0</junit-jupiter.version>
+    <junit-jupiter.version>5.9.1</junit-jupiter.version>
 </#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
@@ -71,6 +71,13 @@
     </dependency>
 </#noparse>
 </#if>
+<#if hasPgClient>
+    <dependency>
+      <groupId>com.ongres.scram</groupId>
+      <artifactId>client</artifactId>
+      <version>2.1</version>
+    </dependency>
+</#if>
 
 <#if hasVertxJUnit5>
     <dependency>
@@ -103,7 +110,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
 </#if>

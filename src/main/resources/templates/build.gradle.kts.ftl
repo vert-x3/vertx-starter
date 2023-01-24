@@ -6,12 +6,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 <#if language == "kotlin">
-  kotlin ("jvm") version "1.6.10"
+  kotlin ("jvm") version "1.7.21"
 <#else>
   java
 </#if>
   application
-  id("com.github.johnrengelman.shadow") version "7.0.0"
+  id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "${groupId}"
@@ -30,7 +30,7 @@ repositories {
 }
 
 val vertxVersion = "${vertxVersion}"
-val junitJupiterVersion = "5.7.0"
+val junitJupiterVersion = "5.9.1"
 
 val mainVerticleName = "${packageName}.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
@@ -55,12 +55,15 @@ dependencies {
 <#if language == "kotlin">
   implementation(kotlin("stdlib-jdk8"))
 </#if>
+<#if hasPgClient>
+  implementation("com.ongres.scram:client:2.1")
+</#if>
 <#if hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 <#elseif hasVertxUnit>
   testImplementation("io.vertx:vertx-unit")
-  testImplementation("junit:junit:4.13.1")
+  testImplementation("junit:junit:4.13.2")
 </#if>
 }
 
