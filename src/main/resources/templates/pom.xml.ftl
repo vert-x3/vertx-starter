@@ -71,6 +71,13 @@
     </dependency>
 </#noparse>
 </#if>
+<#if hasPgClient>
+    <dependency>
+      <groupId>com.ongres.scram</groupId>
+      <artifactId>client</artifactId>
+      <version>2.1</version>
+    </dependency>
+</#if>
 
 <#if hasVertxJUnit5>
     <dependency>
