@@ -121,7 +121,7 @@ class GeneratorTest {
       .setArtifactId("demo")
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
-      .setVertxVersion("4.3.7")
+      .setVertxVersion("4.3.8")
       .setArchiveFormat(TGZ)
       .setJdkVersion(JdkVersion.JDK_1_8);
   }
