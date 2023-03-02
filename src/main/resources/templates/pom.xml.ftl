@@ -50,7 +50,7 @@
   </dependencyManagement>
 
   <dependencies>
-<#if !vertxDependencies?has_content>
+<#if !vertxDependencies?has_content || vertxVersion == "4.4.0">
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
