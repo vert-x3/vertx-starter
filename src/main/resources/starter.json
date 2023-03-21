@@ -12,6 +12,7 @@
     {
       "number": "4.4.0",
       "exclusions": [
+        "vertx-grpc-context-storage"
       ]
     },
     {
@@ -463,6 +464,11 @@
           "name": "Vert.x gRPC Client",
           "artifactId": "vertx-grpc-client",
           "description": "Implement gRPC clients powered by the Vert.x HTTP Client."
+        },
+        {
+          "name": "Vert.x gRPC Context Storage implementation",
+          "artifactId": "vertx-grpc-context-storage",
+          "description": "Context Storage implementation which uses Vert.x local context data maps."
         },
         {
           "name": "Service Factories",
