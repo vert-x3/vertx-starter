@@ -4,19 +4,19 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "4.4.0",
+    "vertxVersion": "4.4.1",
     "archiveFormat": "zip",
     "jdkVersion": "11"
   },
   "versions": [
     {
-      "number": "4.4.0",
+      "number": "4.4.1",
       "exclusions": [
         "vertx-grpc-context-storage"
       ]
     },
     {
-      "number": "4.4.1-SNAPSHOT",
+      "number": "4.4.2-SNAPSHOT",
       "exclusions": [
       ]
     }
