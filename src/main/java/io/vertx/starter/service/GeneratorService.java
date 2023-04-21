@@ -144,7 +144,7 @@ public class GeneratorService {
     copy(tempDir, "files", "_editorconfig");
     copy(tempDir, "files", "_gitignore");
 
-    if (project.getBuildTool() == GRADLE) {
+    if (project.getBuildTool() == GRADLE || project.getBuildTool() == GRADLE_GROOVY) {
       copy(tempDir, "files/gradle", "gradlew");
       copy(tempDir, "files/gradle", "gradlew.bat");
       if (project.getLanguage() == KOTLIN) {
@@ -152,8 +152,13 @@ public class GeneratorService {
       }
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jarr");
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.properties");
-      render(tempDir, ctx, ".", "build.gradle.kts");
-      render(tempDir, ctx, ".", "settings.gradle.kts");
+      if ( project.getBuildTool() == GRADLE_GROOVY ) {
+        render(tempDir, ctx, ".", "build.gradle");
+        render(tempDir, ctx, ".", "settings.gradle");
+      } else {
+        render(tempDir, ctx, ".", "build.gradle.kts");
+        render(tempDir, ctx, ".", "settings.gradle.kts");
+      }
     } else if (project.getBuildTool() == MAVEN) {
       copy(tempDir, "files/maven", "mvnw");
       copy(tempDir, "files/maven", "mvnw.cmd");

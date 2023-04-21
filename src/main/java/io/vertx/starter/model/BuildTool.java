@@ -22,7 +22,9 @@ public enum BuildTool {
   @JsonProperty("maven")
   MAVEN("maven"),
   @JsonProperty("gradle")
-  GRADLE("gradle");
+  GRADLE("gradle - kotlin"),
+  @JsonProperty("gradle_groovy")
+  GRADLE_GROOVY("gradle - groovy");
 
   private final String value;
 
