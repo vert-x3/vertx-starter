@@ -75,14 +75,14 @@ In order to build it, you will need Java 1.8.
 
 [source,shell]
 ----
-mvn clean package -DskipTests
+./mvnw clean package -DskipTests
 ----
 
 === Running the app locally
 
 [source,shell]
 ----
-mvn clean compile vertx:run
+./mvnw clean compile vertx:run
 ----
 
 NOTE: you need MongoDB.
@@ -107,7 +107,7 @@ First, tag the last commit in `master` branch:
 
 [source,shell]
 ----
-STARTER_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -B | grep -v '\[')
+STARTER_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -B | grep -v '\[')
 git tag -f -a ${STARTER_VERSION} -m "Version ${STARTER_VERSION}"
 git push upstream  --tags
 ----
@@ -130,7 +130,7 @@ Eventually, checkout `master` again and update the version:
 [source,shell]
 ----
 git checkout master
-mvn versions:set -DgenerateBackupPoms=false
+./mvnw versions:set -DgenerateBackupPoms=false
 git add pom.xml
 git commit
 git push
