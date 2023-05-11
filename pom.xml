@@ -150,6 +150,7 @@
         </executions>
         <configuration>
           <redeploy>true</redeploy>
+          <classifier>fat</classifier>
         </configuration>
       </plugin>
     </plugins>
