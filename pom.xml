@@ -13,7 +13,7 @@
     <maven.compiler.target>8</maven.compiler.target>
     <!-- vert.x properties -->
     <vertx.version>4.3.3</vertx.version>
-    <vertx.verticle>io.github.jponge.vertx.boot.BootVerticle</vertx.verticle>
+    <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>1.0.28</vertx-maven-plugin.version>
     <testcontainers.version>1.18.1</testcontainers.version>
@@ -88,11 +88,6 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.github.jponge</groupId>
-      <artifactId>vertx-boot</artifactId>
-      <version>1.2.1</version>
     </dependency>
 
     <dependency>
