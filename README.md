@@ -11,7 +11,7 @@ Simply click on _Generate Project_ on the web interface to download a project ar
 If you are a CLI adept, you can use any http client (curl, [httpie](https://httpie.org/)) to invoke the API.
 
 ```
-$ curl -X GET https://start.vertx.io/starter.zip -d groupId=com.acme -d language=java -d vertxVersion=4.4.1 -o starter.zip
+$ curl -X GET https://start.vertx.io/starter.zip -d groupId=com.acme -d language=java -d vertxVersion=4.4.2 -o starter.zip
 ```
 
 ## API
@@ -38,7 +38,7 @@ Full example:
 
 ```
 curl -X GET \
-  'https://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.4.1' \
+  'https://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion=4.4.2' \
   -o starter.zip
 ```
 
@@ -50,7 +50,7 @@ groupId==io.vertx \
 artitfactId==starter \
 language==java \
 buildTool==maven \
-vertxVersion==4.4.1 \
+vertxVersion==4.4.2 \
 vertxDependencies==vertx-web,vertx-web-client \
 -o starter.zip
 ```
