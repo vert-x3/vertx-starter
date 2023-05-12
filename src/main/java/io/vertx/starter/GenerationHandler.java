@@ -20,8 +20,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.starter.model.VertxProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static io.vertx.starter.config.Topics.PROJECT_CREATED;
 import static io.vertx.starter.config.Topics.PROJECT_REQUESTED;
@@ -32,7 +32,7 @@ import static io.vertx.starter.config.Topics.PROJECT_REQUESTED;
  */
 public class GenerationHandler implements Handler<RoutingContext> {
 
-  private static final Logger log = LoggerFactory.getLogger(GenerationHandler.class);
+  private static final Logger log = LogManager.getLogger(GenerationHandler.class);
 
   @Override
   public void handle(RoutingContext rc) {

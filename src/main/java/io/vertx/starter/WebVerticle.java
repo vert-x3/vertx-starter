@@ -26,19 +26,15 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.CSPHandler;
-import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.ext.web.handler.HSTSHandler;
-import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.XFrameHandler;
+import io.vertx.ext.web.handler.*;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.MetadataHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-import static io.vertx.starter.config.VerticleConfigurationConstants.Web.*;
+import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
 
 /**
  * @author Daniel Petisme
@@ -46,7 +42,7 @@ import static io.vertx.starter.config.VerticleConfigurationConstants.Web.*;
  */
 public class WebVerticle extends AbstractVerticle {
 
-  private static final Logger log = LoggerFactory.getLogger(WebVerticle.class);
+  private static final Logger log = LogManager.getLogger(WebVerticle.class);
 
   private static final AsciiString X_CONTENT_TYPE_OPTIONS_HEADER = AsciiString.cached("x-content-type-options");
   private static final AsciiString NOSNIFF = AsciiString.cached("nosniff");
