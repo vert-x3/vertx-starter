@@ -1,7 +1,7 @@
 set -e
 
 echo "Extracting Starter version..."
-STARTER_VERSION=$(./gradlew properties -q | grep "^version:" | awk '{print $2}')
+STARTER_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -B | grep -v '\[')
 echo "Starter version is ${STARTER_VERSION}"
 
 STARTER_JAR_NAME="vertx-starter-${STARTER_VERSION}-fat.jar"

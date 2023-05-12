@@ -1,0 +1,141 @@
+= Vertx.x Starter
+:vertx-version: 4.4.2
+
+image:https://github.com/vert-x3/vertx-starter/workflows/CI/badge.svg[Build Status,link=https://github.com/vert-x3/vertx-starter/actions?query=workflow%3ACI]
+
+https://start.vertx.io[Vert.x Starter] is an open-source web application for creating https://vertx.io/[Vert.x] applications.
+
+== Quickstart
+
+Simply click on _Generate Project_ on the web interface to download a project archive.
+
+If you are a CLI adept, you can use any http client (curl, https://httpie.org/[httpie]) to invoke the API.
+
+[source,shell,subs="attributes"]
+----
+curl -X GET https://start.vertx.io/starter.zip -d groupId=com.acme -d language=java -d vertxVersion={vertx-version} -o starter.zip
+----
+
+== API
+
+== Generating a Vert.x application
+
+----
+https://start.vertx.io/starter.{archiveFormat}
+----
+
+NOTE: `archiveFormat` can be `zip`, `tgz`, `tar.gz`, etc. if the project generator can handle the format, it will use the appropriate compression tool.
+
+You can provide the following query parameters to customize the project:
+
+* Basic information for the generated project `groupId`, `artifactId`
+* `language`: `java` or `kotlin`
+* `buildTool`: `maven` or `gradle` build tool
+* `vertxVersion`: the Vert.x version
+* `vertxDependencies`: a comma separated list of artifactIds of the vert.x modules
+* `packageName`: code package name, derived from `groupId` and `artifactId` by default
+* `jdkVersion`: which version of the JDK to use, defaults to `1.8`
+
+Full example:
+
+[source,shell,subs="attributes"]
+----
+curl -X GET \
+  'https://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion={vertx-version}' \
+  -o starter.zip
+----
+
+The HTTPie equivalent:
+
+[source,shell,subs="attributes"]
+----
+$ http https://start.vertx.io/starter.zip \
+  groupId==io.vertx \
+  artitfactId==starter \
+  language==java \
+  buildTool==maven \
+  vertxVersion=={vertx-version} \
+  vertxDependencies==vertx-web,vertx-web-client \
+  -o starter.zip
+----
+
+== Vert.x Starter metadata
+
+The vert.x starter metadata lists all the capabilities proposed by the API. The metadata is used to build the Web UI is exposed to ease the creation of third-party clients (IDE integration, CLI, etc).
+
+----
+https://start.vertx.io/metadata
+----
+
+== Running your own starter
+
+=== Building fat jar
+
+In order to build it, you will need Java 1.8.
+
+[source,shell]
+----
+./mvnw clean package -DskipTests
+----
+
+=== Running the app locally
+
+[source,shell]
+----
+./mvnw clean compile vertx:run
+----
+
+NOTE: you need MongoDB.
+You may run it using Docker:
+
+[source,shell]
+----
+docker run --rm -d -p 27017:27017 mongo
+----
+
+=== Configuration
+
+Vert.x starter relies on the https://github.com/jponge/vertx-boot[`vertx-boot`] launcher.
+The application is configured by link:./src/main/resources/application.conf[`src/main/resources/application.conf`].
+Please see the according documentation to know how to override the configuration.
+
+== Releasing
+
+To release the project, proceed as follows.
+
+First, tag the last commit in `master` branch:
+
+[source,shell]
+----
+STARTER_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -B | grep -v '\[')
+git tag -f -a ${STARTER_VERSION} -m "Version ${STARTER_VERSION}"
+git push upstream  --tags
+----
+
+Close the corresponding https://github.com/vert-x3/vertx-starter/milestones[milestone] on GitHub.
+
+Then merge the `master` branch into the `prod` branch:
+
+[source,shell]
+----
+git checkout prod
+git merge master
+git push
+----
+
+GitHub _Deploy_ job will automatically redeploy the starter if the `prod` branch build passes.
+
+Eventually, checkout `master` again and update the version:
+
+[source,shell]
+----
+git checkout master
+./mvnw versions:set -DgenerateBackupPoms=false
+git add pom.xml
+git commit
+git push
+----
+
+== License
+
+Vert.x Starter is Open Source software released under the https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
