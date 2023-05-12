@@ -9,6 +9,12 @@
     <Logger name="io.netty" level="warn"/>
     <Logger name="org.mongodb.driver" level="info"/>
     <Logger name="io.vertx" level="info"/>
+    <!-- testcontainers -->
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="tc" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+    <logger name="com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire" level="OFF"/>
+    <!-- testcontainers -->
     <Root level="info">
       <AppenderRef ref="Console"/>
     </Root>
