@@ -20,12 +20,12 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.starter.model.VertxProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AnalyticsService {
 
-  private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
+  private static final Logger log = LogManager.getLogger(AnalyticsService.class);
 
   static final String COLLECTION_NAME = "projects";
 

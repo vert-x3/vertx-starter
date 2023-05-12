@@ -22,12 +22,12 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.AnalyticsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AnalyticsVerticle extends AbstractVerticle {
 
-  private static final Logger log = LoggerFactory.getLogger(AnalyticsVerticle.class);
+  private static final Logger log = LogManager.getLogger(AnalyticsVerticle.class);
 
   private MongoClient mongoClient() {
     return MongoClient.createShared(vertx, config());

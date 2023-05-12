@@ -30,31 +30,29 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static io.vertx.starter.model.BuildTool.*;
-import static io.vertx.starter.model.Language.*;
-import static java.util.stream.Collectors.*;
+import static io.vertx.starter.model.BuildTool.GRADLE;
+import static io.vertx.starter.model.BuildTool.MAVEN;
+import static io.vertx.starter.model.Language.KOTLIN;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 public class GeneratorService {
 
-  private static final Logger log = LoggerFactory.getLogger(GeneratorService.class);
+  private static final Logger log = LogManager.getLogger(GeneratorService.class);
 
   private static final Pattern DOT_REGEX = Pattern.compile("\\.");
 

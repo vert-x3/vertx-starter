@@ -93,12 +93,6 @@ You may run it using Docker:
 docker run --rm -d -p 27017:27017 mongo
 ----
 
-=== Configuration
-
-Vert.x starter relies on the https://github.com/jponge/vertx-boot[`vertx-boot`] launcher.
-The application is configured by link:./src/main/resources/application.conf[`src/main/resources/application.conf`].
-Please see the according documentation to know how to override the configuration.
-
 == Releasing
 
 To release the project, proceed as follows.
