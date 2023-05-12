@@ -12,7 +12,7 @@
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <!-- vert.x properties -->
-    <vertx.version>4.3.3</vertx.version>
+    <vertx.version>4.4.2</vertx.version>
     <vertx.verticle>io.github.jponge.vertx.boot.BootVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>1.0.28</vertx-maven-plugin.version>
