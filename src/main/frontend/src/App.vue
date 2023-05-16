@@ -46,7 +46,6 @@ export default {
     }
   },
   created() {
-    console.log(this.metadata)
     this.reset()
   }
 }

@@ -48,7 +48,6 @@ export default {
       return this.projectProperty + '-' + i
     },
     formatRadioLabel(val) {
-      console.log('ueh')
       return this.prefix + (this.capitalize ? _startCase(val) : val)
     }
   }
