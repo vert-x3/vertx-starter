@@ -102,7 +102,7 @@ export default {
                 ng-click="vm.toggleDetailedOptions()"
                 style="padding-left: 0px"
               >
-                <i ng-class="vm.detailedOptionsCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i>
+                <i ng-class="vm.detailedOptionsCollapsed ? 'bi-plus' : 'bi-minus'"></i>
                 [[vm.detailedOptionsCollapsed?"Show dependencies panel":"Hide dependencies panel"]]
               </button>
             </div>
@@ -173,7 +173,7 @@ export default {
           <p class="text-center">
             <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleAdvanced()">
               Advanced options
-              <i ng-class="vm.advancedCollapsed ? 'fa fa-plus' : 'fa fa-minus'"></i>
+              <i ng-class="vm.advancedCollapsed ? 'bi-plus' : 'bi-minus'"></i>
             </button>
           </p>
         </div>
@@ -257,7 +257,7 @@ export default {
               uib-dropdown-toggle
               ng-disabled="form.$invalid"
             >
-              <i class="fa fa-terminal"></i>
+              <i class="bi-terminal"></i>
               <span class="sr-only">CLI</span>
             </button>
             <ul
@@ -288,7 +288,7 @@ export default {
                       tooltip-trigger="'focus'"
                       tooltip-popup-close-delay="2000"
                     >
-                      <i class="fa fa-copy"></i>
+                      <i class="bi-copy"></i>
                     </button>
                   </span>
                 </div>
@@ -322,7 +322,7 @@ export default {
                       tooltip-trigger="'focus'"
                       tooltip-popup-close-delay="2000"
                     >
-                      <i class="fa fa-copy"></i>
+                      <i class="bi-copy"></i>
                     </button>
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export default {
                       tooltip-trigger="'focus'"
                       tooltip-popup-close-delay="2000"
                     >
-                      <i class="fa fa-copy"></i>
+                      <i class="bi-copy"></i>
                     </button>
                   </span>
                 </div>
@@ -358,7 +358,7 @@ export default {
         </div>
         <div class="col-sm-12" ng-show="vm.isGenerating">
           <p class="text-center">
-            <i class="fa fa-spinner fa-spin"></i>
+            <i class="bi-spinner fa-spin"></i>
           </p>
         </div>
       </div>
@@ -366,7 +366,7 @@ export default {
         <div class="col-sm-12">
           <p class="small pull-right">
             <a href="https://how-to.vertx.io/"
-              ><i class="fa fa-arrow-right" aria-hidden="true"></i> Find a Vert.x how-to</a
+              ><i class="bi-arrow-right" aria-hidden="true"></i> Find a Vert.x how-to</a
             >
           </p>
         </div>
@@ -374,9 +374,7 @@ export default {
       <div class="row">
         <div class="col-sm-12">
           <p class="small pull-right">
-            <a href="https://github.com/vert-x3/vertx-starter/issues"
-              ><i class="fa fa-bug" aria-hidden="true"></i> Report an issue</a
-            >
+            <a href="https://github.com/vert-x3/vertx-starter/issues"><i class="bi-bug"></i> Report an issue</a>
           </p>
         </div>
       </div>

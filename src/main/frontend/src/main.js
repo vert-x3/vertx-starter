@@ -1,6 +1,10 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import "@fontsource/ubuntu/500.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/stylesheets/main.css';
+import './assets/main.css';
+
 import 'bootstrap'
-import './assets/main.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
