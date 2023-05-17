@@ -374,7 +374,9 @@ export default {
       <div class="row">
         <div class="col-sm-12">
           <p class="small pull-right">
-            <a href="https://github.com/vert-x3/vertx-starter/issues"><i class="bi-bug"></i> Report an issue</a>
+            <a href="https://github.com/vert-x3/vertx-starter/issues"
+              ><i class="bi-bug"></i> Report an issue</a
+            >
           </p>
         </div>
       </div>

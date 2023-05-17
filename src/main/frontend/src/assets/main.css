@@ -44,7 +44,8 @@ div.title {
   border-color: #ebccd1;
 }
 
-.alert-dismissable, .alert-dismissible {
+.alert-dismissable,
+.alert-dismissible {
   padding-right: 35px;
 }
 
@@ -64,7 +65,7 @@ button.close {
   color: #000;
   text-shadow: 0 1px 0 #fff;
   filter: alpha(opacity=20);
-  opacity: .2;
+  opacity: 0.2;
 }
 
 button kbd {
@@ -82,7 +83,8 @@ kbd {
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
-.btn-advanced:active, .btn-advanced:focus {
+.btn-advanced:active,
+.btn-advanced:focus {
   outline: none;
 }
 
@@ -94,7 +96,8 @@ kbd {
   padding: 16px;
 }
 
-.go-to-generate i, .go-to-generate i:focus {
+.go-to-generate i,
+.go-to-generate i:focus {
   right: 20px;
   bottom: 30px;
   width: 38px;
@@ -107,5 +110,5 @@ kbd {
 
 /*By default line-heigh is 1.33 and look like if not rounded the button-group items are not aligned*/
 .fix-btn-lg > button.btn-lg {
-  line-height: 1.40;
+  line-height: 1.4;
 }

@@ -48,10 +48,10 @@ export default {
     isInvalid() {
       let val = this.store.project[this.projectProperty]
       let type = typeof val
-      return type !== 'string' || (val.trim().length > 0 && !this.regExp.test(val));
+      return type !== 'string' || (val.trim().length > 0 && !this.regExp.test(val))
     },
     rowClass() {
-      return this.isInvalid ? 'form-group row has-error' : 'form-group row';
+      return this.isInvalid ? 'form-group row has-error' : 'form-group row'
     }
   },
   methods: {
