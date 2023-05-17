@@ -58,20 +58,22 @@ export default {
   <div class="form-group row">
     <label class="col-sm-4 col-form-label">{{ formLabel }}</label>
     <div class="col-sm-8">
-      <div v-for="(value, i) in values" :key="value" class="btn-group" role="group">
-        <input
-          type="radio"
-          class="btn-check"
-          :id="inputId(i)"
-          :name="projectProperty"
-          :value="value"
-          autocomplete="off"
-          v-model="store.project[projectProperty]"
-          :checked="value === store.project[projectProperty]"
-        />
-        <label class="btn btn-outline-primary" :for="inputId(i)">{{
-          formatRadioLabel(value)
-        }}</label>
+      <div class="btn-group" role="group">
+        <template v-for="(value, i) in values" :key="value">
+          <input
+            type="radio"
+            class="btn-check"
+            :id="inputId(i)"
+            :name="projectProperty"
+            :value="value"
+            autocomplete="off"
+            v-model="store.project[projectProperty]"
+            :checked="value === store.project[projectProperty]"
+          />
+          <label class="btn btn-outline-primary" :for="inputId(i)">{{
+            formatRadioLabel(value)
+          }}</label>
+        </template>
       </div>
     </div>
   </div>
