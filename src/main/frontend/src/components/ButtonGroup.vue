@@ -55,8 +55,8 @@ export default {
 </script>
 
 <template>
-  <div class="form-group row">
-    <label class="col-sm-4 col-form-label">{{ formLabel }}</label>
+  <div class="form-group row mt-2">
+    <label class="col-sm-4 col-form-label"><strong>{{ formLabel }}</strong></label>
     <div class="col-sm-8">
       <div class="btn-group" role="group">
         <template v-for="(value, i) in values" :key="value">

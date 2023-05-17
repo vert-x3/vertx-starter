@@ -54,12 +54,12 @@ export default {
 <template>
   <div class="container">
     <form name="form" novalidate @submit.prevent="onSubmit">
-      <div id="homeAnchor" class="row title">
+      <div id="homeAnchor" class="row mt-4">
         <div class="col-sm-12">
           <h2>Create a new Vert.x application</h2>
         </div>
       </div>
-      <div class="row">
+      <div class="row mt-4">
         <div class="col-sm-12">
           <ButtonGroup
             form-label="Version"

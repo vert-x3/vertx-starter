@@ -51,7 +51,7 @@ export default {
       return type !== 'string' || (val.trim().length > 0 && !this.regExp.test(val))
     },
     rowClass() {
-      return this.isInvalid ? 'form-group row has-error' : 'form-group row'
+      return this.isInvalid ? 'form-group row has-error mt-2' : 'form-group row mt-2'
     }
   },
   methods: {
@@ -64,7 +64,7 @@ export default {
 
 <template>
   <div :class="rowClass">
-    <label for="groupId" class="col-sm-4 col-form-label control-label">{{ formLabel }}</label>
+    <label for="groupId" class="col-sm-4 col-form-label control-label"><strong>{{ formLabel }}</strong></label>
     <div class="col-sm-8">
       <input
         class="form-control"
