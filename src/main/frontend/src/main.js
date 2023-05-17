@@ -1,7 +1,5 @@
-import '@fontsource/ubuntu/500.css'
-import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './assets/main.css'
+import 'bootstrap-icons/font/bootstrap-icons.scss'
+import './assets/main.scss'
 
 import 'bootstrap'
 
