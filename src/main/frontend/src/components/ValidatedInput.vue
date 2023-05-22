@@ -49,9 +49,6 @@ export default {
       let val = this.store.project[this.projectProperty]
       let type = typeof val
       return type !== 'string' || (val.trim().length > 0 && !this.regExp.test(val))
-    },
-    rowClass() {
-      return this.isInvalid ? 'row mt-2 has-error' : 'row mt-2'
     }
   },
   methods: {
@@ -63,18 +60,18 @@ export default {
 </script>
 
 <template>
-  <div :class="rowClass">
+  <div class="row mt-2">
     <label for="groupId" class="col-sm-4 col-form-label control-label"><strong>{{ formLabel }}</strong></label>
     <div class="col-sm-8">
       <input
-        class="form-control"
+        :class="isInvalid ? 'form-control is-invalid' : 'form-control'"
         type="text"
         :id="projectProperty"
         :name="projectProperty"
         v-model="store.project[projectProperty]"
         :placeholder="placeHolder"
       />
-      <span class="help-block" v-if="isInvalid">Invalid format</span>
+      <div class="invalid-feedback" v-if="isInvalid">Invalid format</div>
     </div>
   </div>
 </template>
