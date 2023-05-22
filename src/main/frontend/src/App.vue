@@ -41,12 +41,35 @@ export default {
       store.project.vertxVersion = this.projectDefaults.vertxVersion
       store.project.archiveFormat = this.projectDefaults.archiveFormat
       store.project.vertxDependencies = []
+      this.resetAdvanced()
+    },
+    resetAdvanced: function () {
       store.project.packageName = ''
       store.project.jdkVersion = this.projectDefaults.jdkVersion
+    },
+    scrollTo: function (elementId) {
+      setTimeout(function () {
+        const htmlElement = document.getElementById(elementId)
+        if (htmlElement)
+          htmlElement.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' })
+      }, 150)
     }
   },
   created() {
     this.reset()
+  },
+  mounted() {
+    const collapseAdvanced = document.getElementById('collapseAdvanced')
+    const collapseAdvancedIcon = document.getElementById('collapseAdvancedIcon')
+    collapseAdvanced.addEventListener('show.bs.collapse', () => {
+      collapseAdvancedIcon.className = 'bi-dash-circle-fill'
+      this.scrollTo('advancedAnchor')
+    })
+    collapseAdvanced.addEventListener('hide.bs.collapse', () => {
+      collapseAdvancedIcon.className = 'bi-plus-circle-fill'
+      this.resetAdvanced()
+      this.scrollTo('dependencyTypeaheadAnchor')
+    })
   }
 }
 </script>
@@ -171,14 +194,19 @@ export default {
       <div id="advancedAnchor" class="row">
         <div class="col-sm-12">
           <p class="text-center">
-            <button type="button" class="btn btn-link btn-advanced" ng-click="vm.toggleAdvanced()">
-              Advanced options
-              <i ng-class="vm.advancedCollapsed ? 'bi-plus' : 'bi-minus'"></i>
+            <button
+              class="btn btn-link"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseAdvanced"
+            >
+              <strong>Advanced options</strong>
+              <i id="collapseAdvancedIcon" class="bi-plus-circle-fill" aria-hidden="true"></i>
             </button>
           </p>
         </div>
       </div>
-      <div class="row" ng-hide="vm.advancedCollapsed">
+      <div class="row collapse" id="collapseAdvanced">
         <div class="col-sm-12">
           <hr />
           <ValidatedInput

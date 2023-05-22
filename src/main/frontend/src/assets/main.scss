@@ -6,4 +6,12 @@ $font-size-base: 1.125rem;
 $font-family-sans-serif: Roboto, sans-serif;
 
 // Import all of Bootstrap's CSS
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
+
+.btn-link {
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
