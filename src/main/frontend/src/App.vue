@@ -144,7 +144,7 @@ export default {
           </div>
           <div
             id="detailedDependenciesAnchor"
-            class="form-group row"
+            class="row"
             ng-hide="vm.detailedOptionsCollapsed"
           >
             <div class="col-md-4">
@@ -226,7 +226,7 @@ export default {
       </div>
       <div class="row" ng-if="store.project.vertxDependencies.length != 0">
         <div class="col-sm-12">
-          <div class="form-group">
+          <div>
             <label class="control-label"
               >Selected dependencies ([[store.project.vertxDependencies.length]])</label
             >

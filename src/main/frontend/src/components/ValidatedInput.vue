@@ -51,7 +51,7 @@ export default {
       return type !== 'string' || (val.trim().length > 0 && !this.regExp.test(val))
     },
     rowClass() {
-      return this.isInvalid ? 'form-group row has-error mt-2' : 'form-group row mt-2'
+      return this.isInvalid ? 'row mt-2 has-error' : 'row mt-2'
     }
   },
   methods: {
