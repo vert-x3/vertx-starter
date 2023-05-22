@@ -77,42 +77,38 @@ export default {
 <template>
   <div class="container">
     <form name="form" novalidate @submit.prevent="onSubmit">
-      <div id="homeAnchor" class="row mt-4">
+      <div id="homeAnchor" class="row mt-4 mb-5">
         <div class="col-sm-12">
           <h2>Create a new Vert.x application</h2>
         </div>
       </div>
+      <ButtonGroup form-label="Version" project-property="vertxVersion" :values="vertxVersions" />
+      <ButtonGroup
+        form-label="Language"
+        project-property="language"
+        :values="languages"
+        capitalize
+      />
+      <ButtonGroup
+        form-label="Build"
+        project-property="buildTool"
+        :values="buildTools"
+        capitalize
+      />
+      <ValidatedInput
+        form-label="Group Id"
+        place-holder="Your project group id"
+        project-property="groupId"
+        pattern="^[A-Za-z0-9_\-.]+$"
+      />
+      <ValidatedInput
+        form-label="Artifact Id"
+        place-holder="Your project artifact id"
+        project-property="artifactId"
+        pattern="^[A-Za-z0-9_\-.]+$"
+      />
       <div class="row mt-4">
         <div class="col-sm-12">
-          <ButtonGroup
-            form-label="Version"
-            project-property="vertxVersion"
-            :values="vertxVersions"
-          />
-          <ButtonGroup
-            form-label="Language"
-            project-property="language"
-            :values="languages"
-            capitalize
-          />
-          <ButtonGroup
-            form-label="Build"
-            project-property="buildTool"
-            :values="buildTools"
-            capitalize
-          />
-          <ValidatedInput
-            form-label="Group Id"
-            place-holder="Your project group id"
-            project-property="groupId"
-            pattern="^[A-Za-z0-9_\-.]+$"
-          />
-          <ValidatedInput
-            form-label="Artifact Id"
-            place-holder="Your project artifact id"
-            project-property="artifactId"
-            pattern="^[A-Za-z0-9_\-.]+$"
-          />
           <div id="dependencyTypeaheadAnchor" class="form-group row">
             <div class="col-sm-4">
               <label for="dependencies" class="col-form-label"
@@ -142,11 +138,7 @@ export default {
               />
             </div>
           </div>
-          <div
-            id="detailedDependenciesAnchor"
-            class="row"
-            ng-hide="vm.detailedOptionsCollapsed"
-          >
+          <div id="detailedDependenciesAnchor" class="row" ng-hide="vm.detailedOptionsCollapsed">
             <div class="col-md-4">
               <h3>
                 Dependencies
@@ -191,7 +183,7 @@ export default {
           </div>
         </div>
       </div>
-      <div id="advancedAnchor" class="row">
+      <div id="advancedAnchor" class="row mt-4">
         <div class="col-sm-12">
           <p class="text-center">
             <button

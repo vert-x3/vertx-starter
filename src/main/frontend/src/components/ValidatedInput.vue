@@ -60,8 +60,10 @@ export default {
 </script>
 
 <template>
-  <div class="row mt-2">
-    <label for="groupId" class="col-sm-4 col-form-label control-label"><strong>{{ formLabel }}</strong></label>
+  <div class="row mt-3">
+    <label for="groupId" class="col-sm-4 col-form-label control-label"
+      ><strong>{{ formLabel }}</strong></label
+    >
     <div class="col-sm-8">
       <input
         :class="isInvalid ? 'form-control is-invalid' : 'form-control'"
