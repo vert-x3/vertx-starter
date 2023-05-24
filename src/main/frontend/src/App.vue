@@ -1,3 +1,19 @@
+<!--
+  - Copyright 2023 Red Hat, Inc.
+  -
+  - Red Hat licenses this file to you under the Apache License, version 2.0
+  - (the "License"); you may not use this file except in compliance with the
+  - License.  You may obtain a copy of the License at:
+  -
+  - http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+  - License for the specific language governing permissions and limitations
+  - under the License.
+  -->
+
 <script setup>
 import ButtonGroup from '@/components/ButtonGroup.vue'
 import DependenciesPanels from '@/components/DependenciesPanels.vue'
@@ -6,6 +22,7 @@ import ValidatedInput from '@/components/ValidatedInput.vue'
 
 <script>
 import { store } from '@/store'
+import { scrollTo } from '@/scroll'
 
 export default {
   data() {
@@ -13,26 +30,17 @@ export default {
       store
     }
   },
-  methods: {
-    scrollTo(elementId) {
-      setTimeout(function () {
-        const htmlElement = document.getElementById(elementId)
-        if (htmlElement)
-          htmlElement.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' })
-      }, 150)
-    }
-  },
   mounted() {
     const collapseAdvanced = document.getElementById('collapseAdvanced')
     const collapseAdvancedIcon = document.getElementById('collapseAdvancedIcon')
     collapseAdvanced.addEventListener('show.bs.collapse', () => {
       collapseAdvancedIcon.className = 'bi-dash-circle-fill'
-      this.scrollTo('advancedAnchor')
+      scrollTo('advancedAnchor')
     })
     collapseAdvanced.addEventListener('hide.bs.collapse', () => {
       collapseAdvancedIcon.className = 'bi-plus-circle-fill'
       store.resetAdvanced()
-      this.scrollTo('dependencyTypeaheadAnchor')
+      scrollTo('dependencyTypeaheadAnchor')
     })
   }
 }

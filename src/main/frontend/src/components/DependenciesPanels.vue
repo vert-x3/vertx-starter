@@ -16,6 +16,7 @@
 
 <script>
 import { store } from '@/store'
+import { scrollTo } from '@/scroll'
 
 export default {
   data() {
@@ -42,13 +43,6 @@ export default {
     }
   },
   methods: {
-    scrollTo(elementId) {
-      setTimeout(function () {
-        const htmlElement = document.getElementById(elementId)
-        if (htmlElement)
-          htmlElement.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' })
-      }, 150)
-    },
     isDependencyDisabled(dependency) {
       const excludedOfVersion = store.excludedModulesByVersion[store.project.vertxVersion]
       return excludedOfVersion.includes(dependency.artifactId)
@@ -82,11 +76,11 @@ export default {
     const collapseDependenciesPanel = document.getElementById('collapseDependenciesPanel')
     collapseDependenciesPanel.addEventListener('show.bs.collapse', () => {
       this.collapsed = false
-      this.scrollTo('detailedDependenciesAnchor')
+      scrollTo('detailedDependenciesAnchor')
     })
     collapseDependenciesPanel.addEventListener('hide.bs.collapse', () => {
       this.collapsed = true
-      this.scrollTo('dependencyTypeaheadAnchor')
+      scrollTo('dependencyTypeaheadAnchor')
     })
   }
 }
