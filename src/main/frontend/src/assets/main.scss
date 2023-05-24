@@ -5,6 +5,10 @@ $body-color: #3c3c3b;
 $font-size-base: 1.125rem;
 $font-family-sans-serif: Roboto, sans-serif;
 
+$dropdown-link-color: $primary;
+$dropdown-link-hover-color: white;
+$dropdown-link-hover-bg: $primary;
+
 // Import all of Bootstrap's CSS
 @import '~bootstrap/scss/bootstrap';
 

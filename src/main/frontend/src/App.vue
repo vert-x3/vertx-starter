@@ -1,5 +1,6 @@
 <script setup>
 import ButtonGroup from '@/components/ButtonGroup.vue'
+import DependenciesPanels from '@/components/DependenciesPanels.vue'
 import ValidatedInput from '@/components/ValidatedInput.vue'
 </script>
 
@@ -7,56 +8,19 @@ import ValidatedInput from '@/components/ValidatedInput.vue'
 import { store } from '@/store'
 
 export default {
-  props: {
-    metadata: {
-      type: Object,
-      required: true
-    }
-  },
   data() {
     return {
-      store,
-      projectDefaults: this.metadata.defaults,
-      exclusions: this.metadata.versions.reduce((res, value) => {
-        res[value.number] = value.exclusions || []
-        return res
-      }, {}),
-      stack: this.metadata.stack,
-      buildTools: this.metadata.buildTools,
-      languages: this.metadata.languages,
-      jdkVersions: this.metadata.jdkVersions,
-      selectedPanel:
-        this.metadata.stack && this.metadata.stack.length > 0
-          ? this.metadata.stack[0].code
-          : 'none',
-      vertxVersions: this.metadata.versions.map((version) => version.number)
+      store
     }
   },
   methods: {
-    reset() {
-      store.project.groupId = this.projectDefaults.groupId
-      store.project.artifactId = this.projectDefaults.artifactId
-      store.project.language = this.projectDefaults.language
-      store.project.buildTool = this.projectDefaults.buildTool
-      store.project.vertxVersion = this.projectDefaults.vertxVersion
-      store.project.archiveFormat = this.projectDefaults.archiveFormat
-      store.project.vertxDependencies = []
-      this.resetAdvanced()
-    },
-    resetAdvanced: function () {
-      store.project.packageName = ''
-      store.project.jdkVersion = this.projectDefaults.jdkVersion
-    },
-    scrollTo: function (elementId) {
+    scrollTo(elementId) {
       setTimeout(function () {
         const htmlElement = document.getElementById(elementId)
         if (htmlElement)
           htmlElement.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' })
       }, 150)
     }
-  },
-  created() {
-    this.reset()
   },
   mounted() {
     const collapseAdvanced = document.getElementById('collapseAdvanced')
@@ -67,7 +31,7 @@ export default {
     })
     collapseAdvanced.addEventListener('hide.bs.collapse', () => {
       collapseAdvancedIcon.className = 'bi-plus-circle-fill'
-      this.resetAdvanced()
+      store.resetAdvanced()
       this.scrollTo('dependencyTypeaheadAnchor')
     })
   }
@@ -76,23 +40,28 @@ export default {
 
 <template>
   <div class="container">
-    <form name="form" novalidate @submit.prevent="onSubmit">
-      <div id="homeAnchor" class="row mt-4 mb-5">
+    <form name="form" novalidate @submit.prevent="">
+      <div class="row mt-4 mb-5">
         <div class="col-sm-12">
           <h2>Create a new Vert.x application</h2>
         </div>
       </div>
-      <ButtonGroup form-label="Version" project-property="vertxVersion" :values="vertxVersions" />
+      <ButtonGroup
+        form-label="Version"
+        project-property="vertxVersion"
+        :values="store.vertxVersions"
+        @value-changed="store.onVersionChanged"
+      />
       <ButtonGroup
         form-label="Language"
         project-property="language"
-        :values="languages"
+        :values="store.languages"
         capitalize
       />
       <ButtonGroup
         form-label="Build"
         project-property="buildTool"
-        :values="buildTools"
+        :values="store.buildTools"
         capitalize
       />
       <ValidatedInput
@@ -107,82 +76,7 @@ export default {
         project-property="artifactId"
         pattern="^[A-Za-z0-9_\-.]+$"
       />
-      <div class="row mt-4">
-        <div class="col-sm-12">
-          <div id="dependencyTypeaheadAnchor" class="form-group row">
-            <div class="col-sm-4">
-              <label for="dependencies" class="col-form-label"
-                >Dependencies
-                ([[store.project.vertxDependencies.length]]/[[vm.availableVertxDependencies.length]])</label
-              >
-              <button
-                type="button"
-                class="btn btn-link btn-advanced"
-                ng-click="vm.toggleDetailedOptions()"
-                style="padding-left: 0px"
-              >
-                <i ng-class="vm.detailedOptionsCollapsed ? 'bi-plus' : 'bi-minus'"></i>
-                [[vm.detailedOptionsCollapsed?"Show dependencies panel":"Hide dependencies panel"]]
-              </button>
-            </div>
-
-            <div class="col-sm-8">
-              <input
-                type="text"
-                id="dependencies"
-                class="form-control"
-                placeholder="Web, MQTT, etc."
-                ng-model="vm.selectedDependency"
-                uib-typeahead="dependency as dependency.name for dependency in vm.availableVertxDependencies | filter:$viewValue | limitTo:8"
-                typeahead-on-select="vm.onDependencySelected($item, $model, $label, $event)"
-              />
-            </div>
-          </div>
-          <div id="detailedDependenciesAnchor" class="row" ng-hide="vm.detailedOptionsCollapsed">
-            <div class="col-md-4">
-              <h3>
-                Dependencies
-                ([[store.project.vertxDependencies.length]]/[[vm.availableVertxDependencies.length]])
-              </h3>
-              <ul class="nav nav-pills nav-stacked">
-                <li
-                  role="presentation"
-                  ng-repeat="cat in vm.stack"
-                  ng-class="{active:vm.selectedPanel === cat.code}"
-                >
-                  <a ng-click="vm.selectedPanel = cat.code">[[cat.category]]</a>
-                </li>
-              </ul>
-            </div>
-            <div class="col-sm-8">
-              <div class="tab-content">
-                <div
-                  id="tab-[[cat.code]]"
-                  class="tab-pane fade"
-                  ng-class="{in: cat.code == vm.selectedPanel, active: cat.code == vm.selectedPanel}"
-                  ng-repeat="cat in vm.stack"
-                >
-                  <h3>[[cat.category]]</h3>
-                  <p>[[cat.description]]</p>
-                  <div ng-repeat="dependency in cat.items">
-                    <label ng-class="{'text-muted': dependency.disabled}">
-                      <input
-                        type="checkbox"
-                        ng-disabled="dependency.disabled"
-                        value="[[dependency.name]]"
-                        ng-model="dependency.selected"
-                        ng-change="$parent.vm.onDependencySelected($item, dependency, $label, $event)"
-                      />
-                      [[dependency.name]]
-                    </label>
-                    <p ng-class="{'text-muted': dependency.disabled}">[[dependency.description]]</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <DependenciesPanels />
       <div id="advancedAnchor" class="row mt-4">
         <div class="col-sm-12">
           <p class="text-center">
@@ -193,48 +87,50 @@ export default {
               data-bs-target="#collapseAdvanced"
             >
               <strong>Advanced options</strong>
+              &nbsp;
               <i id="collapseAdvancedIcon" class="bi-plus-circle-fill" aria-hidden="true"></i>
             </button>
           </p>
         </div>
       </div>
-      <div class="row collapse" id="collapseAdvanced">
-        <div class="col-sm-12">
-          <hr />
-          <ValidatedInput
-            form-label="Package"
-            place-holder="Your project package name"
-            project-property="packageName"
-            pattern="^[A-Za-z0-9_\-.]+$"
-          />
-          <ButtonGroup
-            form-label="JDK Version"
-            project-property="jdkVersion"
-            :values="jdkVersions"
-            prefix="JDK "
-          />
-          <hr />
-        </div>
+      <div class="collapse" id="collapseAdvanced">
+        <hr />
+        <ValidatedInput
+          form-label="Package"
+          place-holder="Your project package name"
+          project-property="packageName"
+          pattern="^[A-Za-z0-9_\-.]+$"
+        />
+        <ButtonGroup
+          form-label="JDK Version"
+          project-property="jdkVersion"
+          :values="store.jdkVersions"
+          prefix="JDK "
+        />
+        <hr />
       </div>
-      <div class="row" ng-if="store.project.vertxDependencies.length != 0">
+      <div class="row" v-if="store.project.vertxDependencies.length !== 0">
         <div class="col-sm-12">
           <div>
-            <label class="control-label"
-              >Selected dependencies ([[store.project.vertxDependencies.length]])</label
-            >
+            <label>
+              <strong>
+                Selected dependencies ({{ store.project.vertxDependencies.length }})
+              </strong>
+            </label>
             <br />
-            <div ng-repeat="dependency in vm.selectedDependencies">[[dependency.artifactId]]</div>
-
-            <div class="tag" ng-repeat="dependency in store.project.vertxDependencies">
-              [[ dependency.name ]]
-              <button
-                type="button"
-                class="remove"
-                aria-label="Remove"
-                ng-click="vm.removeDependency(dependency.artifactId)"
+            <div>
+              <template
+                v-for="(dependency, index) in store.project.vertxDependencies"
+                :key="dependency"
               >
-                <span aria-hidden="true">&times;</span>
-              </button>
+                <div
+                  class="btn btn-outline-primary mt-2"
+                  :class="{ 'me-2': index !== store.project.vertxDependencies.length }"
+                >
+                  {{ dependency.name }} dependency
+                  <a @click="store.removeDependency(dependency)">&times;</a>
+                </div>
+              </template>
             </div>
           </div>
         </div>

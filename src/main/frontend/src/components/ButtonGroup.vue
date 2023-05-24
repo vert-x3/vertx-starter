@@ -71,6 +71,7 @@ export default {
             autocomplete="off"
             v-model="store.project[projectProperty]"
             :checked="value === store.project[projectProperty]"
+            @change="$emit('valueChanged')"
           />
           <label class="btn btn-outline-primary" :for="inputId(i)">{{
             formatRadioLabel(value)

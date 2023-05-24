@@ -5,9 +5,11 @@ import 'bootstrap'
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import { store } from '@/store'
 
 fetch('/metadata')
-  .then((r) => r.json())
-  .then((metadata) => {
-    createApp(App, { metadata: metadata }).mount('#app')
+  .then((response) => response.json())
+  .then((json) => {
+    store.initialize(json)
+    createApp(App).mount('#app')
   })
