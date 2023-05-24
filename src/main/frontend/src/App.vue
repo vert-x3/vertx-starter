@@ -132,12 +132,18 @@ export default {
                 v-for="(dependency, index) in store.project.vertxDependencies"
                 :key="dependency"
               >
-                <div
-                  class="btn btn-outline-primary mt-2"
-                  :class="{ 'me-2': index !== store.project.vertxDependencies.length }"
-                >
-                  {{ dependency.name }} dependency
-                  <a @click="store.removeDependency(dependency)">&times;</a>
+                <div class="btn-group mt-2">
+                  <button type="button" class="btn btn-outline-primary disabled">
+                    {{ dependency.name }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    :class="{ 'me-2': index !== store.project.vertxDependencies.length }"
+                    @click="store.removeDependency(dependency)"
+                  >
+                    &times;
+                  </button>
                 </div>
               </template>
             </div>
