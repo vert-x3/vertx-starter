@@ -12,7 +12,10 @@ export const store = {
     packageName: '',
     jdkVersion: ''
   }),
-  projectDefaults: {},
+  projectDefaults: {
+    vertxDependencies: [],
+    packageName: ''
+  },
   stack: [],
   buildTools: [],
   languages: [],
@@ -49,8 +52,8 @@ export const store = {
     this.onVersionChanged()
   },
   resetAdvanced() {
-    store.project.packageName = this.projectDefaults.packageName
-    store.project.jdkVersion = this.projectDefaults.jdkVersion
+    this.project.packageName = this.projectDefaults.packageName
+    this.project.jdkVersion = this.projectDefaults.jdkVersion
   },
   onVersionChanged() {
     const excludedOfVersion = store.excludedModulesByVersion[store.project.vertxVersion]
