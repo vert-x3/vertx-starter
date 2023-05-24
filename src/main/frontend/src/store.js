@@ -32,6 +32,7 @@ export const store = {
     }
     return res
   }),
+  alerts: reactive([]),
   initialize(json) {
     Object.assign(this.projectDefaults, json.defaults)
     for (const prop of ['stack', 'buildTools', 'languages', 'jdkVersions']) {

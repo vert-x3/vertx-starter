@@ -18,6 +18,7 @@
 import ButtonGroup from '@/components/ButtonGroup.vue'
 import DependenciesPanels from '@/components/DependenciesPanels.vue'
 import ValidatedInput from '@/components/ValidatedInput.vue'
+import AlertsPanel from '@/components/AlertsPanel.vue'
 </script>
 
 <script>
@@ -143,21 +144,8 @@ export default {
           </div>
         </div>
       </div>
+      <AlertsPanel />
       <div class="row">
-        <div
-          uib-alert
-          ng-repeat="alert in vm.alerts track by $index"
-          ng-class="'alert-' + (alert.type || 'warning')"
-          close="vm.closeAlert($index)"
-        >
-          [[alert.message]]<span ng-if="alert.type === 'danger'"
-            ><br />Please
-            <a target="_blank" ng-href="https://github.com/vert-x3/vertx-starter/issues/new"
-              >report</a
-            >
-            an issue.</span
-          >
-        </div>
         <div class="col-sm-12 text-center">
           <div
             class="btn-group fix-btn-lg"
