@@ -276,7 +276,7 @@ export default {
       </div>
       <div class="row">
         <div class="col-sm-12">
-          <p class="small pull-right">
+          <p class="small text-end">
             <a href="https://how-to.vertx.io/"
               ><i class="bi-arrow-right" aria-hidden="true"></i> Find a Vert.x how-to</a
             >
@@ -285,7 +285,7 @@ export default {
       </div>
       <div class="row">
         <div class="col-sm-12">
-          <p class="small pull-right">
+          <p class="small text-end">
             <a href="https://github.com/vert-x3/vertx-starter/issues"
               ><i class="bi-bug"></i> Report an issue</a
             >
