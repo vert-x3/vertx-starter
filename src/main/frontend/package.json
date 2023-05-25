@@ -10,7 +10,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@fontsource/ubuntu": "^4.5.11",
+    "@fontsource/ubuntu": "^5.0.1",
     "@popperjs/core": "^2.11.7",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.5",
