@@ -83,15 +83,8 @@ public class WebVerticle extends AbstractVerticle {
       .handler(CSPHandler.create()
         .addDirective("style-src", "self")
         .addDirective("style-src", "unsafe-inline")
-        .addDirective("style-src", "cdnjs.cloudflare.com")
-        .addDirective("style-src", "maxcdn.bootstrapcdn.com")
-        .addDirective("style-src", "fonts.googleapis.com")
         .addDirective("font-src", "self")
-        .addDirective("font-src", "maxcdn.bootstrapcdn.com")
-        .addDirective("font-src", "fonts.googleapis.com")
-        .addDirective("font-src", "fonts.gstatic.com")
-        .addDirective("script-src", "self")
-        .addDirective("script-src", "cdnjs.cloudflare.com"))
+        .addDirective("script-src", "self"))
       .handler(rc -> {
         rc.response().putHeader(X_CONTENT_TYPE_OPTIONS_HEADER, NOSNIFF);
         rc.next();
