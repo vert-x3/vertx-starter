@@ -16,6 +16,9 @@ export default defineConfig({
     proxy: {
       '/metadata': {
         target: 'http://localhost:8080'
+      },
+      '/starter.zip': {
+        target: 'http://localhost:8080'
       }
     }
   }

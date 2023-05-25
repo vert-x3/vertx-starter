@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 export const store = {
   project: reactive({
@@ -35,6 +35,7 @@ export const store = {
     }
     return res
   }),
+  isGenerating: ref(false),
   alerts: reactive([]),
   initialize(json) {
     Object.assign(this.projectDefaults, json.defaults)

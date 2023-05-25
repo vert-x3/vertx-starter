@@ -19,6 +19,7 @@ import ButtonGroup from '@/components/ButtonGroup.vue'
 import DependenciesPanels from '@/components/DependenciesPanels.vue'
 import ValidatedInput from '@/components/ValidatedInput.vue'
 import AlertsPanel from '@/components/AlertsPanel.vue'
+import GenerateButton from '@/components/GenerateButton.vue'
 </script>
 
 <script>
@@ -151,135 +152,7 @@ export default {
         </div>
       </div>
       <AlertsPanel />
-      <div class="row">
-        <div class="col-sm-12 text-center">
-          <div
-            class="btn-group fix-btn-lg"
-            uib-dropdown
-            auto-close="outsideClick"
-            on-toggle="vm.generateCommands(open)"
-            ng-switch
-            on="vm.isWindows"
-          >
-            <button
-              type="button"
-              class="btn btn-lg btn-primary"
-              ng-disabled="form.$invalid"
-              ng-click="vm.generate()"
-            >
-              Generate Project <kbd>[[ vm.hotkey ]]</kbd>
-            </button>
-            <button
-              type="button"
-              class="btn btn-lg btn-default"
-              uib-dropdown-toggle
-              ng-disabled="form.$invalid"
-            >
-              <i class="bi-terminal"></i>
-              <span class="sr-only">CLI</span>
-            </button>
-            <ul
-              ng-switch-when="true"
-              class="p-3 dropdown-menu dropdown-menu-large pull-right"
-              uib-dropdown-menu
-              role="menu"
-              aria-labelledby="split-button"
-            >
-              <li role="menuitem">
-                <label class="label-bold"> Generate with Power Shell </label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    id="powershellCommand"
-                    ng-model="vm.powershellCommand"
-                    class="form-control"
-                    readonly="readonly"
-                    aria-label="Project Power Shell URL"
-                  />
-                  <span class="input-group-btn">
-                    <button
-                      class="btn btn-default"
-                      type="button"
-                      ngclipboard
-                      data-clipboard-target="#powershellCommand"
-                      uib-tooltip="Copied!"
-                      tooltip-trigger="'focus'"
-                      tooltip-popup-close-delay="2000"
-                    >
-                      <i class="bi-copy"></i>
-                    </button>
-                  </span>
-                </div>
-              </li>
-            </ul>
-            <ul
-              ng-switch-default
-              class="p-3 dropdown-menu dropdown-menu-large pull-right"
-              uib-dropdown-menu
-              role="menu"
-              aria-labelledby="split-button"
-            >
-              <li role="menuitem">
-                <label class="label-bold"> Generate with Curl </label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    id="curlCommand"
-                    ng-model="vm.curlCommand"
-                    class="form-control"
-                    readonly="readonly"
-                    aria-label="Project Curl URL"
-                  />
-                  <span class="input-group-btn">
-                    <button
-                      class="btn btn-default"
-                      type="button"
-                      ngclipboard
-                      data-clipboard-target="#curlCommand"
-                      uib-tooltip="Copied!"
-                      tooltip-trigger="'focus'"
-                      tooltip-popup-close-delay="2000"
-                    >
-                      <i class="bi-copy"></i>
-                    </button>
-                  </span>
-                </div>
-              </li>
-              <li role="menuitem">
-                <label class="label-bold"> Generate with HTTPie </label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    id="httpieCommand"
-                    ng-model="vm.httpieCommand"
-                    class="form-control"
-                    readonly="readonly"
-                    aria-label="Project HTTPie URL"
-                  />
-                  <span class="input-group-btn">
-                    <button
-                      class="btn btn-default"
-                      type="button"
-                      ngclipboard
-                      data-clipboard-target="#httpieCommand"
-                      uib-tooltip="Copied!"
-                      tooltip-trigger="'focus'"
-                      tooltip-popup-close-delay="2000"
-                    >
-                      <i class="bi-copy"></i>
-                    </button>
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-sm-12" ng-show="vm.isGenerating">
-          <p class="text-center">
-            <i class="bi-spinner fa-spin"></i>
-          </p>
-        </div>
-      </div>
+      <GenerateButton />
       <div class="row">
         <div class="col-sm-12">
           <p class="small text-end">
