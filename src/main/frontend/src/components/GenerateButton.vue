@@ -150,7 +150,7 @@ export default {
 </script>
 
 <template>
-  <div class="row mt-4">
+  <div class="row mt-5">
     <div class="col-sm-12 text-center">
       <div class="btn-group">
         <button type="button" class="btn btn-lg btn-primary" @click="generate">

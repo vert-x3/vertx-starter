@@ -20,30 +20,19 @@ import DependenciesPanels from '@/components/DependenciesPanels.vue'
 import ValidatedInput from '@/components/ValidatedInput.vue'
 import AlertsPanel from '@/components/AlertsPanel.vue'
 import GenerateButton from '@/components/GenerateButton.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
+import SelectedDependencies from '@/components/SelectedDependencies.vue'
+import AdvancedOptions from '@/components/AdvancedOptions.vue'
 </script>
 
 <script>
 import { store } from '@/store'
-import { scrollTo } from '@/scroll'
 
 export default {
   data() {
     return {
       store
     }
-  },
-  mounted() {
-    const collapseAdvanced = document.getElementById('collapseAdvanced')
-    const collapseAdvancedIcon = document.getElementById('collapseAdvancedIcon')
-    collapseAdvanced.addEventListener('show.bs.collapse', () => {
-      collapseAdvancedIcon.className = 'bi-dash-lg'
-      scrollTo('advancedAnchor')
-    })
-    collapseAdvanced.addEventListener('hide.bs.collapse', () => {
-      collapseAdvancedIcon.className = 'bi-plus-lg'
-      store.resetAdvanced()
-      scrollTo('dependencyTypeaheadAnchor')
-    })
   }
 }
 </script>
@@ -87,91 +76,11 @@ export default {
         pattern="^[A-Za-z0-9_\-.]+$"
       />
       <DependenciesPanels />
-      <div id="advancedAnchor" class="row mt-4">
-        <div class="col-sm-12">
-          <p class="text-center">
-            <button
-              class="btn btn-link"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseAdvanced"
-            >
-              <strong>Advanced options</strong>
-              <i id="collapseAdvancedIcon" class="bi-plus-lg" aria-hidden="true"></i>
-            </button>
-          </p>
-        </div>
-      </div>
-      <div class="collapse" id="collapseAdvanced">
-        <hr />
-        <ValidatedInput
-          form-label="Package"
-          place-holder="Your project package name"
-          project-property="packageName"
-          pattern="^[A-Za-z0-9_\-.]+$"
-        />
-        <ButtonGroup
-          form-label="JDK Version"
-          project-property="jdkVersion"
-          :values="store.jdkVersions"
-          prefix="JDK "
-        />
-        <hr />
-      </div>
-      <div class="row" v-if="store.project.vertxDependencies.length !== 0">
-        <div class="col-sm-12">
-          <div>
-            <label>
-              <strong>
-                Selected dependencies ({{ store.project.vertxDependencies.length }})
-              </strong>
-            </label>
-            <br />
-            <div>
-              <template
-                v-for="(dependency, index) in store.project.vertxDependencies"
-                :key="dependency"
-              >
-                <div class="btn-group mt-2">
-                  <button type="button" class="btn btn-outline-primary disabled">
-                    {{ dependency.name }}
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary"
-                    :class="{ 'me-2': index !== store.project.vertxDependencies.length }"
-                    @click="store.removeDependency(dependency)"
-                  >
-                    &times;
-                  </button>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AdvancedOptions />
       <AlertsPanel />
       <GenerateButton />
-      <div class="row">
-        <div class="col-sm-12">
-          <p class="small text-end">
-            <a href="https://how-to.vertx.io/"
-              ><i class="bi-arrow-right" aria-hidden="true"></i> Find a Vert.x how-to</a
-            >
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-12">
-          <p class="small text-end">
-            <a href="https://github.com/vert-x3/vertx-starter/issues"
-              ><i class="bi-bug"></i> Report an issue</a
-            >
-          </p>
-        </div>
-      </div>
+      <SelectedDependencies />
+      <FooterComponent />
     </form>
   </div>
 </template>
-
-<style scoped></style>

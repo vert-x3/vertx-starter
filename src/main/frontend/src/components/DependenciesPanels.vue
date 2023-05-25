@@ -116,7 +116,7 @@ export default {
   </div>
   <div class="row mt-3">
     <div class="col-sm-12">
-      <p class="text-center">
+      <p id="detailedDependenciesAnchor" class="text-start">
         <button
           class="btn btn-link"
           type="button"
@@ -131,7 +131,7 @@ export default {
   </div>
   <div id="collapseDependenciesPanel" class="collapse row mt-3">
     <div class="col-md-4">
-      <h3 id="detailedDependenciesAnchor">Dependencies</h3>
+      <h3>Dependencies</h3>
       <ul class="nav nav-pills flex-column">
         <li class="nav-item" v-for="cat in store.stack" :key="cat.code">
           <a
