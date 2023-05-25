@@ -35,6 +35,7 @@ export const store = {
     }
     return res
   }),
+  invalidFields: ref(new Set()),
   isGenerating: ref(false),
   alerts: reactive([]),
   initialize(json) {

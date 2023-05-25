@@ -51,6 +51,15 @@ export default {
       return type !== 'string' || (val.trim().length > 0 && !this.regExp.test(val))
     }
   },
+  watch: {
+    isInvalid(value) {
+      if (value) {
+        store.invalidFields.value.add(this.projectProperty)
+      } else {
+        store.invalidFields.value.delete(this.projectProperty)
+      }
+    }
+  },
   methods: {
     inputId(i) {
       return this.projectProperty + '-' + i

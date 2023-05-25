@@ -143,7 +143,9 @@ export default {
     tooltipTriggerList.forEach((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl))
     hotkeys('command+enter,alt+enter', (event) => {
       event.preventDefault()
-      this.generate()
+      if (store.invalidFields.value.size === 0) {
+        this.generate()
+      }
     })
   }
 }
@@ -153,7 +155,12 @@ export default {
   <div class="row mt-5">
     <div class="col-sm-12 text-center">
       <div class="btn-group">
-        <button type="button" class="btn btn-lg btn-primary" @click="generate">
+        <button
+          type="button"
+          class="btn btn-lg btn-primary"
+          @click="generate"
+          :disabled="store.invalidFields.size > 0"
+        >
           Generate Project <kbd>{{ hotkey }}</kbd>
         </button>
         <button
@@ -161,6 +168,7 @@ export default {
           class="btn btn-lg btn-outline-secondary dropdown-toggle dropdown-toggle-split"
           data-bs-toggle="dropdown"
           aria-expanded="false"
+          :disabled="store.invalidFields.size > 0"
         >
           <i class="bi-terminal"></i>
         </button>
