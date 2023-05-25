@@ -124,11 +124,7 @@ export default {
           data-bs-target="#collapseDependenciesPanel"
         >
           <strong>{{ collapsed ? 'Show dependencies panel' : 'Hide dependencies panel' }}</strong>
-          &nbsp;
-          <i
-            :class="collapsed ? 'bi-plus-circle-fill' : 'bi-dash-circle-fill'"
-            aria-hidden="true"
-          ></i>
+          <i :class="collapsed ? 'bi-plus-lg' : 'bi-dash-lg'" aria-hidden="true"></i>
         </button>
       </p>
     </div>

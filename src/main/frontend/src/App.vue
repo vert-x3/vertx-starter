@@ -36,11 +36,11 @@ export default {
     const collapseAdvanced = document.getElementById('collapseAdvanced')
     const collapseAdvancedIcon = document.getElementById('collapseAdvancedIcon')
     collapseAdvanced.addEventListener('show.bs.collapse', () => {
-      collapseAdvancedIcon.className = 'bi-dash-circle-fill'
+      collapseAdvancedIcon.className = 'bi-dash-lg'
       scrollTo('advancedAnchor')
     })
     collapseAdvanced.addEventListener('hide.bs.collapse', () => {
-      collapseAdvancedIcon.className = 'bi-plus-circle-fill'
+      collapseAdvancedIcon.className = 'bi-plus-lg'
       store.resetAdvanced()
       scrollTo('dependencyTypeaheadAnchor')
     })
@@ -97,8 +97,7 @@ export default {
               data-bs-target="#collapseAdvanced"
             >
               <strong>Advanced options</strong>
-              &nbsp;
-              <i id="collapseAdvancedIcon" class="bi-plus-circle-fill" aria-hidden="true"></i>
+              <i id="collapseAdvancedIcon" class="bi-plus-lg" aria-hidden="true"></i>
             </button>
           </p>
         </div>
