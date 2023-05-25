@@ -21,23 +21,30 @@ import { CliConstants } from '@/cli'
 import { saveAs } from 'file-saver'
 import ClipboardJS from 'clipboard'
 import { Tooltip } from 'bootstrap'
+import hotkeys from 'hotkeys-js'
 
 const parsedResult = Bowser.parse(window.navigator.userAgent)
 
 export default {
   data() {
     return {
-      store,
-      isWindows: parsedResult.os.name.toLowerCase() === 'windows'
+      store
     }
   },
   computed: {
+    isWindows() {
+      return parsedResult.os.name.toLowerCase() === 'windows'
+    },
+    isMac() {
+      return parsedResult.os.name.toLowerCase() === 'macOS'
+    },
+    hotkey() {
+      return this.isMac ? '\u2318 + \u23CE' : 'alt + \u23CE'
+    },
     projectRequest() {
       const vertxProject = {}
       Object.assign(vertxProject, store.project)
-      const artifacts = vertxProject.vertxDependencies.map(function (dependency) {
-        return dependency.artifactId
-      })
+      const artifacts = vertxProject.vertxDependencies.map((dependency) => dependency.artifactId)
       vertxProject.vertxDependencies = artifacts.join()
       return vertxProject
     },
@@ -70,7 +77,7 @@ export default {
     },
     toCliArgs(obj, commandArgs, argMapper, argSeparator) {
       const args = []
-      commandArgs.forEach(function (argName) {
+      commandArgs.forEach((argName) => {
         if (
           Object.prototype.hasOwnProperty.call(obj, argName) &&
           obj[argName] !== undefined &&
@@ -108,7 +115,7 @@ export default {
               saveAs(blob, this.projectRequest.artifactId + '.' + this.projectRequest.archiveFormat)
             } else {
               const reader = new FileReader()
-              reader.addEventListener('loadend', function () {
+              reader.addEventListener('loadend', () => {
                 store.alerts.push({
                   message:
                     reader.result.length > 0
@@ -134,6 +141,10 @@ export default {
     new ClipboardJS('.btn-clip')
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     tooltipTriggerList.forEach((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl))
+    hotkeys('command+enter,alt+enter', (event) => {
+      event.preventDefault()
+      this.generate()
+    })
   }
 }
 </script>
@@ -143,7 +154,7 @@ export default {
     <div class="col-sm-12 text-center">
       <div class="btn-group">
         <button type="button" class="btn btn-lg btn-primary" @click="generate">
-          Generate Project
+          Generate Project <kbd>{{ hotkey }}</kbd>
         </button>
         <button
           type="button"
@@ -249,5 +260,9 @@ export default {
 
 input:read-only {
   background-color: lightgray;
+}
+
+kbd {
+  background-color: transparent;
 }
 </style>
