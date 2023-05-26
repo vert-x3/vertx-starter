@@ -21,11 +21,13 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.common.WebEnvironment;
 import io.vertx.ext.web.handler.*;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.MetadataHandler;
@@ -33,8 +35,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Stream;
 
+import static io.vertx.core.http.HttpHeaders.CACHE_CONTROL;
 import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Daniel Petisme
@@ -46,6 +54,17 @@ public class WebVerticle extends AbstractVerticle {
 
   private static final AsciiString X_CONTENT_TYPE_OPTIONS_HEADER = AsciiString.cached("x-content-type-options");
   private static final AsciiString NOSNIFF = AsciiString.cached("nosniff");
+  private static final AsciiString ONE_YEAR_CACHE = AsciiString.cached("cache-control=public, immutable, max-age=31536000");
+
+  private static final Set<String> SKIP_COMPRESSION_FILE_SUFFIXES;
+  private static final Set<String> SKIP_COMPRESSION_MEDIA_TYPES;
+
+  static {
+    SKIP_COMPRESSION_FILE_SUFFIXES = Stream.of("png", "woff2")
+      .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
+    SKIP_COMPRESSION_MEDIA_TYPES = Stream.of("image/png", "font/woff2")
+      .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
+  }
 
   public static final String VERTX_PROJECT_KEY = "vertxProject";
 
@@ -99,13 +118,26 @@ public class WebVerticle extends AbstractVerticle {
 
     router.get("/metadata").handler(metadataHandler);
 
-    router.get("/starter.*").handler(validationHandler).handler(generationHandler);
+    router.get("/starter.*")
+      .handler(validationHandler)
+      .handler(generationHandler);
 
-    router.route().handler(StaticHandler.create());
+    StaticHandler staticHandler = StaticHandler.create()
+      .skipCompressionForSuffixes(SKIP_COMPRESSION_FILE_SUFFIXES)
+      .skipCompressionForMediaTypes(SKIP_COMPRESSION_MEDIA_TYPES);
+    router.route().handler(rc -> {
+      rc.addHeadersEndHandler(v -> {
+        String normalizedPath = rc.normalizedPath();
+        if (!(WebEnvironment.development() || "/".equals(normalizedPath) || "/index.html".equals(normalizedPath))) {
+          rc.response().putHeader(CACHE_CONTROL, ONE_YEAR_CACHE);
+        }
+      });
+      rc.next();
+    }).handler(staticHandler);
 
     int port = config().getInteger(HTTP_PORT, 8080);
 
-    vertx.createHttpServer()
+    vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
       .requestHandler(router)
       .listen(port, ar -> {
         if (ar.failed()) {
