@@ -22,8 +22,8 @@ public interface VerticleConfigurationConstants {
     String HTTP_PORT = "http-port";
   }
 
-  interface Generator {
-    String GENERATOR_DIR = "generator-dir";
-    String GENERATOR_OUTPUT_DIR = "generator-output-dir";
+  interface Analytics {
+    String ANALYTICS_DIR_CONF = "analytics-dir";
+    String ANALYTICS_DIR_ENV = "VERTX_STARTER_ANALYTICS_DIR";
   }
 }

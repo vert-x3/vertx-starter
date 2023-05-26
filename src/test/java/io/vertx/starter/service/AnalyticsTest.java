@@ -19,7 +19,6 @@ package io.vertx.starter.service;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -31,14 +30,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.stream.Stream;
 
+import static io.vertx.starter.config.VerticleConfigurationConstants.Analytics.ANALYTICS_DIR_CONF;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,31 +45,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Thomas Segismont
  */
 @ExtendWith(VertxExtension.class)
-@Testcontainers
 class AnalyticsTest {
 
-  @Container
-  MongoDBContainer mongo = new MongoDBContainer("mongo:3.4");
-
-  private MongoClient client;
+  @TempDir
+  Path analyticsDir;
 
   @BeforeEach
   void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
-    JsonObject config = new JsonObject()
-      .put("host", mongo.getContainerIpAddress())
-      .put("port", mongo.getMappedPort(27017));
-
-    client = MongoClient.create(vertx, config);
-
+    JsonObject config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
     DeploymentOptions options = new DeploymentOptions().setConfig(config);
     vertx.deployVerticle(new AnalyticsVerticle(), options, testContext.succeeding(id -> testContext.completeNow()));
   }
 
   @AfterEach
   void afterEach(Vertx vertx, VertxTestContext testContext) {
-    client.close();
     testContext.completeNow();
   }
 
@@ -87,19 +77,22 @@ class AnalyticsTest {
     vertx.eventBus().publish(Topics.PROJECT_CREATED, vertxProject);
     Checkpoint checkpoint = testContext.laxCheckpoint();
     vertx.setPeriodic(20, id -> {
-      JsonObject query = new JsonObject();
-      client.find(AnalyticsService.COLLECTION_NAME, query, testContext.succeeding(list -> {
-        testContext.verify(() -> {
-          assertTrue(list.size() <= 1);
-          if (list.size() == 1) {
-            JsonObject document = list.get(0);
+      vertx.fileSystem().readDir(analyticsDir.toString()).onComplete(testContext.succeeding(ls -> {
+        if (ls.isEmpty()) {
+          return;
+        }
+        testContext.verify(() -> assertEquals(1, ls.size()));
+        String file = analyticsDir.resolve(ls.get(0)).toString();
+        vertx.fileSystem().readFile(file).onComplete(testContext.succeeding(buffer -> {
+          JsonObject document = new JsonObject(buffer);
+          testContext.verify(() -> {
             assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-            assertEquals(createdOn, document.getJsonObject("createdOn").getInstant("$date"));
+            assertEquals(createdOn, document.getInstant("createdOn"));
             assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
-            checkpoint.flag();
             assertTrue(vertx.cancelTimer(id));
-          }
-        });
+            checkpoint.flag();
+          });
+        }));
       }));
     });
   }

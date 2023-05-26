@@ -40,8 +40,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.junit.Assume;
-import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -187,12 +185,9 @@ class GeneratorTest {
 
   private int javaSpecVersion() {
     String property = System.getProperty("java.specification.version");
-    Assume.assumeNotNull(property);
-    try {
-      return Integer.parseInt(property);
-    } catch (NumberFormatException e) {
-      throw new AssumptionViolatedException("Not a number", e);
-    }
+    assumeThat(property).isNotNull().withFailMessage(() -> "java.specification.version is null");
+    assumeThat(property).matches("\\d+").withFailMessage("%s is not a number", property);
+    return Integer.parseInt(property);
   }
 
   private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {

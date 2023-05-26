@@ -18,24 +18,47 @@ package io.vertx.starter;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.AnalyticsService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static io.vertx.starter.config.VerticleConfigurationConstants.Analytics.ANALYTICS_DIR_CONF;
+import static io.vertx.starter.config.VerticleConfigurationConstants.Analytics.ANALYTICS_DIR_ENV;
+
 public class AnalyticsVerticle extends AbstractVerticle {
 
   private static final Logger log = LogManager.getLogger(AnalyticsVerticle.class);
 
-  private MongoClient mongoClient() {
-    return MongoClient.createShared(vertx, config());
-  }
-
   @Override
   public void start(Promise<Void> startPromise) {
-    AnalyticsService analyticsService = new AnalyticsService(mongoClient());
+    String analyticsDirStr = config().getString(ANALYTICS_DIR_CONF, System.getenv(ANALYTICS_DIR_ENV));
+    if (analyticsDirStr == null) {
+      startPromise.fail("analyticsDir is null");
+      return;
+    }
+
+    Path analyticsDir = Paths.get(analyticsDirStr).toAbsolutePath();
+    if (!Files.isDirectory(analyticsDir)) {
+      startPromise.fail(analyticsDir + " is not a directory");
+      return;
+    }
+
+    try {
+      Path test = Files.createTempFile(analyticsDir, "test", ".donotanalyze");
+      Files.delete(test);
+    } catch (IOException e) {
+      startPromise.fail(new RuntimeException("Cannot write to " + analyticsDir, e));
+      return;
+    }
+
+    AnalyticsService analyticsService = new AnalyticsService(vertx, analyticsDir);
     vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_CREATED).handler(analyticsService::onProjectCreated);
 
     log.info(
