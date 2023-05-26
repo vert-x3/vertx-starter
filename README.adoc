@@ -82,23 +82,13 @@ In order to build it, you will need Java 1.8.
 
 [source,shell]
 ----
+# Configure analytics dir
+export VERTX_STARTER_ANALYTICS_DIR=target
 # Build frontend first
 ./mvnw clean process-resources
 # Run backend in redeploy mode
 ./mvnw compile vertx:run -Dskip.npm
 ----
-
-[NOTE]
-====
-you need MongoDB.
-You may run it using Docker:
-
-[source,shell]
-----
-docker run --rm -d -p 27017:27017 mongo
-----
-====
-
 
 === Running frontend in development mode
 

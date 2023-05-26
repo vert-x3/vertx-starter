@@ -16,7 +16,6 @@
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>1.0.28</vertx-maven-plugin.version>
-    <testcontainers.version>1.18.1</testcontainers.version>
   </properties>
 
   <dependencyManagement>
@@ -53,10 +52,6 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-mongo-client</artifactId>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -105,24 +100,6 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.24.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>${testcontainers.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${testcontainers.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>mongodb</artifactId>
-      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

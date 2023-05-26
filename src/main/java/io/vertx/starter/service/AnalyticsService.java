@@ -16,33 +16,35 @@
 
 package io.vertx.starter.service;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.starter.model.VertxProject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.nio.file.Path;
+import java.util.UUID;
 
 public class AnalyticsService {
 
   private static final Logger log = LogManager.getLogger(AnalyticsService.class);
 
-  static final String COLLECTION_NAME = "projects";
+  private final Vertx vertx;
+  private final Path analyticsDir;
 
-  private final MongoClient mongoClient;
-
-  public AnalyticsService(MongoClient mongoClient) {
-    this.mongoClient = mongoClient;
+  public AnalyticsService(Vertx vertx, Path analyticsDir) {
+    this.vertx = vertx;
+    this.analyticsDir = analyticsDir;
   }
 
   public void onProjectCreated(Message<VertxProject> message) {
     log.debug("Building analytics with on new project created");
     VertxProject project = message.body();
     JsonObject document = toDocument(project);
-    mongoClient.save(COLLECTION_NAME, document, res -> {
-      if (res.failed()) {
-        log.error("Failed to save document", res.cause());
-      }
+    Path path = analyticsDir.resolve(UUID.randomUUID().toString()).toAbsolutePath();
+    vertx.fileSystem().writeFile(path.toString(), document.toBuffer()).onFailure(t -> {
+      log.error("Failed to write file " + path, t);
     });
   }
 
@@ -52,8 +54,6 @@ public class AnalyticsService {
     document.remove("groupId");
     document.remove("artifactId");
     document.remove("packageName");
-    String createdOn = document.getString("createdOn");
-    document.put("createdOn", new JsonObject().put("$date", createdOn));
     return document;
   }
 }
