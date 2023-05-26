@@ -209,6 +209,11 @@
         <configuration>
           <redeploy>true</redeploy>
           <classifier>fat</classifier>
+          <archive>
+            <manifest>
+              <Multi-Release>true</Multi-Release>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
