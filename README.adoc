@@ -34,7 +34,7 @@ You can provide the following query parameters to customize the project:
 * `vertxVersion`: the Vert.x version
 * `vertxDependencies`: a comma separated list of artifactIds of the vert.x modules
 * `packageName`: code package name, derived from `groupId` and `artifactId` by default
-* `jdkVersion`: which version of the JDK to use, defaults to `1.8`
+* `jdkVersion`: which version of the JDK to use, defaults to `11`
 
 Full example:
 
@@ -71,7 +71,7 @@ https://start.vertx.io/metadata
 
 === Building fat jar
 
-In order to build it, you will need Java 1.8.
+In order to build it, you will need Java 17.
 
 [source,shell]
 ----

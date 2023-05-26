@@ -153,7 +153,7 @@ public class ValidationHandler implements Handler<RoutingContext> {
     return true;
   }
 
-  private <T extends Enum> boolean validateAndSetEnum(RoutingContext rc, String name, Function<String, T> factory, Consumer<T> setter) {
+  private <T extends Enum<?>> boolean validateAndSetEnum(RoutingContext rc, String name, Function<String, T> factory, Consumer<T> setter) {
     String value = getQueryParam(rc, name);
     if (isNotBlank(value)) {
       T t = factory.apply(value);

@@ -18,25 +18,23 @@ package io.vertx.starter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public enum Language {
   @JsonProperty("java")
-  JAVA("java", ".java", Collections.emptySet()),
+  JAVA("java", ".java"),
 
   @JsonProperty("kotlin")
-  KOTLIN("kotlin", ".kt", new HashSet<>(Collections.singletonList("vertx-lang-kotlin")));
+  KOTLIN("kotlin", ".kt", "vertx-lang-kotlin");
 
   private final String name;
   private final String extension;
   private final Set<String> languageDependencies;
 
-  Language(String name, String extension, Set<String> languageDependencies) {
+  Language(String name, String extension, String... languageDependencies) {
     this.name = name;
     this.extension = extension;
-    this.languageDependencies = languageDependencies;
+    this.languageDependencies = Set.of(languageDependencies);
   }
 
   public String getName() {
