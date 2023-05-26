@@ -98,7 +98,8 @@ public class WebVerticle extends AbstractVerticle {
         rc.next();
       });
 
-    CorsHandler corsHandler = CorsHandler.create("*")
+    CorsHandler corsHandler = CorsHandler.create()
+      .addRelativeOrigin(".*")
       .allowedMethod(HttpMethod.GET)
       .allowedMethod(HttpMethod.POST)
       .allowedHeader("Content-Type")
