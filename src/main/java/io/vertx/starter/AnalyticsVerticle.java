@@ -61,12 +61,12 @@ public class AnalyticsVerticle extends AbstractVerticle {
     AnalyticsService analyticsService = new AnalyticsService(vertx, analyticsDir);
     vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_CREATED).handler(analyticsService::onProjectCreated);
 
-    log.info(
-      "\n----------------------------------------------------------\n\t" +
-        "{} is running!\n" +
-        "----------------------------------------------------------",
-      AnalyticsVerticle.class.getSimpleName()
-    );
+    log.info("""
+
+      ----------------------------------------------------------
+      {} is running!
+      ----------------------------------------------------------
+      """, AnalyticsVerticle.class.getSimpleName());
 
     startPromise.complete();
   }

@@ -21,7 +21,7 @@ public class TempDir implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(path, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Files.delete(file);

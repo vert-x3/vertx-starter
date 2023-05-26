@@ -55,12 +55,12 @@ public class GeneratorVerticle extends AbstractVerticle {
         consumer.handler(this::onProjectRequested).completionHandler(ar -> {
           if (ar.succeeded()) {
 
-            log.info(
-              "\n----------------------------------------------------------\n\t" +
-                "{} is running!\n" +
-                "----------------------------------------------------------",
-              GeneratorVerticle.class.getSimpleName()
-            );
+            log.info("""
+
+              ----------------------------------------------------------
+              {} is running!
+              ----------------------------------------------------------
+              """, GeneratorVerticle.class.getSimpleName());
 
             startPromise.complete();
 

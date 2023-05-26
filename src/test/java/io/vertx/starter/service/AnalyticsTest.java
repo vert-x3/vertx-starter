@@ -60,7 +60,7 @@ class AnalyticsTest {
   }
 
   @AfterEach
-  void afterEach(Vertx vertx, VertxTestContext testContext) {
+  void afterEach(VertxTestContext testContext) {
     testContext.completeNow();
   }
 

@@ -35,14 +35,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static io.vertx.core.http.HttpHeaders.CACHE_CONTROL;
 import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Daniel Petisme
@@ -56,15 +52,8 @@ public class WebVerticle extends AbstractVerticle {
   private static final AsciiString NOSNIFF = AsciiString.cached("nosniff");
   private static final AsciiString ONE_YEAR_CACHE = AsciiString.cached("cache-control=public, immutable, max-age=31536000");
 
-  private static final Set<String> SKIP_COMPRESSION_FILE_SUFFIXES;
-  private static final Set<String> SKIP_COMPRESSION_MEDIA_TYPES;
-
-  static {
-    SKIP_COMPRESSION_FILE_SUFFIXES = Stream.of("png", "woff2")
-      .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
-    SKIP_COMPRESSION_MEDIA_TYPES = Stream.of("image/png", "font/woff2")
-      .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
-  }
+  private static final Set<String> SKIP_COMPRESSION_FILE_SUFFIXES = Set.of("png", "woff2");
+  private static final Set<String> SKIP_COMPRESSION_MEDIA_TYPES = Set.of("image/png", "font/woff2");
 
   public static final String VERTX_PROJECT_KEY = "vertxProject";
 
@@ -144,11 +133,13 @@ public class WebVerticle extends AbstractVerticle {
           log.error("Fail to start {}", WebVerticle.class.getSimpleName(), ar.cause());
           startPromise.fail(ar.cause());
         } else {
-          log.info("\n----------------------------------------------------------\n\t" +
-              "{} is running! Access URLs:\n\t" +
-              "Local: \t\thttp://localhost:{}\n" +
-              "----------------------------------------------------------",
-            WebVerticle.class.getSimpleName(), port);
+          log.info("""
+
+            ----------------------------------------------------------
+            {} is running! Access URLs:
+            Local: http://localhost:{}
+            ----------------------------------------------------------
+            """, WebVerticle.class.getSimpleName(), port);
           startPromise.complete();
         }
       });
