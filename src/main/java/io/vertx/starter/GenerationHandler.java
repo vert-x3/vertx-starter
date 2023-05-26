@@ -18,6 +18,7 @@ package io.vertx.starter;
 
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.starter.model.VertxProject;
 import org.apache.logging.log4j.LogManager;
@@ -47,8 +48,9 @@ public class GenerationHandler implements Handler<RoutingContext> {
         String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
 
         rc.response()
-          .putHeader("Content-Type", project.getArchiveFormat().getContentType())
-          .putHeader("Content-Disposition", "attachment; filename=" + filename)
+          .putHeader(HttpHeaders.CONTENT_ENCODING, HttpHeaders.IDENTITY)
+          .putHeader(HttpHeaders.CONTENT_TYPE, project.getArchiveFormat().getContentType())
+          .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
           .end(content);
 
       } else {
