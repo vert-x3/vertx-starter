@@ -136,7 +136,7 @@ Eventually, checkout `master` again and update the version:
 git checkout master
 ./mvnw versions:set -DgenerateBackupPoms=false
 git add pom.xml
-git commit
+git commit -s
 git push upstream && git push
 ----
 
