@@ -35,10 +35,15 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static io.vertx.starter.config.VerticleConfigurationConstants.Analytics.ANALYTICS_DIR_CONF;
-import static java.time.temporal.ChronoUnit.MINUTES;
+import static io.vertx.starter.model.ArchiveFormat.ZIP;
+import static io.vertx.starter.model.BuildTool.GRADLE;
+import static io.vertx.starter.model.JdkVersion.JDK_17;
+import static io.vertx.starter.model.Language.KOTLIN;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -66,14 +71,19 @@ class AnalyticsTest {
 
   @Test
   void projectPersisted(Vertx vertx, VertxTestContext testContext) {
-    Instant createdOn = Instant.now().truncatedTo(MINUTES);
     VertxProject vertxProject = new VertxProject()
       .setId("should-not-persist")
       .setGroupId("should-not-persist")
       .setArtifactId("should-not-persist")
+      .setLanguage(KOTLIN)
+      .setBuildTool(GRADLE)
+      .setVertxVersion("4.4.2")
+      .setVertxDependencies(Set.of("vertx-web", "vertx-pg-client"))
+      .setArchiveFormat(ZIP)
       .setPackageName("should-not-persist")
-      .setCreatedOn(createdOn)
-      .setOperatingSystem("Other");
+      .setJdkVersion(JDK_17)
+      .setOperatingSystem("Other")
+      .setCreatedOn(Instant.now());
     vertx.eventBus().publish(Topics.PROJECT_CREATED, vertxProject);
     Checkpoint checkpoint = testContext.laxCheckpoint();
     vertx.setPeriodic(20, id -> {
@@ -87,8 +97,14 @@ class AnalyticsTest {
           JsonObject document = new JsonObject(buffer);
           testContext.verify(() -> {
             assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-            assertEquals(createdOn, document.getInstant("createdOn"));
+            assertEquals(vertxProject.getLanguage().getName(), document.getString("language"));
+            assertEquals(vertxProject.getBuildTool().getValue(), document.getString("buildTool"));
+            assertEquals(vertxProject.getVertxVersion(), document.getString("vertxVersion"));
+            assertEquals(vertxProject.getVertxDependencies(), Set.copyOf(document.getJsonArray("vertxDependencies").getList()));
+            assertEquals(vertxProject.getArchiveFormat().toString().toLowerCase(Locale.ROOT), document.getString("archiveFormat"));
+            assertEquals(vertxProject.getJdkVersion().getValue(), document.getString("jdkVersion"));
             assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
+            assertEquals(vertxProject.getCreatedOn(), document.getInstant("createdOn"));
             assertTrue(vertx.cancelTimer(id));
             checkpoint.flag();
           });
