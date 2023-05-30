@@ -102,6 +102,8 @@ NOTE: The frontend development server expects the backend to listen on `localhos
 
 == Releasing
 
+NOTE: The following commands assume you have forked the project and `upstream` is the `vert-x3/vertx-starter` remote repository.
+
 To release the project, proceed as follows.
 
 First, tag the last commit in `master` branch:
@@ -120,6 +122,7 @@ Then merge the `master` branch into the `prod` branch:
 [source,shell]
 ----
 git checkout prod
+git pull
 git merge master
 git push
 ----
@@ -134,7 +137,7 @@ git checkout master
 ./mvnw versions:set -DgenerateBackupPoms=false
 git add pom.xml
 git commit
-git push
+git push upstream && git push
 ----
 
 == License
