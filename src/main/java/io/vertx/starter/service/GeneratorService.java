@@ -30,15 +30,14 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,28 +47,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static io.vertx.starter.model.BuildTool.*;
-import static io.vertx.starter.model.Language.*;
-import static java.util.stream.Collectors.*;
+import static io.vertx.starter.model.BuildTool.GRADLE;
+import static io.vertx.starter.model.BuildTool.MAVEN;
+import static io.vertx.starter.model.Language.KOTLIN;
+import static java.util.stream.Collectors.joining;
 
 public class GeneratorService {
 
-  private static final Logger log = LoggerFactory.getLogger(GeneratorService.class);
+  private static final Logger log = LogManager.getLogger(GeneratorService.class);
 
   private static final Pattern DOT_REGEX = Pattern.compile("\\.");
 
-  private static final Set<String> EXECUTABLES;
-
-  static {
-    Set<String> executables = Stream.<String>builder()
-      .add(".mvn/wrapper/maven-wrapper.jar")
-      .add(".mvn/wrapper/maven-wrapper.properties")
-      .add("mvnw")
-      .add("gradlew")
-      .build()
-      .collect(toSet());
-    EXECUTABLES = Collections.unmodifiableSet(executables);
-  }
+  private static final Set<String> EXECUTABLES = Set.of(
+    ".mvn/wrapper/maven-wrapper.jar",
+    ".mvn/wrapper/maven-wrapper.properties",
+    "mvnw",
+    "gradlew");
 
   private final Vertx vertx;
   private final Set<String> keywords;
@@ -138,9 +131,6 @@ public class GeneratorService {
     ctx.put("packageName", packageName);
     ctx.put("jdkVersion", project.getJdkVersion().getValue());
 
-    Path tempDirPath = tempDir.path();
-    String tempDirPathStr = tempDirPath.toString();
-
     copy(tempDir, "files", "_editorconfig");
     copy(tempDir, "files", "_gitignore");
 
@@ -194,6 +184,7 @@ public class GeneratorService {
     vertx.fileSystem().copyBlocking(base + "/" + filename, dest.toString());
   }
 
+  @SuppressWarnings("SameParameterValue")
   private void render(TempDir tempDir, Map<String, Object> ctx, String sourceDir, String filename) throws IOException {
     render(tempDir, ctx, sourceDir, filename, sourceDir);
   }
@@ -234,17 +225,16 @@ public class GeneratorService {
     });
   }
 
+  @SuppressWarnings("OctalInteger")
   private void addFile(Path rootPath, Path filePath, ArchiveOutputStream stream) throws IOException {
     String relativePath = rootPath.relativize(filePath).toString();
     if (relativePath.length() == 0) return;
     String entryName = jarFileWorkAround(leadingDot(relativePath));
     ArchiveEntry entry = stream.createArchiveEntry(filePath.toFile(), entryName);
     if (EXECUTABLES.contains(entryName)) {
-      if (entry instanceof ZipArchiveEntry) {
-        ZipArchiveEntry zipArchiveEntry = (ZipArchiveEntry) entry;
+      if (entry instanceof ZipArchiveEntry zipArchiveEntry) {
         zipArchiveEntry.setUnixMode(0744);
-      } else if (entry instanceof TarArchiveEntry) {
-        TarArchiveEntry tarArchiveEntry = (TarArchiveEntry) entry;
+      } else if (entry instanceof TarArchiveEntry tarArchiveEntry) {
         tarArchiveEntry.setMode(0100744);
       }
     }

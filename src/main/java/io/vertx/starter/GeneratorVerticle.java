@@ -23,8 +23,8 @@ import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.GeneratorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class GeneratorVerticle extends AbstractVerticle {
 
-  private static final Logger log = LoggerFactory.getLogger(GeneratorVerticle.class);
+  private static final Logger log = LogManager.getLogger(GeneratorVerticle.class);
 
   private static final Pattern NEWLINE_REGEX = Pattern.compile("\\r?\\n");
 
@@ -55,12 +55,12 @@ public class GeneratorVerticle extends AbstractVerticle {
         consumer.handler(this::onProjectRequested).completionHandler(ar -> {
           if (ar.succeeded()) {
 
-            log.info(
-              "\n----------------------------------------------------------\n\t" +
-                "{} is running!\n" +
-                "----------------------------------------------------------",
-              GeneratorVerticle.class.getSimpleName()
-            );
+            log.info("""
+
+              ----------------------------------------------------------
+              {} is running!
+              ----------------------------------------------------------
+              """, GeneratorVerticle.class.getSimpleName());
 
             startPromise.complete();
 

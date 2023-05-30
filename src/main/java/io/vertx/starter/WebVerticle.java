@@ -21,24 +21,24 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.CSPHandler;
-import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.ext.web.handler.HSTSHandler;
-import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.XFrameHandler;
+import io.vertx.ext.web.common.WebEnvironment;
+import io.vertx.ext.web.handler.*;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.MetadataHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Set;
 
-import static io.vertx.starter.config.VerticleConfigurationConstants.Web.*;
+import static io.vertx.core.http.HttpHeaders.CACHE_CONTROL;
+import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
 
 /**
  * @author Daniel Petisme
@@ -46,10 +46,14 @@ import static io.vertx.starter.config.VerticleConfigurationConstants.Web.*;
  */
 public class WebVerticle extends AbstractVerticle {
 
-  private static final Logger log = LoggerFactory.getLogger(WebVerticle.class);
+  private static final Logger log = LogManager.getLogger(WebVerticle.class);
 
   private static final AsciiString X_CONTENT_TYPE_OPTIONS_HEADER = AsciiString.cached("x-content-type-options");
   private static final AsciiString NOSNIFF = AsciiString.cached("nosniff");
+  private static final AsciiString ONE_YEAR_CACHE = AsciiString.cached("cache-control=public, immutable, max-age=31536000");
+
+  private static final Set<String> SKIP_COMPRESSION_FILE_SUFFIXES = Set.of("png", "woff2");
+  private static final Set<String> SKIP_COMPRESSION_MEDIA_TYPES = Set.of("image/png", "font/woff2");
 
   public static final String VERTX_PROJECT_KEY = "vertxProject";
 
@@ -87,21 +91,15 @@ public class WebVerticle extends AbstractVerticle {
       .handler(CSPHandler.create()
         .addDirective("style-src", "self")
         .addDirective("style-src", "unsafe-inline")
-        .addDirective("style-src", "cdnjs.cloudflare.com")
-        .addDirective("style-src", "maxcdn.bootstrapcdn.com")
-        .addDirective("style-src", "fonts.googleapis.com")
         .addDirective("font-src", "self")
-        .addDirective("font-src", "maxcdn.bootstrapcdn.com")
-        .addDirective("font-src", "fonts.googleapis.com")
-        .addDirective("font-src", "fonts.gstatic.com")
-        .addDirective("script-src", "self")
-        .addDirective("script-src", "cdnjs.cloudflare.com"))
+        .addDirective("script-src", "self"))
       .handler(rc -> {
         rc.response().putHeader(X_CONTENT_TYPE_OPTIONS_HEADER, NOSNIFF);
         rc.next();
       });
 
-    CorsHandler corsHandler = CorsHandler.create("*")
+    CorsHandler corsHandler = CorsHandler.create()
+      .addRelativeOrigin(".*")
       .allowedMethod(HttpMethod.GET)
       .allowedMethod(HttpMethod.POST)
       .allowedHeader("Content-Type")
@@ -110,24 +108,39 @@ public class WebVerticle extends AbstractVerticle {
 
     router.get("/metadata").handler(metadataHandler);
 
-    router.get("/starter.*").handler(validationHandler).handler(generationHandler);
+    router.get("/starter.*")
+      .handler(validationHandler)
+      .handler(generationHandler);
 
-    router.route().handler(StaticHandler.create());
+    StaticHandler staticHandler = StaticHandler.create()
+      .skipCompressionForSuffixes(SKIP_COMPRESSION_FILE_SUFFIXES)
+      .skipCompressionForMediaTypes(SKIP_COMPRESSION_MEDIA_TYPES);
+    router.route().handler(rc -> {
+      rc.addHeadersEndHandler(v -> {
+        String normalizedPath = rc.normalizedPath();
+        if (!(WebEnvironment.development() || "/".equals(normalizedPath) || "/index.html".equals(normalizedPath))) {
+          rc.response().putHeader(CACHE_CONTROL, ONE_YEAR_CACHE);
+        }
+      });
+      rc.next();
+    }).handler(staticHandler);
 
     int port = config().getInteger(HTTP_PORT, 8080);
 
-    vertx.createHttpServer()
+    vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
       .requestHandler(router)
       .listen(port, ar -> {
         if (ar.failed()) {
           log.error("Fail to start {}", WebVerticle.class.getSimpleName(), ar.cause());
           startPromise.fail(ar.cause());
         } else {
-          log.info("\n----------------------------------------------------------\n\t" +
-              "{} is running! Access URLs:\n\t" +
-              "Local: \t\thttp://localhost:{}\n" +
-              "----------------------------------------------------------",
-            WebVerticle.class.getSimpleName(), port);
+          log.info("""
+
+            ----------------------------------------------------------
+            {} is running! Access URLs:
+            Local: http://localhost:{}
+            ----------------------------------------------------------
+            """, WebVerticle.class.getSimpleName(), port);
           startPromise.complete();
         }
       });

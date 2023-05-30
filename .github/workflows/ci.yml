@@ -16,41 +16,35 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        jdk: [8,11,17]
+        jdk: [ 17 ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install JDK
-        uses: joschi/setup-jdk@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: ${{ matrix.jdk }}
       - name: Run generator tests
-        run: ./gradlew check -i -DincludeTags=generator-${{ matrix.jdk }}
+        run: mvn test -Dgroups=generator-${{ matrix.jdk }}
       - name: Run other tests
-        run: ./gradlew check -i -DexcludeTags=generator
+        run: mvn test -DexcludedGroups=generator
   Deploy:
     name: Deploy to starter machine
     if: ${{ github.repository_owner == 'vert-x3' && github.event_name == 'push' && github.ref == 'refs/heads/prod' }}
     needs: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
         with:
-          path: ~/.m2/repository
-          key: maven-java-11
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install JDK
-        uses: joschi/setup-jdk@v2
-        with:
-          java-version: 11
+          distribution: 'temurin'
+          java-version: 17
       - name: Setup SSH
-        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.1.0
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-host: start.vertx.io
+          ssh-host: 13.94.149.21
       - name: Assemble
-        run: ./gradlew assemble
+        run: mvn package -DskipTests
       - name: Run deployment script
         run: bash .gh.deploy.bash

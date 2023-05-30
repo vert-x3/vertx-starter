@@ -40,8 +40,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.junit.Assume;
-import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -89,7 +87,8 @@ class GeneratorTest {
     mavenRepository = tempDir.resolve("repository");
     Files.createDirectories(mavenRepository);
     settingsFile = m2dir.resolve("settings.xml");
-    Files.copy(GeneratorTest.class.getClassLoader().getResourceAsStream("settings-test.xml"), settingsFile);
+    ClassLoader classLoader = GeneratorTest.class.getClassLoader();
+    Files.copy(Objects.requireNonNull(classLoader.getResourceAsStream("settings-test.xml")), settingsFile);
   }
 
   @BeforeEach
@@ -138,7 +137,7 @@ class GeneratorTest {
       .map(JsonObject.class::cast)
       .map(obj -> obj.getString("number"))
       .filter(version -> !version.endsWith("-SNAPSHOT"))
-      .collect(toList());
+      .toList();
 
     List<Set<String>> testDeps = Arrays.asList(Collections.singleton("vertx-unit"), Collections.singleton("vertx-junit5"));
 
@@ -187,17 +186,14 @@ class GeneratorTest {
 
   private int javaSpecVersion() {
     String property = System.getProperty("java.specification.version");
-    Assume.assumeNotNull(property);
-    try {
-      return Integer.parseInt(property);
-    } catch (NumberFormatException e) {
-      throw new AssumptionViolatedException("Not a number", e);
-    }
+    assumeThat(property).isNotNull().withFailMessage(() -> "java.specification.version is null");
+    assumeThat(property).matches("\\d+").withFailMessage("%s is not a number", property);
+    return Integer.parseInt(property);
   }
 
   private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
     vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project, testContext.succeeding(msg -> {
-      unpack(vertx, testContext, workdir, msg.body(), testContext.succeeding(unpacked -> {
+      unpack(vertx, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
 
           verifyBaseFiles();
@@ -226,20 +222,24 @@ class GeneratorTest {
             buildProject(vertx, buildTool, testContext.succeeding(projectBuilt -> {
               testContext.verify(() -> {
 
-                if (buildTool == MAVEN) {
-                  try {
-                    verifyMavenOutputFiles();
-                  } catch (IOException e) {
-                    throw new AssertionError(e);
-                  }
-                } else if (buildTool == GRADLE) {
-                  try {
-                    verifyGradleOutputFiles();
-                  } catch (IOException e) {
-                    throw new AssertionError(e);
-                  }
-                } else {
-                  testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
+                switch (buildTool) {
+                  case MAVEN:
+                    try {
+                      verifyMavenOutputFiles();
+                    } catch (IOException e) {
+                      throw new AssertionError(e);
+                    }
+                    break;
+                  case GRADLE:
+                    try {
+                      verifyGradleOutputFiles();
+                    } catch (IOException e) {
+                      throw new AssertionError(e);
+                    }
+                    break;
+                  default:
+                    testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
+                    break;
                 }
 
                 runDevMode(vertx, buildTool, testContext.succeeding(devModeRan -> testContext.completeNow()));
@@ -308,7 +308,7 @@ class GeneratorTest {
     if (buildTool == MAVEN) {
       command = "./mvnw";
       args = Stream.<String>builder()
-        .add("-Dmaven.repo.local=" + mavenRepository.toAbsolutePath().toString())
+        .add("-Dmaven.repo.local=" + mavenRepository.toAbsolutePath())
         .add("-s")
         .add(settingsFile.toAbsolutePath().toString())
         .add("-B")
@@ -337,7 +337,7 @@ class GeneratorTest {
       if (code == 0) {
         handler.handle(Future.succeededFuture());
       } else {
-        handler.handle(Future.failedFuture(String.format("Failed to build project%n%s", buffer.toString())));
+        handler.handle(Future.failedFuture(String.format("Failed to build project%n%s", buffer)));
       }
     });
     process.start();
@@ -373,12 +373,13 @@ class GeneratorTest {
     process.start();
   }
 
-  private void unpack(Vertx vertx, VertxTestContext testContext, Path workdir, Buffer buffer, Handler<AsyncResult<Void>> handler) {
+  @SuppressWarnings("OctalInteger")
+  private void unpack(Vertx vertx, Path workdir, Buffer buffer, Handler<AsyncResult<Void>> handler) {
     vertx.executeBlocking(fut -> {
       try (ByteBufInputStream bbis = new ByteBufInputStream(buffer.getByteBuf());
            TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(bbis))) {
 
-        TarArchiveEntry entry = null;
+        TarArchiveEntry entry;
         while ((entry = archiveInputStream.getNextTarEntry()) != null) {
 
           if (!archiveInputStream.canReadEntryData(entry)) {

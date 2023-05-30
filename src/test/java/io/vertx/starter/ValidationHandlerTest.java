@@ -72,32 +72,32 @@ class ValidationHandlerTest {
 
   @Test
   void testInvalidGroupId(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(GROUP_ID, "é;;"), ZIP.getFileExtension(), GROUP_ID);
+    expectFailure(vertx, testContext, validator, params.add(GROUP_ID, "é;;"), ZIP.getFileExtension());
   }
 
   @Test
   void testInvalidArtifactId(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(ARTIFACT_ID, "é;;"), ZIP.getFileExtension(), ARTIFACT_ID);
+    expectFailure(vertx, testContext, validator, params.add(ARTIFACT_ID, "é;;"), ZIP.getFileExtension());
   }
 
   @Test
   void testUnknownLanguage(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(LANGUAGE, "rust"), ZIP.getFileExtension(), LANGUAGE);
+    expectFailure(vertx, testContext, validator, params.add(LANGUAGE, "rust"), ZIP.getFileExtension());
   }
 
   @Test
   void testUnknownBuildTool(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(BUILD_TOOL, "ivy"), ZIP.getFileExtension(), BUILD_TOOL);
+    expectFailure(vertx, testContext, validator, params.add(BUILD_TOOL, "ivy"), ZIP.getFileExtension());
   }
 
   @Test
   void testUnknownVersion(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(VERTX_VERSION, "1.0.2"), ZIP.getFileExtension(), VERTX_VERSION);
+    expectFailure(vertx, testContext, validator, params.add(VERTX_VERSION, "1.0.2"), ZIP.getFileExtension());
   }
 
   @Test
   void testUnknownDependency(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-coffee-machine"), ZIP.getFileExtension(), VERTX_DEPENDENCIES);
+    expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-coffee-machine"), ZIP.getFileExtension());
   }
 
   @Test
@@ -118,28 +118,28 @@ class ValidationHandlerTest {
         .put("items", new JsonArray().add(new JsonObject().put("artifactId", "vertx-web-graphql")))
       );
     validator = new ValidationHandler(defaults, versions, stack);
-    expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web-graphql"), ZIP.getFileExtension(), VERTX_DEPENDENCIES);
+    expectFailure(vertx, testContext, validator, params.add(VERTX_DEPENDENCIES, "vertx-web-graphql"), ZIP.getFileExtension());
   }
 
   @Test
   void testUnknownArchiveFormat(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params, ".rar", ARCHIVE_FORMAT);
+    expectFailure(vertx, testContext, validator, params, ".rar");
   }
 
   @Test
   void testInvalidPackageName(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(PACKAGE_NAME, "é;;"), ZIP.getFileExtension(), PACKAGE_NAME);
+    expectFailure(vertx, testContext, validator, params.add(PACKAGE_NAME, "é;;"), ZIP.getFileExtension());
   }
 
   @Test
   void testUnknownJdkVersion(Vertx vertx, VertxTestContext testContext) {
-    expectFailure(vertx, testContext, validator, params.add(JDK_VERSION, "9"), ZIP.getFileExtension(), JDK_VERSION);
+    expectFailure(vertx, testContext, validator, params.add(JDK_VERSION, "9"), ZIP.getFileExtension());
   }
 
   @Test
   void testTwoJunitVersions(Vertx vertx, VertxTestContext testContext) {
     MultiMap params = this.params.add(VERTX_DEPENDENCIES, "vertx-unit,vertx-junit5");
-    expectFailure(vertx, testContext, validator, params, ZIP.getFileExtension(), VERTX_DEPENDENCIES);
+    expectFailure(vertx, testContext, validator, params, ZIP.getFileExtension());
   }
 
   private void expectSuccess(Vertx vertx, VertxTestContext testContext, ValidationHandler validator, MultiMap params, String extension, VertxProject expected) {
@@ -147,13 +147,15 @@ class ValidationHandlerTest {
       testContext.verify(() -> {
         assertThat(response.statusCode()).withFailMessage(response.bodyAsString()).isEqualTo(200);
         VertxProject actual = Json.decodeValue(response.body(), VertxProject.class);
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "id", "operatingSystem", "createdOn");
+        assertThat(actual).usingRecursiveComparison()
+          .ignoringFields("id", "operatingSystem", "createdOn")
+          .isEqualTo(expected);
         testContext.completeNow();
       });
     });
   }
 
-  private void expectFailure(Vertx vertx, VertxTestContext testContext, ValidationHandler validator, MultiMap params, String extension, String param) {
+  private void expectFailure(Vertx vertx, VertxTestContext testContext, ValidationHandler validator, MultiMap params, String extension) {
     doTest(vertx, testContext, validator, params, extension, response -> {
       testContext.verify(() -> {
         assertThat(response.statusCode()).withFailMessage(response.bodyAsString()).isEqualTo(400);
