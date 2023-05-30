@@ -40,10 +40,10 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Setup SSH
-        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.1.0
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-host: start.vertx.io
+          ssh-host: 13.94.149.21
       - name: Assemble
         run: mvn package -DskipTests
       - name: Run deployment script
