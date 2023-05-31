@@ -16,5 +16,6 @@ REMOTE_USER="vertx-deploy"
 REMOTE_HOSTNAME="13.94.149.21"
 
 echo "Sending JAR to ${REMOTE_USER}@${REMOTE_HOSTNAME}..."
-scp "${STARTER_JAR}" "${REMOTE_USER}"@"${REMOTE_HOSTNAME}":latest-build
+scp "${STARTER_JAR}" "${REMOTE_USER}"@"${REMOTE_HOSTNAME}":latest-build.upload
+ssh "${REMOTE_USER}"@"${REMOTE_HOSTNAME}" mv latest-build.upload latest-build
 echo "JAR sent"
