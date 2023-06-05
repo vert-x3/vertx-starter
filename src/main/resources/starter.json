@@ -373,7 +373,7 @@
         {
           "artifactId": "vertx-health-check",
           "name": "Vert.x Health Check",
-          "description": "This component provides a simple way to expose health checks."
+          "description": "A simple API to compute and compose health checks."
         },
         {
           "artifactId": "vertx-zipkin",
