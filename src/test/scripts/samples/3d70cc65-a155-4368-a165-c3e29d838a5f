@@ -1,0 +1,1 @@
+{"language":"java","buildTool":"maven","vertxVersion":"4.4.2","vertxDependencies":["vertx-web","vertx-pg-client"],"archiveFormat":"zip","jdkVersion":"11","operatingSystem":"Mac","createdOn":"2023-05-31T12:43:12.928917614Z"}
