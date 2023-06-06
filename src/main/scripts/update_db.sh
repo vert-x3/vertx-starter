@@ -23,6 +23,7 @@ DATABASE_FILE=vertx-starter.db
 
 if [ ! -f "${DATABASE_FILE}" ]; then
   sqlite3 "${DATABASE_FILE}" <<EOF
+PRAGMA journal_mode=WAL;
 create table projects
 (
   language           TEXT,
@@ -40,9 +41,9 @@ fi
 WORK_DIR=work-dir
 mkdir "${WORK_DIR}"
 
-mv "$ANALYTICS_DIR"/* "$WORK_DIR"
+find "$ANALYTICS_DIR" -mindepth 1 -type f -exec mv -t "$WORK_DIR" {} +
 
-for file in "$WORK_DIR"/*; do
+for file in $(find "${WORK_DIR}" -maxdepth 1 -type f -printf "%T+ %p\n" | sort | cut -d ' ' -f2); do
   json=$(cat "$file")
   sqlite3 "${DATABASE_FILE}" "INSERT INTO projects
   (
