@@ -11,7 +11,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
     <!-- vert.x properties -->
-    <vertx.version>4.4.2</vertx.version>
+    <vertx.version>4.4.3</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>1.0.28</vertx-maven-plugin.version>
