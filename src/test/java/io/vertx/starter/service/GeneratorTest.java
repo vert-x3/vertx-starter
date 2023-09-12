@@ -18,7 +18,6 @@ package io.vertx.starter.service;
 
 import com.julienviet.childprocess.Process;
 import com.julienviet.childprocess.ProcessOptions;
-import io.netty.buffer.ByteBufInputStream;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.NoStackTraceThrowable;
@@ -45,6 +44,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -107,10 +107,12 @@ class GeneratorTest {
 
   @AfterAll
   static void afterAll() throws Exception {
-    Files.walk(tempDir)
-      .sorted(Comparator.reverseOrder())
-      .map(Path::toFile)
-      .forEach(File::delete);
+    try (Stream<Path> pathStream = Files.walk(tempDir)) {
+      pathStream
+        .sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .forEach(File::delete);
+    }
   }
 
   static VertxProject defaultProject() {
@@ -223,23 +225,21 @@ class GeneratorTest {
               testContext.verify(() -> {
 
                 switch (buildTool) {
-                  case MAVEN:
+                  case MAVEN -> {
                     try {
                       verifyMavenOutputFiles();
                     } catch (IOException e) {
                       throw new AssertionError(e);
                     }
-                    break;
-                  case GRADLE:
+                  }
+                  case GRADLE -> {
                     try {
                       verifyGradleOutputFiles();
                     } catch (IOException e) {
                       throw new AssertionError(e);
                     }
-                    break;
-                  default:
-                    testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
-                    break;
+                  }
+                  default -> testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
                 }
 
                 runDevMode(vertx, buildTool, testContext.succeeding(devModeRan -> testContext.completeNow()));
@@ -267,9 +267,11 @@ class GeneratorTest {
   }
 
   private void verifyMavenOutputFiles() throws IOException {
-    Optional<Path> testResult = Files.walk(workdir).filter(p -> p.toString().endsWith("TestMainVerticle.txt")).findFirst();
-    assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
-    assertThat(workdir.resolve("target/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
+    try (Stream<Path> pathStream = Files.walk(workdir)) {
+      Optional<Path> testResult = pathStream.filter(p -> p.toString().endsWith("TestMainVerticle.txt")).findFirst();
+      assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
+      assertThat(workdir.resolve("target/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
+    }
   }
 
   private void verifyGradleFiles(Language language) {
@@ -285,20 +287,26 @@ class GeneratorTest {
   }
 
   private void verifyGradleOutputFiles() throws IOException {
-    Optional<Path> testResult = Files.walk(workdir).filter(p -> p.toString().endsWith("TestMainVerticle.xml")).findFirst();
-    assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
-    assertThat(workdir.resolve("build/libs/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
+    try (Stream<Path> pathStream = Files.walk(workdir)) {
+      Optional<Path> testResult = pathStream.filter(p -> p.toString().endsWith("TestMainVerticle.xml")).findFirst();
+      assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
+      assertThat(workdir.resolve("build/libs/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
+    }
   }
 
   private void verifySourceFiles(Language language) throws IOException {
-    Optional<Path> verticleFile = Files.walk(workdir.resolve("src/main/" + language.getName()))
-      .filter(p -> p.endsWith("MainVerticle" + language.getExtension()))
-      .findFirst();
-    assertThat(verticleFile).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
-    Optional<Path> testFile = Files.walk(workdir.resolve("src/test/" + language.getName()))
-      .filter(p -> p.endsWith("TestMainVerticle" + language.getExtension()))
-      .findFirst();
-    assertThat(testFile).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
+    try (Stream<Path> pathStream = Files.walk(workdir.resolve("src/main/" + language.getName()))) {
+      Optional<Path> verticleFile = pathStream
+        .filter(p -> p.endsWith("MainVerticle" + language.getExtension()))
+        .findFirst();
+      assertThat(verticleFile).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
+    }
+    try (Stream<Path> pathStream = Files.walk(workdir.resolve("src/test/" + language.getName()))) {
+      Optional<Path> testFile = pathStream
+        .filter(p -> p.endsWith("TestMainVerticle" + language.getExtension()))
+        .findFirst();
+      assertThat(testFile).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
+    }
   }
 
   private void buildProject(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
@@ -328,19 +336,19 @@ class GeneratorTest {
       handler.handle(Future.failedFuture(unsupported(buildTool)));
       return;
     }
-    Process process = Process.create(vertx, command, args, processOptions);
-    cleanupTasks.add(() -> process.kill(true));
-    Buffer buffer = Buffer.buffer();
-    process.stdout().handler(buffer::appendBuffer);
-    process.stderr().handler(buffer::appendBuffer);
-    process.exitHandler(code -> {
-      if (code == 0) {
-        handler.handle(Future.succeededFuture());
-      } else {
-        handler.handle(Future.failedFuture(String.format("Failed to build project%n%s", buffer)));
-      }
-    });
-    process.start();
+    Process.create(vertx, command, args, processOptions).startHandler(process -> {
+      cleanupTasks.add(() -> process.kill(true));
+      Buffer buffer = Buffer.buffer();
+      process.stdout().handler(buffer::appendBuffer);
+      process.stderr().handler(buffer::appendBuffer);
+      process.exitHandler(code -> {
+        if (code == 0) {
+          handler.handle(Future.succeededFuture());
+        } else {
+          handler.handle(Future.failedFuture(String.format("Failed to build project%n%s", buffer)));
+        }
+      });
+    }).start();
   }
 
   private void runDevMode(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
@@ -357,49 +365,46 @@ class GeneratorTest {
       handler.handle(Future.failedFuture(unsupported(buildTool)));
       return;
     }
-    Process process = Process.create(vertx, command, args, processOptions);
-    cleanupTasks.add(() -> process.kill(true));
-    Promise<Void> promise = Promise.promise();
-    promise.future().onComplete(handler);
-    RecordParser parser = RecordParser.newDelimited("\n")
-      .exceptionHandler(promise::tryFail)
-      .handler(buffer -> {
-        String line = buffer.toString().trim();
-        if (line.contains("HTTP server started on port 8888")) {
-          promise.tryComplete();
-        }
-      });
-    process.stdout().exceptionHandler(promise::tryFail).handler(parser);
-    process.start();
+    Process.create(vertx, command, args, processOptions).startHandler(process -> {
+      cleanupTasks.add(() -> process.kill(true));
+      Promise<Void> promise = Promise.promise();
+      promise.future().onComplete(handler);
+      RecordParser parser = RecordParser.newDelimited("\n")
+        .exceptionHandler(promise::tryFail)
+        .handler(buffer -> {
+          String line = buffer.toString().trim();
+          if (line.contains("HTTP server started on port 8888")) {
+            promise.tryComplete();
+          }
+        });
+      process.stdout().exceptionHandler(promise::tryFail).handler(parser);
+    }).start();
   }
 
   @SuppressWarnings("OctalInteger")
   private void unpack(Vertx vertx, Path workdir, Buffer buffer, Handler<AsyncResult<Void>> handler) {
-    vertx.executeBlocking(fut -> {
-      try (ByteBufInputStream bbis = new ByteBufInputStream(buffer.getByteBuf());
-           TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(bbis))) {
+    vertx.<Void>executeBlocking(() -> {
+      try (ByteArrayInputStream bais = new ByteArrayInputStream(buffer.getBytes());
+           TarArchiveInputStream ais = new TarArchiveInputStream(new GzipCompressorInputStream(bais))) {
 
         TarArchiveEntry entry;
-        while ((entry = archiveInputStream.getNextTarEntry()) != null) {
+        while ((entry = ais.getNextTarEntry()) != null) {
 
-          if (!archiveInputStream.canReadEntryData(entry)) {
-            fut.fail("Can't read entry " + entry.getName());
-            return;
+          if (!ais.canReadEntryData(entry)) {
+            throw new IOException("Can't read entry " + entry.getName());
           }
           File f = workdir.resolve(entry.getName()).toFile();
           if (entry.isDirectory()) {
             if (!f.isDirectory() && !f.mkdirs()) {
-              fut.fail(new IOException("Failed to create directory " + f));
-              return;
+              throw new IOException("Failed to create directory " + f);
             }
           } else {
             File parent = f.getParentFile();
             if (!parent.isDirectory() && !parent.mkdirs()) {
-              fut.fail(new IOException("Failed to create directory " + parent));
-              return;
+              throw new IOException("Failed to create directory " + parent);
             }
             try (OutputStream outputStream = Files.newOutputStream(f.toPath())) {
-              IOUtils.copy(archiveInputStream, outputStream);
+              IOUtils.copy(ais, outputStream);
               if (entry.getMode() == 0100744) {
                 f.setExecutable(true);
               }
@@ -407,12 +412,9 @@ class GeneratorTest {
           }
         }
 
-        fut.complete();
-
-      } catch (IOException e) {
-        fut.fail(e);
+        return null;
       }
-    }, false, handler);
+    }, false).onComplete(handler);
   }
 
   private String unsupported(BuildTool buildTool) {
