@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Locale;
@@ -56,7 +55,7 @@ class AnalyticsTest {
   Path analyticsDir;
 
   @BeforeEach
-  void beforeEach(Vertx vertx, VertxTestContext testContext) throws IOException {
+  void beforeEach(Vertx vertx, VertxTestContext testContext) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
     JsonObject config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
