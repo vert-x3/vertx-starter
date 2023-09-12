@@ -77,13 +77,7 @@ public class GeneratorVerticle extends AbstractVerticle {
 
   private void onProjectRequested(Message<VertxProject> msg) {
     VertxProject project = msg.body();
-    vertx.executeBlocking(fut -> {
-      try {
-        fut.complete(generatorService.onProjectRequested(project));
-      } catch (Exception e) {
-        fut.fail(e);
-      }
-    }, false, ar -> {
+    vertx.executeBlocking(() -> generatorService.onProjectRequested(project), false).onComplete(ar -> {
       if (ar.succeeded()) {
         msg.reply(ar.result());
       } else {
