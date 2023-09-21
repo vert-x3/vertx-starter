@@ -1,0 +1,102 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+<#if language == "kotlin">
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+</#if>
+
+plugins {
+<#if language == "kotlin">
+  kotlin ("jvm") version "1.7.21"
+<#else>
+  id 'java'
+</#if>
+  id 'application'
+  id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = '${groupId}'
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+<#if vertxVersion?ends_with("-SNAPSHOT")>
+  maven {
+    url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+    mavenContent {
+      snapshotsOnly()
+    }
+  }
+</#if>
+  mavenCentral()
+}
+
+def vertxVersion = "${vertxVersion}"
+def junitJupiterVersion = "5.9.1"
+
+def mainVerticleName = "${packageName}.MainVerticle"
+def launcherClassName = "io.vertx.core.Launcher"
+
+def watchForChange = "src/**/*"
+<#noparse>
+def doOnChange = "${projectDir}/gradlew classes"
+</#noparse>
+
+application {
+  mainClass = launcherClassName
+}
+
+dependencies {
+  implementation platform("io.vertx:vertx-stack-depchain:$vertxVersion")
+<#if !vertxDependencies?has_content || vertxVersion == "4.4.1">
+  implementation "io.vertx:vertx-core"
+</#if>
+<#list vertxDependencies as dependency>
+  implementation "io.vertx:${dependency}"
+</#list>
+<#if language == "kotlin">
+  implementation kotlin("stdlib-jdk8")
+</#if>
+<#if hasPgClient>
+  implementation "com.ongres.scram:client:2.1"
+</#if>
+<#if hasVertxJUnit5>
+  testImplementation "io.vertx:vertx-junit5"
+  testImplementation "org.junit.jupiter:junit-jupiter:$junitJupiterVersion"
+<#elseif hasVertxUnit>
+  testImplementation "io.vertx:vertx-unit"
+  testImplementation "junit:junit:4.13.2"
+</#if>
+}
+
+<#if language == "kotlin">
+tasks.withType<KotlinCompile> {
+  kotlinOptions.jvmTarget = "${jdkVersion}"
+}
+<#else>
+compileJava {
+  sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
+  targetCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
+}
+</#if>
+
+tasks.withType(ShadowJar) {
+  archiveClassifier = "fat"
+  manifest {
+    attributes(["Main-Verticle": mainVerticleName])
+  }
+  mergeServiceFiles()
+}
+
+tasks.withType(Test) {
+<#if hasVertxJUnit5>
+  useJUnitPlatform()
+<#elseif hasVertxUnit>
+  useJUnit()
+</#if>
+  testLogging {
+      events = [TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED]
+  }
+}
+
+tasks.withType(JavaExec) {
+  args = ["run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange"]
+}

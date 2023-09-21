@@ -65,7 +65,7 @@ public class MetadataHandlerTest {
             assertThat(metadata.getJsonObject("defaults")).isEqualTo(defaults);
             assertThat(metadata.getJsonArray("versions")).isEqualTo(versions);
             assertThat(metadata.getJsonArray("stack")).isEqualTo(stack);
-            assertThat(metadata.getJsonArray("buildTools")).contains("maven", "gradle");
+            assertThat(metadata.getJsonArray("buildTools")).contains("maven", "gradle - kotlin", "gradle - groovy");
             assertThat(metadata.getJsonArray("languages")).contains("java", "kotlin");
             assertThat(metadata.getJsonArray("jdkVersions")).contains("1.8", "11", "17");
             assertThat(metadata.getJsonArray("vertxDependencies")).isEqualTo(stack);
