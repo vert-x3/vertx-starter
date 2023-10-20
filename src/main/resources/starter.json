@@ -100,6 +100,11 @@
           "description": "Extends Vert.x Web to support OpenAPI 3, bringing a simple interface for building web routers that conform to OpenAPI contracts."
         },
         {
+          "artifactId": "vertx-web-openapi-router",
+          "name": "Web OpenAPI Router",
+          "description": "Vert.x OpenAPI Router is based on Vert.x OpenAPI and only provides the router functionality."
+        },
+        {
           "artifactId": "vertx-uri-template",
           "name": "Vert.x URI Template",
           "description": "RFC 6570 URI Template implementation for Vert.x."
