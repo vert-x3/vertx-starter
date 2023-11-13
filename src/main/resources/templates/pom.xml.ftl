@@ -15,7 +15,8 @@
     <#if vertxVersion?starts_with("5.")>
     <kotlin.version>2.0.0</kotlin.version>
     <#else>
-    <kotlin.version>1.7.21</kotlin.version>
+      <kotlin.version>1.7.21</kotlin.version>
+    </#if>
     <#elseif language == "scala">
     <scala.version>3.5.2</scala.version>
     <#else>
@@ -81,13 +82,14 @@
       </dependency>
     </#noparse>
     <#else>
-    <#noparse>
-      <dependency>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-stdlib-jdk8</artifactId>
-        <version>${kotlin.version}</version>
-      </dependency>
-    </#noparse>
+      <#noparse>
+        <dependency>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-jdk8</artifactId>
+          <version>${kotlin.version}</version>
+        </dependency>
+      </#noparse>
+    </#if>
     <#elseif language == "scala">
       <#noparse>
         <dependency>
@@ -111,18 +113,20 @@
     </#if>
 
     <#if language == "scala">
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-lang-scala-test_3</artifactId>
-      <version>${vertx.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_3</artifactId>
-      <version>3.2.17</version>
-      <scope>test</scope>
-    </dependency>
+    <#noparse>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-lang-scala-test_3</artifactId>
+        <version>${vertx.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest_3</artifactId>
+        <version>3.2.19</version>
+        <scope>test</scope>
+      </dependency>
+    </#noparse>
     <#elseif hasVertxJUnit5>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -206,10 +210,9 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>4.8.1</version>
+        <version>4.9.2</version>
         <configuration>
           <args>
-            <arg>java-output-version 8</arg>
             <arg>-feature</arg>
             <arg>-deprecation</arg>
           </args>
