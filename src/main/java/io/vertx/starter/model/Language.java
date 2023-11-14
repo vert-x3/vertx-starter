@@ -25,10 +25,7 @@ public enum Language {
   JAVA("java", ".java"),
 
   @JsonProperty("kotlin")
-  KOTLIN("kotlin", ".kt", "vertx-lang-kotlin"),
-
-  @JsonProperty("scala")
-  SCALA("scala", ".scala");
+  KOTLIN("kotlin", ".kt", "vertx-lang-kotlin");
 
   private final String name;
   private final String extension;
