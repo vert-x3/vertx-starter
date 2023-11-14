@@ -83,6 +83,11 @@
       <artifactId>vertx-lang-scala3</artifactId>
       <version>${vertx.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-lang-scala3-test</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
 </#noparse>
 </#if>
 <#if hasPgClient>
@@ -94,12 +99,6 @@
 </#if>
 
 <#if language == "scala">
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-lang-scala3-test</artifactId>
-      <version>${vertx.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_3</artifactId>
