@@ -97,9 +97,7 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-lang-scala3-test</artifactId>
-<#noparse>
       <version>${vertx.version}</version>
-</#noparse>
       <scope>test</scope>
     </dependency>
     <dependency>
