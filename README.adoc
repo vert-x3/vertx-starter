@@ -1,5 +1,5 @@
 = Vertx.x Starter
-:vertx-version: 4.4.6
+:vertx-version: 4.5.0
 
 image:https://github.com/vert-x3/vertx-starter/workflows/CI/badge.svg[Build Status,link=https://github.com/vert-x3/vertx-starter/actions?query=workflow%3ACI]
 
