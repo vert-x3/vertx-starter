@@ -13,19 +13,15 @@ on:
 jobs:
   Test:
     name: Run tests
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        jdk: [ 17 ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.jdk }}
+          java-version: 21
       - name: Run generator tests
-        run: mvn test -Dgroups=generator-${{ matrix.jdk }}
+        run: mvn test -Dgroups=generator
       - name: Run other tests
         run: mvn test -DexcludedGroups=generator
   Deploy:
