@@ -22,12 +22,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Thomas Segismont
  */
 public enum JdkVersion {
-  @JsonProperty("1.8")
-  JDK_1_8("1.8"),
   @JsonProperty("11")
   JDK_11("11"),
   @JsonProperty("17")
-  JDK_17("17");
+  JDK_17("17"),
+  @JsonProperty("21")
+  JDK_21("21"),
+  ;
 
   private final String value;
 

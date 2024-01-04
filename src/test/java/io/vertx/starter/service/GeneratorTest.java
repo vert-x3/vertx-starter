@@ -32,7 +32,6 @@ import io.vertx.starter.Util;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.BuildTool;
-import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -57,6 +56,7 @@ import java.util.stream.Stream;
 import static io.vertx.starter.model.ArchiveFormat.TGZ;
 import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
+import static io.vertx.starter.model.JdkVersion.*;
 import static io.vertx.starter.model.Language.JAVA;
 import static io.vertx.starter.model.Language.KOTLIN;
 import static java.util.stream.Collectors.toList;
@@ -122,19 +122,11 @@ class GeneratorTest {
       .setArtifactId("demo")
       .setLanguage(JAVA)
       .setBuildTool(MAVEN)
-      .setVertxVersion("4.4.2")
-      .setArchiveFormat(TGZ)
-      .setJdkVersion(JdkVersion.JDK_1_8);
+      .setVertxVersion("4.5.1")
+      .setArchiveFormat(TGZ);
   }
 
-  @ParameterizedTest
-  @MethodSource("testProjectsJdk8")
-  @Tag("generator-8")
-  void testProjectJdk8(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    testProject(project, vertx, testContext);
-  }
-
-  static Stream<VertxProject> testProjectsJdk8() throws IOException {
+  static Stream<VertxProject> testProjects() throws IOException {
     List<String> versions = Util.loadStarterData().getJsonArray("versions").stream()
       .map(JsonObject.class::cast)
       .map(obj -> obj.getString("number"))
@@ -171,7 +163,7 @@ class GeneratorTest {
   }
 
   static Stream<VertxProject> testProjectsJdk11() throws IOException {
-    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_11));
+    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_11));
   }
 
   @ParameterizedTest
@@ -183,7 +175,19 @@ class GeneratorTest {
   }
 
   static Stream<VertxProject> testProjectsJdk17() throws IOException {
-    return testProjectsJdk8().map(vertxProject -> vertxProject.setJdkVersion(JdkVersion.JDK_17));
+    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_17));
+  }
+
+  @ParameterizedTest
+  @MethodSource("testProjectsJdk21")
+  @Tag("generator-21")
+  void testProjectJdk21(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(21);
+    testProject(project, vertx, testContext);
+  }
+
+  static Stream<VertxProject> testProjectsJdk21() throws IOException {
+    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_21));
   }
 
   private int javaSpecVersion() {
@@ -311,6 +315,8 @@ class GeneratorTest {
 
   private void buildProject(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
     ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
+    processOptions.getEnv().put("JAVA_HOME", System.getProperty("java.home"));
+
     String command;
     List<String> args;
     if (buildTool == MAVEN) {
@@ -353,6 +359,8 @@ class GeneratorTest {
 
   private void runDevMode(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
     ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
+    processOptions.getEnv().put("JAVA_HOME", System.getProperty("java.home"));
+
     String command;
     List<String> args;
     if (buildTool == MAVEN) {
