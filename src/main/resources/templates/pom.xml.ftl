@@ -127,7 +127,7 @@
         <version>${kotlin.version}</version>
 </#noparse>
         <configuration>
-          <jvmTarget>${jdkVersion}</jvmTarget>
+          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '17')}</jvmTarget>
         </configuration>
         <executions>
           <execution>
