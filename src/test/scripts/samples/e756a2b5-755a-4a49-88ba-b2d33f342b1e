@@ -1,0 +1,1 @@
+{"language":"kotlin","buildTool":"gradle","vertxVersion":"4.4.2","vertxDependencies":["vertx-auth-jwt","vertx-web","vertx-pg-client","vertx-lang-kotlin"],"archiveFormat":"zip","jdkVersion":"11","operatingSystem":"Other","createdOn":"2023-06-03T21:51:52.001695117Z"}

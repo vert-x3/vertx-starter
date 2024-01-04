@@ -36,7 +36,7 @@ export default {
       return parsedResult.os.name.toLowerCase() === 'windows'
     },
     isMac() {
-      return parsedResult.os.name.toLowerCase() === 'macOS'
+      return parsedResult.os.name.toLowerCase() === 'macos'
     },
     hotkey() {
       return this.isMac ? '\u2318 + \u23CE' : 'alt + \u23CE'

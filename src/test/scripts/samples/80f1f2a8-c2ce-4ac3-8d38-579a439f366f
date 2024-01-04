@@ -1,0 +1,1 @@
+{"language":"java","buildTool":"maven","vertxVersion":"4.4.2","vertxDependencies":["vertx-web","vertx-redis-client"],"archiveFormat":"zip","jdkVersion":"11","operatingSystem":"Windows","createdOn":"2023-06-03T16:14:51.749463303Z"}

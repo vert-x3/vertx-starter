@@ -6,7 +6,7 @@
     "buildTool": "maven",
     "vertxVersion": "4.5.1",
     "archiveFormat": "zip",
-    "jdkVersion": "11"
+    "jdkVersion": "17"
   },
   "versions": [
     {
@@ -98,6 +98,11 @@
           "artifactId": "vertx-web-openapi",
           "name": "Web OpenAPI",
           "description": "Extends Vert.x Web to support OpenAPI 3, bringing a simple interface for building web routers that conform to OpenAPI contracts."
+        },
+        {
+          "artifactId": "vertx-web-openapi-router",
+          "name": "Web OpenAPI Router",
+          "description": "Vert.x OpenAPI Router is based on Vert.x OpenAPI and only provides the router functionality."
         },
         {
           "artifactId": "vertx-uri-template",
@@ -373,7 +378,7 @@
         {
           "artifactId": "vertx-health-check",
           "name": "Vert.x Health Check",
-          "description": "This component provides a simple way to expose health checks."
+          "description": "A simple API to compute and compose health checks."
         },
         {
           "artifactId": "vertx-zipkin",

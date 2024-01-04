@@ -69,7 +69,7 @@ dependencies {
 
 <#if language == "kotlin">
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion}"
+compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '17')}"
 <#else>
 java {
   sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}

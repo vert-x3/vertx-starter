@@ -1,0 +1,1 @@
+{"language":"java","buildTool":"maven","vertxVersion":"4.4.2","vertxDependencies":["vertx-web-validation","vertx-auth-jwt","vertx-web","vertx-mysql-client"],"archiveFormat":"zip","jdkVersion":"17","operatingSystem":"Windows","createdOn":"2023-06-03T17:53:45.604747994Z"}
