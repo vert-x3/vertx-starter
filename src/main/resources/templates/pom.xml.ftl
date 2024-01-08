@@ -75,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-lang-scala3</artifactId>
+      <artifactId>vertx-lang-scala_3</artifactId>
       <version>${vertx.version}</version>
     </dependency>
 </#noparse>
@@ -91,7 +91,7 @@
 <#if language == "scala">
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-lang-scala3-test</artifactId>
+      <artifactId>vertx-lang-scala-test_3</artifactId>
 <#noparse>
       <version>${vertx.version}</version>
 </#noparse>

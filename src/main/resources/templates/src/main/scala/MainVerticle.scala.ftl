@@ -1,6 +1,7 @@
 package ${packageName}
 
 import io.vertx.core.{AbstractVerticle, Promise}
+import io.vertx.lang.scala.*
 import io.vertx.lang.scala.ScalaVerticle
 import io.vertx.lang.scala.ImplicitConversions.vertxFutureToScalaFuture
 
@@ -11,7 +12,7 @@ class MainVerticle extends AbstractVerticle:
 
   override def start(startPromise: Promise[Void]): Unit =
     vertx
-      .deployVerticle(HttpVerticle().asJava)
+      .deployVerticle(HttpVerticle())
       .onSuccess(_ => startPromise.complete)
       .onFailure(e => startPromise.fail(e))
 

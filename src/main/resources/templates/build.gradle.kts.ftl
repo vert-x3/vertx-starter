@@ -58,13 +58,13 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 <#elseif language == "scala">
   implementation("org.scala-lang:scala3-library_3:3.3.1")
-  implementation("io.vertx:vertx-lang-scala3:${vertxVersion}")
+  implementation("io.vertx:vertx-lang-scala_3:${vertxVersion}")
 </#if>
 <#if hasPgClient>
   implementation("com.ongres.scram:client:2.1")
 </#if>
 <#if language == "scala">
-  testImplementation("io.vertx:vertx-lang-scala3-test:${vertxVersion}")
+  testImplementation("io.vertx:vertx-lang-scala-test_3:${vertxVersion}")
   testImplementation("org.scalatest:scalatest_3:3.2.17")
   testRuntimeOnly("org.scalatestplus:junit-5-10_3:3.2.17.0")
 <#elseif hasVertxJUnit5>
