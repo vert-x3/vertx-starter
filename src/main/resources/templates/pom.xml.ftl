@@ -16,11 +16,6 @@
 <#elseif language == "scala">
     <scala.version>3.3.1</scala.version>
 <#else>
-<#if jdkVersion == "1.8">
-    <maven.compiler.source>${jdkVersion}</maven.compiler.source>
-    <maven.compiler.target>${jdkVersion}</maven.compiler.target>
-
-</#if>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 </#if>
     <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
@@ -166,7 +161,7 @@
         <version>${kotlin.version}</version>
 </#noparse>
         <configuration>
-          <jvmTarget>${jdkVersion}</jvmTarget>
+          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '17')}</jvmTarget>
         </configuration>
         <executions>
           <execution>
@@ -236,11 +231,9 @@
 <#noparse>
         <version>${maven-compiler-plugin.version}</version>
 </#noparse>
-<#if jdkVersion != "1.8">
         <configuration>
           <release>${jdkVersion}</release>
         </configuration>
-</#if>
       </plugin>
 </#if>
       <plugin>

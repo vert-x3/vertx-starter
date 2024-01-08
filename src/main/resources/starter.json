@@ -4,18 +4,18 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "4.4.6",
+    "vertxVersion": "4.5.1",
     "archiveFormat": "zip",
-    "jdkVersion": "11"
+    "jdkVersion": "17"
   },
   "versions": [
     {
-      "number": "4.4.6",
+      "number": "4.5.1",
       "exclusions": [
       ]
     },
     {
-      "number": "4.4.7-SNAPSHOT",
+      "number": "4.5.2-SNAPSHOT",
       "exclusions": [
       ]
     }

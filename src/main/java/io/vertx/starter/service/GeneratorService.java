@@ -149,7 +149,6 @@ public class GeneratorService {
       copy(tempDir, "files/maven", "mvnw.cmd");
       copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.jarr");
       copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.properties");
-      copy(tempDir, "files/maven", "_mvn/wrapper/MavenWrapperDownloader.java");
       render(tempDir, ctx, ".", "pom.xml");
     } else {
       throw new RuntimeException("Unsupported build tool: " + project.getBuildTool());
