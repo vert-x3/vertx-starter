@@ -54,8 +54,8 @@
           "name": "Handlebars template engine"
         },
         {
-          "artifactId": "vertx-web-templ-jade",
-          "name": "Jade template engine"
+          "artifactId": "vertx-web-templ-pug",
+          "name": "Pug template engine"
         },
         {
           "artifactId": "vertx-web-templ-mvel",
