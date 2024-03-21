@@ -214,6 +214,7 @@
           </execution>
         </executions>
         <configuration>
+          <debugSuspend>true</debugSuspend>
           <redeploy>true</redeploy>
           <classifier>fat</classifier>
           <archive>
