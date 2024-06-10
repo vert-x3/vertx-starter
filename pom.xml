@@ -14,7 +14,7 @@
     <vertx.version>4.5.8</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
-    <vertx-maven-plugin.version>1.0.28</vertx-maven-plugin.version>
+    <vertx-maven-plugin.version>1.0.29</vertx-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
