@@ -105,6 +105,11 @@
           "description": "Vert.x OpenAPI Router is based on Vert.x OpenAPI and only provides the router functionality."
         },
         {
+          "artifactId": "vertx-web-proxy",
+          "name": "Vert.x Web Proxy",
+          "description": "Vert.x Web Proxy provides a handler that handles the reverse proxy logic using Vert.x Http Proxy."
+        },
+        {
           "artifactId": "vertx-uri-template",
           "name": "Vert.x URI Template",
           "description": "RFC 6570 URI Template implementation for Vert.x."
@@ -335,6 +340,11 @@
           "artifactId": "vertx-consul-client",
           "name": "Consul Client",
           "description": "A client to interact with Consul."
+        },
+        {
+          "artifactId": "vertx-http-proxy",
+          "name": "Vert.x Http Proxy",
+          "description": "Vert.x Http Proxy is a reverse proxy based on Vert.x, it aims to implement reusable reverse proxy logic to focus on higher concerns."
         }
       ]
     },
