@@ -327,11 +327,6 @@
           "description": "Vert.x provides a simple SMTP mail client so you can send emails from your applications."
         },
         {
-          "artifactId": "vertx-jca",
-          "name": "JCA Adaptor",
-          "description": "Vert.x provides a Java Connector Architecture (JCA) adaptor which allows it to interoperate with any JavaEE application server."
-        },
-        {
           "artifactId": "vertx-kafka-client",
           "name": "Kafka Client",
           "description": "A client to interact with Apache Kafka."
