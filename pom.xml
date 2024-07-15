@@ -14,7 +14,7 @@
     <vertx.version>4.5.8</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
-    <vertx-maven-plugin.version>1.0.29</vertx-maven-plugin.version>
+    <vertx-maven-plugin.version>2.0.0</vertx-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.25.0</version>
+      <version>1.26.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -214,14 +214,12 @@
           </execution>
         </executions>
         <configuration>
-          <debugSuspend>true</debugSuspend>
-          <redeploy>true</redeploy>
           <classifier>fat</classifier>
-          <archive>
-            <manifest>
-              <Multi-Release>true</Multi-Release>
-            </manifest>
-          </archive>
+          <redeployExcludes>
+            <redeployExclude>frontend/node_modules/**</redeployExclude>
+            <redeployExclude>frontend/dist/**</redeployExclude>
+            <redeployExclude>frontend/package-lock.json</redeployExclude>
+          </redeployExcludes>
         </configuration>
       </plugin>
     </plugins>
