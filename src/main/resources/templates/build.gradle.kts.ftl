@@ -33,7 +33,11 @@ val vertxVersion = "${vertxVersion}"
 val junitJupiterVersion = "5.9.1"
 
 val mainVerticleName = "${packageName}.MainVerticle"
+<#if vertxVersion?starts_with("5.")>
+val launcherClassName = "io.vertx.launcher.application.VertxApplication"
+<#else>
 val launcherClassName = "io.vertx.core.Launcher"
+</#if>
 
 val watchForChange = "src/**/*"
 <#noparse>
@@ -48,6 +52,9 @@ dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
 <#if !vertxDependencies?has_content>
   implementation("io.vertx:vertx-core")
+</#if>
+<#if vertxVersion?starts_with("5.")>
+  implementation("io.vertx:vertx-launcher-application")
 </#if>
 <#list vertxDependencies as dependency>
   implementation("io.vertx:${dependency}")
@@ -97,5 +104,9 @@ tasks.withType<Test> {
 }
 
 tasks.withType<JavaExec> {
+<#if vertxVersion?starts_with("5.")>
+  args = listOf(mainVerticleName)
+<#else>
   args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
+</#if>
 }

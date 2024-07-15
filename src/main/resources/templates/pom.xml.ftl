@@ -51,6 +51,12 @@
       <artifactId>vertx-core</artifactId>
     </dependency>
 </#if>
+<#if vertxVersion?starts_with("5.")>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-launcher-application</artifactId>
+    </dependency>
+</#if>
 <#list vertxDependencies as dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -200,9 +206,15 @@
         <version>${exec-maven-plugin.version}</version>
 </#noparse>
         <configuration>
+<#if vertxVersion?starts_with("5.")>
+          <mainClass>io.vertx.launcher.application.VertxApplication</mainClass>
+<#else>
           <mainClass>io.vertx.core.Launcher</mainClass>
+</#if>
           <arguments>
+<#if vertxVersion?starts_with("4.")>
             <argument>run</argument>
+</#if>
 <#noparse>
             <argument>${main.verticle}</argument>
 </#noparse>

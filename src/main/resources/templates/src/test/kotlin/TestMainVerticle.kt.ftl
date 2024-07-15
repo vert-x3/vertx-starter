@@ -27,7 +27,7 @@ class TestMainVerticle {
 <#if hasVertxJUnit5>
   @BeforeEach
   fun deploy_verticle(vertx: Vertx, testContext: VertxTestContext) {
-    vertx.deployVerticle(MainVerticle(), testContext.succeeding<String> { _ -> testContext.completeNow() })
+    vertx.deployVerticle(MainVerticle()).onComplete(testContext.succeeding<String> { _ -> testContext.completeNow() })
   }
 
   @Test
@@ -42,7 +42,7 @@ class TestMainVerticle {
   @Before
   fun deploy_verticle(testContext: TestContext) {
     val vertx = rule.vertx()
-    vertx.deployVerticle(MainVerticle(), testContext.asyncAssertSuccess())
+    vertx.deployVerticle(MainVerticle()).onComplete(testContext.asyncAssertSuccess())
   }
 
   @Test

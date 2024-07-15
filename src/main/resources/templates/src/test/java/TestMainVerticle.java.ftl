@@ -29,7 +29,7 @@ public class TestMainVerticle {
 <#if hasVertxJUnit5>
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
-    vertx.deployVerticle(new MainVerticle(), testContext.succeeding(id -> testContext.completeNow()));
+    vertx.deployVerticle(new MainVerticle()).onComplete(testContext.succeeding(id -> testContext.completeNow()));
   }
 
   @Test
@@ -43,7 +43,7 @@ public class TestMainVerticle {
   @Before
   public void deploy_verticle(TestContext testContext) {
     Vertx vertx = rule.vertx();
-    vertx.deployVerticle(new MainVerticle(), testContext.asyncAssertSuccess());
+    vertx.deployVerticle(new MainVerticle()).onComplete(testContext.asyncAssertSuccess());
   }
 
   @Test
