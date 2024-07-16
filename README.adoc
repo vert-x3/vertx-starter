@@ -1,5 +1,4 @@
 = Vertx.x Starter
-:vertx-version: 4.5.8
 
 image:https://github.com/vert-x3/vertx-starter/workflows/CI/badge.svg[Build Status,link=https://github.com/vert-x3/vertx-starter/actions?query=workflow%3ACI]
 
@@ -13,7 +12,10 @@ If you are a CLI adept, you can use any http client (curl, https://httpie.org/[h
 
 [source,shell,subs="attributes"]
 ----
-curl -X GET https://start.vertx.io/starter.zip -d groupId=com.acme -d language=java -d vertxVersion={vertx-version} -o starter.zip
+curl -G https://start.vertx.io/starter.zip \
+  -d "groupId=com.example" \
+  -d "language=java" \
+  --output starter.zip
 ----
 
 == API
@@ -40,21 +42,24 @@ Full example:
 
 [source,shell,subs="attributes"]
 ----
-curl -X GET \
-  'https://start.vertx.io/starter.zip?artifactId=starter&buildTool=maven&groupId=io.vertx&language=java&vertxDependencies=&vertxVersion={vertx-version}' \
-  -o starter.zip
+curl -G https://start.vertx.io/starter.zip \
+  -d "groupId=com.example" \
+  -d "artifactId=starter" \
+  -d "language=java" \
+  -d "buildTool=maven" \
+  -d "vertxDependencies=vertx-web,vertx-web-client"
+  --output starter.zip
 ----
 
 The HTTPie equivalent:
 
 [source,shell,subs="attributes"]
 ----
-$ http https://start.vertx.io/starter.zip \
-  groupId==io.vertx \
+http https://start.vertx.io/starter.zip \
+  groupId==com.example \
   artitfactId==starter \
   language==java \
   buildTool==maven \
-  vertxVersion=={vertx-version} \
   vertxDependencies==vertx-web,vertx-web-client \
   -o starter.zip
 ----
