@@ -192,8 +192,8 @@ class GeneratorTest {
 
   private int javaSpecVersion() {
     String property = System.getProperty("java.specification.version");
-    assumeThat(property).isNotNull().withFailMessage(() -> "java.specification.version is null");
-    assumeThat(property).matches("\\d+").withFailMessage("%s is not a number", property);
+    assumeThat(property).withFailMessage("java.specification.version is null").isNotNull();
+    assumeThat(property).withFailMessage("%s is not a number", property).matches("\\d+");
     return Integer.parseInt(property);
   }
 
