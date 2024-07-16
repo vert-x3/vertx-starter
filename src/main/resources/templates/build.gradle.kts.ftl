@@ -54,7 +54,7 @@ application {
 
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-<#if !vertxDependencies?has_content || vertxVersion == "4.4.2">
+<#if !vertxDependencies?has_content>
   implementation("io.vertx:vertx-core")
 </#if>
 <#if vertxVersion?starts_with("5.")>
