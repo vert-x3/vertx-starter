@@ -57,7 +57,6 @@ import static io.vertx.starter.model.ArchiveFormat.TGZ;
 import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.JdkVersion.*;
-import static io.vertx.starter.model.Language.JAVA;
 import static io.vertx.starter.model.Language.KOTLIN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,9 +119,6 @@ class GeneratorTest {
       .setId("demo")
       .setGroupId("com.example")
       .setArtifactId("demo")
-      .setLanguage(JAVA)
-      .setBuildTool(MAVEN)
-      .setVertxVersion("4.5.8")
       .setArchiveFormat(TGZ);
   }
 
