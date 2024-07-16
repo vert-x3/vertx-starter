@@ -12,7 +12,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 <#if language == "kotlin">
+<#if vertxVersion?starts_with("5.")>
+    <kotlin.version>2.0.0</kotlin.version>
+<#else>
     <kotlin.version>1.7.21</kotlin.version>
+</#if>
 
 <#else>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -64,6 +68,15 @@
     </dependency>
 </#list>
 <#if language == "kotlin">
+<#if vertxVersion?starts_with("5.")>
+<#noparse>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+</#noparse>
+<#else>
 <#noparse>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -71,6 +84,7 @@
       <version>${kotlin.version}</version>
     </dependency>
 </#noparse>
+</#if>
 </#if>
 <#if hasPgClient>
     <dependency>
@@ -133,7 +147,11 @@
         <version>${kotlin.version}</version>
 </#noparse>
         <configuration>
+<#if vertxVersion?starts_with("5.")>
+          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '21' '21', '17')}</jvmTarget>
+<#else>
           <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '17')}</jvmTarget>
+</#if>
         </configuration>
         <executions>
           <execution>

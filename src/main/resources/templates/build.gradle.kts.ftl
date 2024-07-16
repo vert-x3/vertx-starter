@@ -6,7 +6,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 <#if language == "kotlin">
+<#if vertxVersion?starts_with("5.")>
+  kotlin ("jvm") version "2.0.0"
+<#else>
   kotlin ("jvm") version "1.7.21"
+</#if>
 <#else>
   java
 </#if>
@@ -59,7 +63,7 @@ dependencies {
 <#list vertxDependencies as dependency>
   implementation("io.vertx:${dependency}")
 </#list>
-<#if language == "kotlin">
+<#if language == "kotlin" && vertxVersion?starts_with("4.")>
   implementation(kotlin("stdlib-jdk8"))
 </#if>
 <#if hasPgClient>
@@ -76,7 +80,11 @@ dependencies {
 
 <#if language == "kotlin">
 val compileKotlin: KotlinCompile by tasks
+<#if vertxVersion?starts_with("5.")>
+compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '21' '21', '17')}"
+<#else>
 compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '17')}"
+</#if>
 <#else>
 java {
   sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
