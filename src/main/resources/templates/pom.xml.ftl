@@ -31,7 +31,11 @@
 </#if>
 
     <main.verticle>${packageName}.MainVerticle</main.verticle>
+<#if vertxVersion?starts_with("5.")>
+    <launcher.class>io.vertx.launcher.application.VertxApplication</launcher.class>
+<#else>
     <launcher.class>io.vertx.core.Launcher</launcher.class>
+</#if>
   </properties>
 
   <dependencyManagement>
@@ -224,11 +228,9 @@
         <version>${exec-maven-plugin.version}</version>
 </#noparse>
         <configuration>
-<#if vertxVersion?starts_with("5.")>
-          <mainClass>io.vertx.launcher.application.VertxApplication</mainClass>
-<#else>
-          <mainClass>io.vertx.core.Launcher</mainClass>
-</#if>
+<#noparse>
+          <mainClass>${launcher.class}</mainClass>
+</#noparse>
           <arguments>
 <#if vertxVersion?starts_with("4.")>
             <argument>run</argument>
