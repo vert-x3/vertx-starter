@@ -12,11 +12,13 @@
     {
       "number": "4.5.10",
       "exclusions": [
+        "vertx-auth-webauthn4j"
       ]
     },
     {
       "number": "4.5.11-SNAPSHOT",
       "exclusions": [
+        "vertx-auth-webauthn4j"
       ]
     },
     {
@@ -288,6 +290,11 @@
           "artifactId": "vertx-auth-webauthn",
           "name": "Webauthn Auth",
           "description": "FIDO2 WebAuthn (password-less) implementation."
+        },
+        {
+          "artifactId": "vertx-auth-webauthn4j",
+          "name": "Webauthn Auth with WebAuthn4J",
+          "description": "FIDO2 WebAuthn (password-less) wrapper for WebAuthn4J."
         },
         {
           "artifactId": "vertx-auth-htpasswd",
