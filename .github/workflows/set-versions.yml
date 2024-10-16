@@ -1,0 +1,34 @@
+name: "Set versions"
+on:
+  workflow_dispatch:
+    inputs:
+      stableVersion:
+        description: 'Vert.x stable version, e.g 1.2.3'
+        required: true
+        type: string
+      stableSnapshotVersion:
+        description: 'Vert.x stable snapshot version, e.g. 1.2.4-SNAPSHOT'
+        required: true
+        type: string
+jobs:
+  set-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: dcarbone/install-jq-action@v2
+        with:
+          version: '1.7'
+          force: true
+      - run: |
+          tmp=$(mktemp)
+          cat src/main/resources/starter.json | jq ".versions[0].number=\"$STABLE_VERSION\" | .versions[1].number=\"$STABLE_SNAPSHOT_VERSION\"" > "$tmp" && mv "$tmp" src/main/resources/starter.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add src/main/resources/starter.json
+          git commit -m "Update stable version to $STABLE_VERSION and stable snapshot version to $STABLE_SNAPSHOT_VERSION"
+          git push
+        env:
+          STABLE_VERSION: ${{ inputs.stableVersion }}
+          STABLE_SNAPSHOT_VERSION: ${{ inputs.stableSnapshotVersion }}
