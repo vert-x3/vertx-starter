@@ -1,7 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 <#if language == "kotlin">
+<#if vertxVersion?starts_with("5.")>
+import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode.IGNORE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+<#else>
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+</#if>
 </#if>
 
 plugins {
@@ -82,6 +88,10 @@ dependencies {
 val compileKotlin: KotlinCompile by tasks
 <#if vertxVersion?starts_with("5.")>
 compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '21' '21', '17')}"
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+  jvmTargetValidationMode.set(IGNORE)
+}
 <#else>
 compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '17')}"
 </#if>
