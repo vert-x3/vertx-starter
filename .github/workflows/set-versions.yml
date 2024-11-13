@@ -23,7 +23,7 @@ jobs:
       - name: Set version and push
         run: |
           tmp=$(mktemp)
-          cat src/main/resources/starter.json | jq ".versions[0].number=\"$STABLE_VERSION\" | .versions[1].number=\"$STABLE_SNAPSHOT_VERSION\"" > "$tmp" && mv "$tmp" src/main/resources/starter.json
+          cat src/main/resources/starter.json | jq ".versions[0].number=\"$STABLE_VERSION\" | .defaults.vertxVersion=\"$STABLE_VERSION\" | .versions[1].number=\"$STABLE_SNAPSHOT_VERSION\"" > "$tmp" && mv "$tmp" src/main/resources/starter.json
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add src/main/resources/starter.json
