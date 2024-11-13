@@ -10,13 +10,13 @@
   },
   "versions": [
     {
-      "number": "4.5.10",
+      "number": "4.5.11",
       "exclusions": [
         "vertx-auth-webauthn4j"
       ]
     },
     {
-      "number": "4.5.11-SNAPSHOT",
+      "number": "4.5.12-SNAPSHOT",
       "exclusions": [
         "vertx-auth-webauthn4j"
       ]
