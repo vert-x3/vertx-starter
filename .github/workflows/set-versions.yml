@@ -11,7 +11,33 @@ on:
         required: true
         type: string
 jobs:
-  set-versions:
+  Test:
+    name: Run tests
+    strategy:
+      matrix:
+        profile: [ generator-tests-jdk11,generator-tests-jdk17,generator-tests-jdk21,no-generator-tests ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: |
+            11
+            21
+            17
+      - uses: dcarbone/install-jq-action@v2
+        with:
+          version: '1.7'
+          force: true
+      - name: Set versions
+        run: bash .gh.set-versions.bash $STABLE_VERSION $STABLE_SNAPSHOT_VERSION
+        env:
+          STABLE_VERSION: ${{ inputs.stableVersion }}
+          STABLE_SNAPSHOT_VERSION: ${{ inputs.stableSnapshotVersion }}
+      - name: Run tests
+        run: mvn test -P ${{ matrix.profile }}
+  Update-repo:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,10 +46,13 @@ jobs:
         with:
           version: '1.7'
           force: true
-      - name: Set version and push
+      - name: Set versions
+        run: bash .gh.set-versions.bash $STABLE_VERSION $STABLE_SNAPSHOT_VERSION
+        env:
+          STABLE_VERSION: ${{ inputs.stableVersion }}
+          STABLE_SNAPSHOT_VERSION: ${{ inputs.stableSnapshotVersion }}
+      - name: Commit and push
         run: |
-          tmp=$(mktemp)
-          cat src/main/resources/starter.json | jq ".versions[0].number=\"$STABLE_VERSION\" | .defaults.vertxVersion=\"$STABLE_VERSION\" | .versions[1].number=\"$STABLE_SNAPSHOT_VERSION\"" > "$tmp" && mv "$tmp" src/main/resources/starter.json
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add src/main/resources/starter.json

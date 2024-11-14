@@ -26,7 +26,7 @@ jobs:
             11
             21
             17
-      - name: Run other tests
+      - name: Run tests
         run: mvn test -P ${{ matrix.profile }}
   Deploy:
     name: Deploy to starter machine
