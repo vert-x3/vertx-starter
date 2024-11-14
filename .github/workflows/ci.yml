@@ -22,7 +22,10 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: |
+            11
+            21
+            17
       - name: Run other tests
         run: mvn test -P ${{ matrix.profile }}
   Deploy:
