@@ -58,6 +58,7 @@ import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.JdkVersion.*;
 import static io.vertx.starter.model.Language.KOTLIN;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -71,6 +72,9 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 class GeneratorTest {
 
   static Path tempDir;
+  static String java11Home;
+  static String java17Home;
+  static String java21Home;
   static Path m2dir;
   static Path mavenRepository;
   static Path settingsFile;
@@ -81,6 +85,9 @@ class GeneratorTest {
   @BeforeAll
   static void beforeAll() throws Exception {
     tempDir = Files.createTempDirectory(GeneratorTest.class.getName());
+    java11Home = computeJavaHome("JAVA_HOME_11_X64", 11);
+    java17Home = computeJavaHome("JAVA_HOME_17_X64", 17);
+    java21Home = computeJavaHome("JAVA_HOME_21_X64", 21);
     m2dir = tempDir.resolve("m2");
     Files.createDirectories(m2dir);
     mavenRepository = tempDir.resolve("repository");
@@ -88,6 +95,31 @@ class GeneratorTest {
     settingsFile = m2dir.resolve("settings.xml");
     ClassLoader classLoader = GeneratorTest.class.getClassLoader();
     Files.copy(Objects.requireNonNull(classLoader.getResourceAsStream("settings-test.xml")), settingsFile);
+  }
+
+  private static String computeJavaHome(String generatorJavaHomeEnv, int minimumJavaVersion) {
+    String javaHome = System.getenv().getOrDefault(generatorJavaHomeEnv, System.getProperty("java.home"));
+    Path versionFile = tempDir.resolve("version");
+    File bin = new File(javaHome, "bin");
+    File java = new File(bin, "java");
+    int javaVersion;
+    try {
+      java.lang.Process process = new ProcessBuilder(java.getAbsolutePath(), "--version")
+        .directory(bin)
+        .redirectOutput(versionFile.toFile())
+        .start();
+      process.waitFor(5, SECONDS);
+      javaVersion = Integer.parseInt(Files.readAllLines(versionFile)
+        .get(0)
+        .split("\\s")[1]
+        .split("\\.")[0]);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    } catch (Exception ignored) {
+      return null;
+    }
+    return javaVersion >= minimumJavaVersion ? javaHome : null;
   }
 
   @BeforeEach
@@ -154,8 +186,8 @@ class GeneratorTest {
   @MethodSource("testProjectsJdk11")
   @Tag("generator-11")
   void testProjectJdk11(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(11);
-    testProject(project, vertx, testContext);
+    assumeThat(java11Home).isNotNull();
+    testProject(project, vertx, java11Home, testContext);
   }
 
   static Stream<VertxProject> testProjectsJdk11() throws IOException {
@@ -166,8 +198,8 @@ class GeneratorTest {
   @MethodSource("testProjectsJdk17")
   @Tag("generator-17")
   void testProjectJdk17(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(17);
-    testProject(project, vertx, testContext);
+    assumeThat(java17Home).isNotNull();
+    testProject(project, vertx, java17Home, testContext);
   }
 
   static Stream<VertxProject> testProjectsJdk17() throws IOException {
@@ -178,22 +210,15 @@ class GeneratorTest {
   @MethodSource("testProjectsJdk21")
   @Tag("generator-21")
   void testProjectJdk21(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(javaSpecVersion()).isGreaterThanOrEqualTo(21);
-    testProject(project, vertx, testContext);
+    assumeThat(java21Home).isNotNull();
+    testProject(project, vertx, java21Home, testContext);
   }
 
   static Stream<VertxProject> testProjectsJdk21() throws IOException {
     return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_21));
   }
 
-  private int javaSpecVersion() {
-    String property = System.getProperty("java.specification.version");
-    assumeThat(property).withFailMessage("java.specification.version is null").isNotNull();
-    assumeThat(property).withFailMessage("%s is not a number", property).matches("\\d+");
-    return Integer.parseInt(property);
-  }
-
-  private void testProject(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+  private void testProject(VertxProject project, Vertx vertx, String javaHome, VertxTestContext testContext) {
     vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project, testContext.succeeding(msg -> {
       unpack(vertx, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
@@ -221,7 +246,7 @@ class GeneratorTest {
             testContext.completeNow();
           } else {
 
-            buildProject(vertx, buildTool, testContext.succeeding(projectBuilt -> {
+            buildProject(vertx, buildTool, javaHome, testContext.succeeding(projectBuilt -> {
               testContext.verify(() -> {
 
                 switch (buildTool) {
@@ -242,7 +267,7 @@ class GeneratorTest {
                   default -> testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
                 }
 
-                runDevMode(vertx, buildTool, testContext.succeeding(devModeRan -> testContext.completeNow()));
+                runDevMode(vertx, buildTool, javaHome, testContext.succeeding(devModeRan -> testContext.completeNow()));
               });
             }));
           }
@@ -308,9 +333,9 @@ class GeneratorTest {
     }
   }
 
-  private void buildProject(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
+  private void buildProject(Vertx vertx, BuildTool buildTool, String javaHome, Handler<AsyncResult<Void>> handler) {
     ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
-    processOptions.getEnv().put("JAVA_HOME", System.getProperty("java.home"));
+    processOptions.getEnv().put("JAVA_HOME", javaHome);
 
     String command;
     List<String> args;
@@ -352,9 +377,9 @@ class GeneratorTest {
     }).start();
   }
 
-  private void runDevMode(Vertx vertx, BuildTool buildTool, Handler<AsyncResult<Void>> handler) {
+  private void runDevMode(Vertx vertx, BuildTool buildTool, String javaHome, Handler<AsyncResult<Void>> handler) {
     ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
-    processOptions.getEnv().put("JAVA_HOME", System.getProperty("java.home"));
+    processOptions.getEnv().put("JAVA_HOME", javaHome);
 
     String command;
     List<String> args;

@@ -13,17 +13,21 @@ on:
 jobs:
   Test:
     name: Run tests
+    strategy:
+      matrix:
+        profile: [ generator-tests-jdk11,generator-tests-jdk17,generator-tests-jdk21,no-generator-tests ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 21
-      - name: Run generator tests
-        run: mvn test -Dgroups=generator
-      - name: Run other tests
-        run: mvn test -DexcludedGroups=generator
+          java-version: |
+            11
+            21
+            17
+      - name: Run tests
+        run: mvn test -P ${{ matrix.profile }}
   Deploy:
     name: Deploy to starter machine
     if: ${{ github.repository_owner == 'vert-x3' && github.event_name == 'push' && github.ref == 'refs/heads/prod' }}
