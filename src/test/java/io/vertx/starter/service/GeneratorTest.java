@@ -292,7 +292,7 @@ class GeneratorTest {
 
   private void verifyMavenOutputFiles() throws IOException {
     try (Stream<Path> pathStream = Files.walk(workdir)) {
-      Optional<Path> testResult = pathStream.filter(p -> p.toString().endsWith("TestMainVerticle.txt")).findFirst();
+      Optional<Path> testResult = pathStream.filter(p -> p.toString().endsWith("TestMainVerticle.xml")).findFirst();
       assertThat(testResult).isPresent().hasValueSatisfying(p -> assertThat(p).isRegularFile());
       assertThat(workdir.resolve("target/demo-1.0.0-SNAPSHOT-fat.jar")).isRegularFile();
     }

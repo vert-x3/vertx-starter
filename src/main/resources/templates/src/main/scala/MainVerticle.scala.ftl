@@ -25,4 +25,5 @@ class HttpVerticle extends ScalaVerticle:
         .putHeader("content-type", "text/plain")
         .end("Hello from Vert.x!"))
       .listen(8888)
+      .onSuccess(_ => println("HTTP server started on port 8888"))
       .mapEmpty[Unit]()

@@ -10,7 +10,7 @@ import org.scalatest.matchers.should.Matchers
 import scala.language.implicitConversions
 
 
-class MainVerticleSpec extends VerticleTesting[HttpVerticle], Matchers:
+class TestMainVerticle extends VerticleTesting[HttpVerticle], Matchers:
 
   "HttpVerticle" should "bind to 8888 and answer with 'Hello from Vert.x!'" in {
     val httpClient = vertx.createHttpClient()
