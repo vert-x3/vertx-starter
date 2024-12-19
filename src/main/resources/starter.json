@@ -22,7 +22,7 @@
       ]
     },
     {
-      "number": "5.0.0.CR2",
+      "number": "5.0.0.CR3",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
