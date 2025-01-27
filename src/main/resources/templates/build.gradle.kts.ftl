@@ -47,12 +47,12 @@ val mainVerticleName = "${packageName}.MainVerticle"
 val launcherClassName = "io.vertx.launcher.application.VertxApplication"
 <#else>
 val launcherClassName = "io.vertx.core.Launcher"
-</#if>
 
 val watchForChange = "src/**/*"
 <#noparse>
 val doOnChange = "${projectDir}/gradlew classes"
 </#noparse>
+</#if>
 
 application {
   mainClass.set(launcherClassName)
