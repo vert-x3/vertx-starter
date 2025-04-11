@@ -5,7 +5,7 @@
 
   <groupId>io.vertx</groupId>
   <artifactId>vertx-starter</artifactId>
-  <version>3.7</version>
+  <version>3.8</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
