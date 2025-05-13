@@ -12,13 +12,15 @@
     {
       "number": "4.5.14",
       "exclusions": [
-        "vertx-auth-webauthn4j"
+        "vertx-auth-webauthn4j",
+        "vertx-auth-abac"
       ]
     },
     {
       "number": "4.5.15-SNAPSHOT",
       "exclusions": [
-        "vertx-auth-webauthn4j"
+        "vertx-auth-webauthn4j",
+        "vertx-auth-abac"
       ]
     },
     {
@@ -310,6 +312,11 @@
           "artifactId": "vertx-auth-otp",
           "name": "OTP Auth",
           "description": "OTP (One Time Password Multi-Factor) implementation."
+        },
+        {
+          "artifactId": "vertx-auth-abac",
+          "name": "ABAC Auth Provider",
+          "description": "Simple Attribute Based Access Control."
         }
       ]
     },
