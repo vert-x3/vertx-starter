@@ -4,7 +4,7 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "4.5.15",
+    "vertxVersion": "5.0.0",
     "archiveFormat": "zip",
     "jdkVersion": "17"
   },
@@ -12,17 +12,22 @@
     {
       "number": "4.5.15",
       "exclusions": [
-        "vertx-auth-webauthn4j"
-      ]
-    },
-    {
-      "number": "4.5.16-SNAPSHOT",
-      "exclusions": [
-        "vertx-auth-webauthn4j"
+        "vertx-auth-webauthn4j",
+        "vertx-auth-abac"
       ]
     },
     {
       "number": "5.0.0",
+      "exclusions": [
+        "vertx-web-openapi",
+        "vertx-auth-shiro",
+        "vertx-service-factory",
+        "vertx-maven-service-factory",
+        "vertx-http-service-factory"
+      ]
+    },
+    {
+      "number": "5.0.1-SNAPSHOT",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
@@ -310,6 +315,11 @@
           "artifactId": "vertx-auth-otp",
           "name": "OTP Auth",
           "description": "OTP (One Time Password Multi-Factor) implementation."
+        },
+        {
+          "artifactId": "vertx-auth-abac",
+          "name": "ABAC Auth Provider",
+          "description": "Simple Attribute Based Access Control."
         }
       ]
     },
