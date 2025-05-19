@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -197,16 +196,11 @@ public class GeneratorService {
   }
 
   private Buffer renderBlocking(Map<String, Object> context, String templateFileName) {
-    CompletableFuture<Buffer> cf = new CompletableFuture<>();
-    templateEngine.render(context, templateFileName, ar -> {
-      if (ar.succeeded()) {
-        cf.complete(ar.result());
-      } else {
-        cf.completeExceptionally(ar.cause());
-      }
-    });
     try {
-      return cf.get();
+      return templateEngine.render(context, templateFileName)
+        .toCompletionStage()
+        .toCompletableFuture()
+        .get();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new RuntimeException(e);
