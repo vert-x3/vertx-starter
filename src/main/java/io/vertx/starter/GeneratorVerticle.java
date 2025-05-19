@@ -16,8 +16,8 @@
 
 package io.vertx.starter;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import io.vertx.core.Future;
+import io.vertx.core.VerticleBase;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.starter.config.Topics;
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toSet;
 
-public class GeneratorVerticle extends AbstractVerticle {
+public class GeneratorVerticle extends VerticleBase {
 
   private static final Logger log = LogManager.getLogger(GeneratorVerticle.class);
 
@@ -40,38 +40,24 @@ public class GeneratorVerticle extends AbstractVerticle {
   private GeneratorService generatorService;
 
   @Override
-  public void start(Promise<Void> startPromise) {
-    vertx.fileSystem().readFile("keywords", kar -> {
-      if (kar.succeeded()) {
+  public Future<?> start() throws Exception {
+    return vertx.fileSystem().readFile("keywords").compose(res -> {
+      Set<String> keywords = NEWLINE_REGEX.splitAsStream(res.toString())
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .collect(toSet());
 
-        Set<String> keywords = NEWLINE_REGEX.splitAsStream(kar.result().toString())
-          .map(String::trim)
-          .filter(s -> !s.isEmpty())
-          .collect(toSet());
+      generatorService = new GeneratorService(vertx, keywords);
 
-        generatorService = new GeneratorService(vertx, keywords);
+      MessageConsumer<VertxProject> consumer = vertx.eventBus().consumer(Topics.PROJECT_REQUESTED);
+      return consumer.handler(this::onProjectRequested).completion();
+    }).onSuccess(v -> {
+      log.info("""
 
-        MessageConsumer<VertxProject> consumer = vertx.eventBus().consumer(Topics.PROJECT_REQUESTED);
-        consumer.handler(this::onProjectRequested).completionHandler(ar -> {
-          if (ar.succeeded()) {
-
-            log.info("""
-
-              ----------------------------------------------------------
-              {} is running!
-              ----------------------------------------------------------
-              """, GeneratorVerticle.class.getSimpleName());
-
-            startPromise.complete();
-
-          } else {
-            startPromise.fail(ar.cause());
-          }
-        });
-
-      } else {
-        startPromise.fail(kar.cause());
-      }
+        ----------------------------------------------------------
+        {} is running!
+        ----------------------------------------------------------
+        """, GeneratorVerticle.class.getSimpleName());
     });
   }
 

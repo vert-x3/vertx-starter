@@ -39,24 +39,20 @@ public class GenerationHandler implements Handler<RoutingContext> {
   public void handle(RoutingContext rc) {
     VertxProject project = rc.get(WebVerticle.VERTX_PROJECT_KEY);
 
-    rc.vertx().eventBus().<Buffer>request(PROJECT_REQUESTED, project, reply -> {
-      if (reply.succeeded()) {
+    rc.vertx().eventBus().<Buffer>request(PROJECT_REQUESTED, project).onComplete(msg -> {
+      rc.vertx().eventBus().publish(PROJECT_CREATED, project);
 
-        rc.vertx().eventBus().publish(PROJECT_CREATED, project);
+      Buffer content = msg.body();
+      String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
 
-        Buffer content = reply.result().body();
-        String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
-
-        rc.response()
-          .putHeader(HttpHeaders.CONTENT_ENCODING, HttpHeaders.IDENTITY)
-          .putHeader(HttpHeaders.CONTENT_TYPE, project.getArchiveFormat().getContentType())
-          .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-          .end(content);
-
-      } else {
-        log.error("Failed to create project " + project.getId(), reply.cause());
-        WebVerticle.fail(rc, 500, "Failed to create project: " + project.getId());
-      }
+      rc.response()
+        .putHeader(HttpHeaders.CONTENT_ENCODING, HttpHeaders.IDENTITY)
+        .putHeader(HttpHeaders.CONTENT_TYPE, project.getArchiveFormat().getContentType())
+        .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+        .end(content);
+    }, t -> {
+      log.error("Failed to create project " + project.getId(), t);
+      WebVerticle.fail(rc, 500, "Failed to create project: " + project.getId());
     });
   }
 }
