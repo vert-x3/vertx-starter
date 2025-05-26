@@ -18,7 +18,7 @@
     "file-saver": "^2.0.5",
     "hotkeys-js": "^3.13.10",
     "lodash": "^4.17.21",
-    "vue": "^3.5.14"
+    "vue": "^3.5.15"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.11.0",
