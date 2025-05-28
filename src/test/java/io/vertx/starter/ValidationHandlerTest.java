@@ -175,7 +175,8 @@ class ValidationHandlerTest {
 
     vertx.createHttpServer(new HttpServerOptions().setPort(0))
       .requestHandler(router)
-      .listen(testContext.succeeding(server -> {
+      .listen()
+      .onComplete(testContext.succeeding(server -> {
 
         WebClientOptions options = new WebClientOptions().setDefaultPort(server.actualPort());
         WebClient webClient = WebClient.create(vertx, options);
@@ -183,7 +184,7 @@ class ValidationHandlerTest {
         HttpRequest<Buffer> request = webClient.get("/starter" + extension);
         request.queryParams().addAll(params);
 
-        request.send(testContext.succeeding(handler));
+        request.send().onComplete(testContext.succeeding(handler));
       }));
   }
 }

@@ -62,7 +62,8 @@ public class MetadataHandlerTest {
     server = vertx.createHttpServer(new HttpServerOptions().setPort(0));
     server
       .requestHandler(router)
-      .listen(testContext.succeeding(srv -> {
+      .listen()
+      .onComplete(testContext.succeeding(srv -> {
         httpClient = vertx.createHttpClient(new HttpClientOptions().setDefaultPort(srv.actualPort()));
         testContext.completeNow();
       }));
@@ -71,7 +72,7 @@ public class MetadataHandlerTest {
   @Test
   public void shouldReturnStarterMetadata(Vertx vertx, VertxTestContext testContext) {
     WebClient webClient = WebClient.wrap(httpClient);
-    webClient.get("/").send(testContext.succeeding(response -> testContext.verify(() -> {
+    webClient.get("/").send().onComplete(testContext.succeeding(response -> testContext.verify(() -> {
 
       assertThat(response.statusCode()).withFailMessage(response.bodyAsString()).isEqualTo(200);
 
@@ -96,7 +97,7 @@ public class MetadataHandlerTest {
   @Test
   public void shouldHandleEtag(Vertx vertx, VertxTestContext testContext) {
     WebClient webClient = WebClient.wrap(httpClient);
-    webClient.get("/").send(testContext.succeeding(response -> testContext.verify(() -> {
+    webClient.get("/").send().onComplete(testContext.succeeding(response -> testContext.verify(() -> {
 
       assertThat(response.statusCode()).withFailMessage(response.bodyAsString()).isEqualTo(200);
       assertThat(response.headers().contains(HttpHeaders.CACHE_CONTROL)).isTrue();
@@ -104,7 +105,7 @@ public class MetadataHandlerTest {
 
       String etag = response.headers().get(HttpHeaders.ETAG);
 
-      webClient.get("/").putHeader(HttpHeaders.IF_NONE_MATCH.toString(), etag).send(testContext.succeeding(cachedResp -> testContext.verify(() -> {
+      webClient.get("/").putHeader(HttpHeaders.IF_NONE_MATCH.toString(), etag).send().onComplete(testContext.succeeding(cachedResp -> testContext.verify(() -> {
         assertThat(cachedResp.statusCode()).isEqualTo(304);
         assertThat(cachedResp.body()).isNull();
         testContext.completeNow();
