@@ -16,8 +16,8 @@
 
 package io.vertx.starter;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import io.vertx.core.Future;
+import io.vertx.core.VerticleBase;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
 import io.vertx.starter.service.AnalyticsService;
@@ -32,42 +32,40 @@ import java.nio.file.Paths;
 import static io.vertx.starter.config.VerticleConfigurationConstants.Analytics.ANALYTICS_DIR_CONF;
 import static io.vertx.starter.config.VerticleConfigurationConstants.Analytics.ANALYTICS_DIR_ENV;
 
-public class AnalyticsVerticle extends AbstractVerticle {
+public class AnalyticsVerticle extends VerticleBase {
 
   private static final Logger log = LogManager.getLogger(AnalyticsVerticle.class);
 
   @Override
-  public void start(Promise<Void> startPromise) {
+  public Future<?> start() throws Exception {
     String analyticsDirStr = config().getString(ANALYTICS_DIR_CONF, System.getenv(ANALYTICS_DIR_ENV));
     if (analyticsDirStr == null) {
-      startPromise.fail("analyticsDir is null");
-      return;
+      return Future.failedFuture("analyticsDir is null");
     }
 
     Path analyticsDir = Paths.get(analyticsDirStr).toAbsolutePath();
     if (!Files.isDirectory(analyticsDir)) {
-      startPromise.fail(analyticsDir + " is not a directory");
-      return;
+      return Future.failedFuture(analyticsDir + " is not a directory");
     }
 
     try {
       Path test = Files.createTempFile(analyticsDir, "test", ".donotanalyze");
       Files.delete(test);
     } catch (IOException e) {
-      startPromise.fail(new RuntimeException("Cannot write to " + analyticsDir, e));
-      return;
+      return Future.failedFuture(new RuntimeException("Cannot write to " + analyticsDir, e));
     }
 
     AnalyticsService analyticsService = new AnalyticsService(vertx, analyticsDir);
-    vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_CREATED).handler(analyticsService::onProjectCreated);
+    return vertx.eventBus().<VertxProject>consumer(Topics.PROJECT_CREATED)
+      .handler(analyticsService::onProjectCreated)
+      .completion()
+      .onSuccess(v -> {
+        log.info("""
 
-    log.info("""
-
-      ----------------------------------------------------------
-      {} is running!
-      ----------------------------------------------------------
-      """, AnalyticsVerticle.class.getSimpleName());
-
-    startPromise.complete();
+          ----------------------------------------------------------
+          {} is running!
+          ----------------------------------------------------------
+          """, AnalyticsVerticle.class.getSimpleName());
+      });
   }
 }

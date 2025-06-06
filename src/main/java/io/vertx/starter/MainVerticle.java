@@ -16,17 +16,17 @@
 
 package io.vertx.starter;
 
-import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Promise;
+import io.vertx.core.Future;
+import io.vertx.core.VerticleBase;
 import io.vertx.core.json.JsonObject;
 
 import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PORT;
 
-public class MainVerticle extends AbstractVerticle {
+public class MainVerticle extends VerticleBase {
 
   @Override
-  public void start(Promise<Void> startPromise) throws Exception {
+  public Future<?> start() throws Exception {
     DeploymentOptions analyticsOptions = new DeploymentOptions()
       .setConfig(new JsonObject()
         .put("host", "localhost")
@@ -36,10 +36,8 @@ public class MainVerticle extends AbstractVerticle {
     DeploymentOptions webOptions = new DeploymentOptions()
       .setConfig(new JsonObject().put(HTTP_PORT, 8080));
 
-    vertx.deployVerticle(AnalyticsVerticle::new, analyticsOptions)
+    return vertx.deployVerticle(AnalyticsVerticle::new, analyticsOptions)
       .compose(v -> vertx.deployVerticle(GeneratorVerticle::new, new DeploymentOptions()))
-      .compose(v -> vertx.deployVerticle(WebVerticle::new, webOptions))
-      .<Void>mapEmpty()
-      .onComplete(startPromise);
+      .compose(v -> vertx.deployVerticle(WebVerticle::new, webOptions));
   }
 }
