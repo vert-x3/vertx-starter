@@ -5,17 +5,17 @@
 
   <groupId>io.vertx</groupId>
   <artifactId>vertx-starter</artifactId>
-  <version>3.8</version>
+  <version>3.9</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
     <!-- vert.x properties -->
     <!-- It is not required to update this property when a new Vert.x version is released -->
-    <vertx.version>4.5.14</vertx.version>
+    <vertx.version>5.0.0</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
-    <vertx-maven-plugin.version>2.0.1</vertx-maven-plugin.version>
+    <vertx-maven-plugin.version>2.0.2</vertx-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.12.2</version>
+        <version>5.13.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -48,6 +48,10 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-launcher-application</artifactId>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -103,9 +107,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.julienviet</groupId>
-      <artifactId>childprocess-vertx-ext</artifactId>
-      <version>2.0.0</version>
+      <groupId>io.reactiverse</groupId>
+      <artifactId>reactiverse-child-process</artifactId>
+      <version>3.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

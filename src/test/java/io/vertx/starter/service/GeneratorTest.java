@@ -16,11 +16,10 @@
 
 package io.vertx.starter.service;
 
-import com.julienviet.childprocess.Process;
-import com.julienviet.childprocess.ProcessOptions;
+import io.reactiverse.childprocess.Process;
+import io.reactiverse.childprocess.ProcessOptions;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.impl.Utils;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
@@ -128,7 +127,7 @@ class GeneratorTest {
     Files.createDirectories(workdir);
     cleanupTasks = new ArrayList<>();
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
-    vertx.deployVerticle(new GeneratorVerticle(), testContext.succeeding(id -> testContext.completeNow()));
+    vertx.deployVerticle(new GeneratorVerticle()).onComplete(testContext.succeeding(id -> testContext.completeNow()));
   }
 
   @AfterEach
@@ -219,7 +218,7 @@ class GeneratorTest {
   }
 
   private void testProject(VertxProject project, Vertx vertx, String javaHome, VertxTestContext testContext) {
-    vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project, testContext.succeeding(msg -> {
+    vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project).onComplete(testContext.succeeding(msg -> {
       unpack(vertx, workdir, msg.body(), testContext.succeeding(unpacked -> {
         testContext.verify(() -> {
 
@@ -232,7 +231,7 @@ class GeneratorTest {
           } else if (buildTool == GRADLE) {
             verifyGradleFiles(language);
           } else {
-            testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
+            testContext.failNow(unsupported(buildTool));
             return;
           }
 
@@ -264,7 +263,7 @@ class GeneratorTest {
                       throw new AssertionError(e);
                     }
                   }
-                  default -> testContext.failNow(new NoStackTraceThrowable(unsupported(buildTool)));
+                  default -> testContext.failNow(unsupported(buildTool));
                 }
 
                 runDevMode(vertx, buildTool, javaHome, testContext.succeeding(devModeRan -> testContext.completeNow()));

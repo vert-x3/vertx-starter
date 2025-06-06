@@ -17,8 +17,8 @@
 package io.vertx.starter;
 
 import io.netty.util.AsciiString;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import io.vertx.core.Future;
+import io.vertx.core.VerticleBase;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
@@ -44,7 +44,7 @@ import static io.vertx.starter.config.VerticleConfigurationConstants.Web.HTTP_PO
  * @author Daniel Petisme
  * @author Thomas Segismont
  */
-public class WebVerticle extends AbstractVerticle {
+public class WebVerticle extends VerticleBase {
 
   private static final Logger log = LogManager.getLogger(WebVerticle.class);
 
@@ -80,7 +80,7 @@ public class WebVerticle extends AbstractVerticle {
   }
 
   @Override
-  public void start(Promise<Void> startPromise) {
+  public Future<?> start() throws Exception {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
     Router router = Router.router(vertx).allowForward(AllowForwardHeaders.X_FORWARD);
@@ -99,7 +99,7 @@ public class WebVerticle extends AbstractVerticle {
       });
 
     CorsHandler corsHandler = CorsHandler.create()
-      .addRelativeOrigin(".*")
+      .addOriginWithRegex(".*")
       .allowedMethod(HttpMethod.GET)
       .allowedMethod(HttpMethod.POST)
       .allowedHeader("Content-Type")
@@ -127,22 +127,18 @@ public class WebVerticle extends AbstractVerticle {
 
     int port = config().getInteger(HTTP_PORT, 8080);
 
-    vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
+    return vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
       .requestHandler(router)
-      .listen(port, ar -> {
-        if (ar.failed()) {
-          log.error("Fail to start {}", WebVerticle.class.getSimpleName(), ar.cause());
-          startPromise.fail(ar.cause());
-        } else {
-          log.info("""
+      .listen(port)
+      .onFailure(t -> log.error("Fail to start {}", WebVerticle.class.getSimpleName()))
+      .onSuccess(v -> {
+        log.info("""
 
-            ----------------------------------------------------------
-            {} is running! Access URLs:
-            Local: http://localhost:{}
-            ----------------------------------------------------------
-            """, WebVerticle.class.getSimpleName(), port);
-          startPromise.complete();
-        }
+          ----------------------------------------------------------
+          {} is running! Access URLs:
+          Local: http://localhost:{}
+          ----------------------------------------------------------
+          """, WebVerticle.class.getSimpleName(), port);
       });
   }
 

@@ -60,7 +60,7 @@ class AnalyticsTest {
 
     JsonObject config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
     DeploymentOptions options = new DeploymentOptions().setConfig(config);
-    vertx.deployVerticle(new AnalyticsVerticle(), options, testContext.succeeding(id -> testContext.completeNow()));
+    vertx.deployVerticle(new AnalyticsVerticle(), options).onComplete(testContext.succeeding(id -> testContext.completeNow()));
   }
 
   @AfterEach
