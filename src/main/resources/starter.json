@@ -4,20 +4,20 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "5.0.1",
+    "vertxVersion": "5.0.2",
     "archiveFormat": "zip",
     "jdkVersion": "17"
   },
   "versions": [
     {
-      "number": "4.5.16",
+      "number": "4.5.17",
       "exclusions": [
         "vertx-auth-webauthn4j",
         "vertx-auth-abac"
       ]
     },
     {
-      "number": "5.0.1",
+      "number": "5.0.2",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "number": "5.0.2-SNAPSHOT",
+      "number": "5.0.3-SNAPSHOT",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
