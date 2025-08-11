@@ -13,7 +13,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
-    "bowser": "^2.11.0",
+    "bowser": "^2.12.0",
     "clipboard": "^2.0.11",
     "file-saver": "^2.0.5",
     "hotkeys-js": "^3.13.15",
