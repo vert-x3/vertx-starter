@@ -12,7 +12,7 @@
     <maven.compiler.release>17</maven.compiler.release>
     <!-- vert.x properties -->
     <!-- It is not required to update this property when a new Vert.x version is released -->
-    <vertx.version>5.0.2</vertx.version>
+    <vertx.version>5.0.3</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>2.0.2</vertx-maven-plugin.version>
