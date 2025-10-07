@@ -152,9 +152,9 @@
 </#noparse>
         <configuration>
 <#if vertxVersion?starts_with("5.")>
-          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '21' '21', '17')}</jvmTarget>
+          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '17')}</jvmTarget>
 <#else>
-          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '17')}</jvmTarget>
+          <jvmTarget>17</jvmTarget>
 </#if>
         </configuration>
         <executions>

@@ -87,13 +87,13 @@ dependencies {
 <#if language == "kotlin">
 val compileKotlin: KotlinCompile by tasks
 <#if vertxVersion?starts_with("5.")>
-compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '21' '21', '17')}"
+compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('17' '17', '21' '21', '17')}"
 
 tasks.withType<KotlinJvmCompile>().configureEach {
   jvmTargetValidationMode.set(IGNORE)
 }
 <#else>
-compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('11', '11', '17' '17', '17')}"
+compileKotlin.kotlinOptions.jvmTarget = "17"
 </#if>
 <#else>
 java {
