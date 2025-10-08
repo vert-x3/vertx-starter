@@ -140,14 +140,14 @@ public class GeneratorService {
       if (project.getLanguage() == KOTLIN) {
         copy(tempDir, "files/gradle", "gradle.properties");
       }
-      copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jarr");
+      copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jar");
       copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.properties");
       render(tempDir, ctx, ".", "build.gradle.kts");
       render(tempDir, ctx, ".", "settings.gradle.kts");
     } else if (project.getBuildTool() == MAVEN) {
       copy(tempDir, "files/maven", "mvnw");
       copy(tempDir, "files/maven", "mvnw.cmd");
-      copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.jarr");
+      copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.jar");
       copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.properties");
       render(tempDir, ctx, ".", "pom.xml");
     } else {
@@ -223,7 +223,7 @@ public class GeneratorService {
   private void addFile(Path rootPath, Path filePath, ArchiveOutputStream stream) throws IOException {
     String relativePath = rootPath.relativize(filePath).toString();
     if (relativePath.length() == 0) return;
-    String entryName = jarFileWorkAround(leadingDot(relativePath));
+    String entryName = leadingDot(relativePath);
     ArchiveEntry entry = stream.createArchiveEntry(filePath.toFile(), entryName);
     if (EXECUTABLES.contains(entryName)) {
       if (entry instanceof ZipArchiveEntry zipArchiveEntry) {
@@ -243,11 +243,6 @@ public class GeneratorService {
 
   private String leadingDot(String s) {
     return s.charAt(0) == '_' ? '.' + s.substring(1) : s;
-  }
-
-  private String jarFileWorkAround(String s) {
-    // See https://github.com/johnrengelman/shadow/issues/111
-    return s.endsWith(".jarr") ? s.substring(0, s.length() - ".jarr".length()) + ".jar" : s;
   }
 
   @FunctionalInterface
