@@ -1,21 +1,16 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 <#if language == "kotlin">
-<#if vertxVersion?starts_with("5.")>
-import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode.IGNORE
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-<#else>
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-</#if>
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 </#if>
 
 plugins {
 <#if language == "kotlin">
 <#if vertxVersion?starts_with("5.")>
-  kotlin ("jvm") version "2.0.0"
+  kotlin ("jvm") version "2.2.20"
 <#else>
-  kotlin ("jvm") version "1.7.21"
+  kotlin ("jvm") version "2.0.0"
 </#if>
 <#else>
   java
@@ -86,16 +81,18 @@ dependencies {
 }
 
 <#if language == "kotlin">
-val compileKotlin: KotlinCompile by tasks
+kotlin {
+  compilerOptions {
+    jvmTarget = JvmTarget.fromTarget("${jdkVersion?switch('17' '17', '21' '21', '25' '25', '17')}")
 <#if vertxVersion?starts_with("5.")>
-compileKotlin.kotlinOptions.jvmTarget = "${jdkVersion?switch('17' '17', '21' '21', '17')}"
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-  jvmTargetValidationMode.set(IGNORE)
+    languageVersion = KotlinVersion.fromVersion("2.0")
+    apiVersion = KotlinVersion.fromVersion("2.0")
+  <#else>
+    languageVersion = KotlinVersion.fromVersion("1.7")
+    apiVersion = KotlinVersion.fromVersion("1.7")
+  </#if>
+  }
 }
-<#else>
-compileKotlin.kotlinOptions.jvmTarget = "17"
-</#if>
 <#else>
 java {
   sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}
