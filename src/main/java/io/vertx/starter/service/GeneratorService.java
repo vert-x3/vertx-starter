@@ -58,11 +58,7 @@ public class GeneratorService {
 
   private static final Pattern DOT_REGEX = Pattern.compile("\\.");
 
-  private static final Set<String> EXECUTABLES = Set.of(
-    ".mvn/wrapper/maven-wrapper.jar",
-    ".mvn/wrapper/maven-wrapper.properties",
-    "mvnw",
-    "gradlew");
+  private static final Set<String> EXECUTABLES = Set.of("mvnw", "gradlew");
 
   private final Vertx vertx;
   private final Set<String> keywords;
@@ -153,7 +149,6 @@ public class GeneratorService {
     } else if (project.getBuildTool() == MAVEN) {
       copy(tempDir, "files/maven", "mvnw");
       copy(tempDir, "files/maven", "mvnw.cmd");
-      copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.jar");
       copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.properties");
       render(tempDir, ctx, ".", "pom.xml");
     } else {

@@ -286,7 +286,6 @@ class GeneratorTest {
     assertThat(workdir.resolve("mvnw")).isRegularFile().isExecutable();
     assertThat(workdir.resolve("mvnw.cmd")).isRegularFile();
     assertThat(workdir.resolve(".mvn/wrapper/maven-wrapper.properties")).isRegularFile();
-    assertThat(workdir.resolve(".mvn/wrapper/maven-wrapper.jar")).isRegularFile().isExecutable();
   }
 
   private void verifyMavenOutputFiles() throws IOException {
