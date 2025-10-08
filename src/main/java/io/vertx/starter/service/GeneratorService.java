@@ -20,6 +20,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.templ.freemarker.FreeMarkerTemplateEngine;
 import io.vertx.starter.model.ArchiveFormat;
+import io.vertx.starter.model.JdkVersion;
 import io.vertx.starter.model.Language;
 import io.vertx.starter.model.VertxProject;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -57,11 +58,7 @@ public class GeneratorService {
 
   private static final Pattern DOT_REGEX = Pattern.compile("\\.");
 
-  private static final Set<String> EXECUTABLES = Set.of(
-    ".mvn/wrapper/maven-wrapper.jar",
-    ".mvn/wrapper/maven-wrapper.properties",
-    "mvnw",
-    "gradlew");
+  private static final Set<String> EXECUTABLES = Set.of("mvnw", "gradlew");
 
   private final Vertx vertx;
   private final Set<String> keywords;
@@ -128,26 +125,30 @@ public class GeneratorService {
     ctx.put("vertxDependencies", vertxDependencies);
     String packageName = packageName(project);
     ctx.put("packageName", packageName);
-    ctx.put("jdkVersion", project.getJdkVersion().getValue());
+    JdkVersion jdkVersion = project.getJdkVersion();
+    ctx.put("jdkVersion", jdkVersion.getValue());
     ctx.put("futurizedVerticle", project.getVertxVersion().startsWith("5."));
 
     copy(tempDir, "files", "_editorconfig");
     copy(tempDir, "files", "_gitignore");
 
     if (project.getBuildTool() == GRADLE) {
-      copy(tempDir, "files/gradle", "gradlew");
-      copy(tempDir, "files/gradle", "gradlew.bat");
+      String gradleFilesBase = switch (jdkVersion) {
+        case JDK_17, JDK_21 -> "files/gradle-8.14.3";
+        default -> "files/gradle-9.1.0";
+      };
+      copy(tempDir, gradleFilesBase, "gradlew");
+      copy(tempDir, gradleFilesBase, "gradlew.bat");
       if (project.getLanguage() == KOTLIN) {
-        copy(tempDir, "files/gradle", "gradle.properties");
+        copy(tempDir, gradleFilesBase, "gradle.properties");
       }
-      copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.jar");
-      copy(tempDir, "files/gradle", "gradle/wrapper/gradle-wrapper.properties");
+      copy(tempDir, gradleFilesBase, "gradle/wrapper/gradle-wrapper.jar");
+      copy(tempDir, gradleFilesBase, "gradle/wrapper/gradle-wrapper.properties");
       render(tempDir, ctx, ".", "build.gradle.kts");
       render(tempDir, ctx, ".", "settings.gradle.kts");
     } else if (project.getBuildTool() == MAVEN) {
       copy(tempDir, "files/maven", "mvnw");
       copy(tempDir, "files/maven", "mvnw.cmd");
-      copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.jar");
       copy(tempDir, "files/maven", "_mvn/wrapper/maven-wrapper.properties");
       render(tempDir, ctx, ".", "pom.xml");
     } else {
