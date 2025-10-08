@@ -21,7 +21,7 @@ plugins {
   java
 </#if>
   application
-  id("com.github.johnrengelman.shadow") version "7.1.2"
+  id("com.gradleup.shadow") version "9.2.2"
 }
 
 group = "${groupId}"
@@ -78,6 +78,7 @@ dependencies {
 <#if hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 <#elseif hasVertxUnit>
   testImplementation("io.vertx:vertx-unit")
   testImplementation("junit:junit:4.13.2")
