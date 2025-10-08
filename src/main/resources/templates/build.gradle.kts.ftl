@@ -72,7 +72,7 @@ dependencies {
 <#if language == "kotlin" && vertxVersion?starts_with("4.")>
   implementation(kotlin("stdlib-jdk8"))
 </#if>
-<#if hasPgClient>
+<#if hasPgClient && vertxVersion?starts_with("4.")>
   implementation("com.ongres.scram:client:2.1")
 </#if>
 <#if hasVertxJUnit5>
