@@ -90,20 +90,12 @@
 </#noparse>
 </#if>
 </#if>
-<#if hasPgClient>
-<#if vertxVersion?starts_with("5.")>
+<#if hasPgClient && vertxVersion?starts_with("4.")>
   <dependency>
     <groupId>com.ongres.scram</groupId>
-    <artifactId>scram-client</artifactId>
-    <version>3.1</version>
+    <artifactId>client</artifactId>
+    <version>2.1</version>
   </dependency>
-<#else>
-  <dependency>
-  <groupId>com.ongres.scram</groupId>
-  <artifactId>client</artifactId>
-  <version>2.1</version>
-  </dependency>
-</#if>
 </#if>
 
 <#if hasVertxJUnit5>
