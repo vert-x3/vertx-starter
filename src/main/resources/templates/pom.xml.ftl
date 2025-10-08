@@ -147,15 +147,9 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
-<#noparse>
-        <version>${kotlin.version}</version>
-</#noparse>
+        <version>2.2.20</version>
         <configuration>
-<#if vertxVersion?starts_with("5.")>
-          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '17')}</jvmTarget>
-<#else>
-          <jvmTarget>17</jvmTarget>
-</#if>
+          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '25' '25', '17')}</jvmTarget>
         </configuration>
         <executions>
           <execution>
