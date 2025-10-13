@@ -17,16 +17,15 @@
 package io.vertx.starter.service;
 
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.ThreadingModel;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.AnalyticsVerticle;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,22 +54,17 @@ class AnalyticsTest {
   Path analyticsDir;
 
   @BeforeEach
-  void beforeEach(Vertx vertx, VertxTestContext testContext) {
+  void beforeEach(Vertx vertx) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
-    JsonObject config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
-    DeploymentOptions options = new DeploymentOptions().setConfig(config);
-    vertx.deployVerticle(new AnalyticsVerticle(), options).onComplete(testContext.succeeding(id -> testContext.completeNow()));
-  }
-
-  @AfterEach
-  void afterEach(VertxTestContext testContext) {
-    testContext.completeNow();
+    var config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
+    var options = new DeploymentOptions().setConfig(config).setThreadingModel(ThreadingModel.VIRTUAL_THREAD);
+    vertx.deployVerticle(new AnalyticsVerticle(), options).await();
   }
 
   @Test
   void projectPersisted(Vertx vertx, VertxTestContext testContext) {
-    VertxProject vertxProject = new VertxProject()
+    var vertxProject = new VertxProject()
       .setId("should-not-persist")
       .setGroupId("should-not-persist")
       .setArtifactId("should-not-persist")
@@ -84,16 +78,16 @@ class AnalyticsTest {
       .setOperatingSystem("Other")
       .setCreatedOn(Instant.now());
     vertx.eventBus().publish(Topics.PROJECT_CREATED, vertxProject);
-    Checkpoint checkpoint = testContext.laxCheckpoint();
+    var checkpoint = testContext.laxCheckpoint();
     vertx.setPeriodic(20, id -> {
       vertx.fileSystem().readDir(analyticsDir.toString()).onComplete(testContext.succeeding(ls -> {
         if (ls.isEmpty()) {
           return;
         }
         testContext.verify(() -> assertEquals(1, ls.size()));
-        String file = analyticsDir.resolve(ls.get(0)).toString();
+        var file = analyticsDir.resolve(ls.get(0)).toString();
         vertx.fileSystem().readFile(file).onComplete(testContext.succeeding(buffer -> {
-          JsonObject document = new JsonObject(buffer);
+          var document = new JsonObject(buffer);
           testContext.verify(() -> {
             assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
             assertEquals(vertxProject.getLanguage().getName(), document.getString("language"));

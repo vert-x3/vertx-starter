@@ -39,20 +39,23 @@ public class GenerationHandler implements Handler<RoutingContext> {
   public void handle(RoutingContext rc) {
     VertxProject project = rc.get(WebVerticle.VERTX_PROJECT_KEY);
 
-    rc.vertx().eventBus().<Buffer>request(PROJECT_REQUESTED, project).onComplete(msg -> {
+    try {
+      var msg = rc.vertx().eventBus().<Buffer>request(PROJECT_REQUESTED, project).await();
+
       rc.vertx().eventBus().publish(PROJECT_CREATED, project);
 
       Buffer content = msg.body();
-      String filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
+      var filename = project.getArtifactId() + "." + project.getArchiveFormat().getFileExtension();
 
       rc.response()
         .putHeader(HttpHeaders.CONTENT_ENCODING, HttpHeaders.IDENTITY)
         .putHeader(HttpHeaders.CONTENT_TYPE, project.getArchiveFormat().getContentType())
         .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
         .end(content);
-    }, t -> {
-      log.error("Failed to create project " + project.getId(), t);
+
+    } catch (Exception e) {
+      log.error("Failed to create project {}", project.getId(), e);
       WebVerticle.fail(rc, 500, "Failed to create project: " + project.getId());
-    });
+    }
   }
 }

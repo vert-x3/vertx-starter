@@ -18,14 +18,17 @@ package io.vertx.starter.service;
 
 import io.reactiverse.childprocess.Process;
 import io.reactiverse.childprocess.ProcessOptions;
-import io.vertx.core.*;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Promise;
+import io.vertx.core.ThreadingModel;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.impl.Utils;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
-import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.GeneratorVerticle;
 import io.vertx.starter.Util;
 import io.vertx.starter.VertxProjectCodec;
@@ -109,7 +112,7 @@ class GeneratorTest {
         .start();
       process.waitFor(5, SECONDS);
       javaVersion = Integer.parseInt(Files.readAllLines(versionFile)
-        .get(0)
+        .getFirst()
         .split("\\s")[1]
         .split("\\.")[0]);
     } catch (InterruptedException e) {
@@ -122,12 +125,12 @@ class GeneratorTest {
   }
 
   @BeforeEach
-  void beforeEach(Vertx vertx, VertxTestContext testContext) throws Exception {
+  void beforeEach(Vertx vertx) throws Exception {
     workdir = tempDir.resolve(UUID.randomUUID().toString());
     Files.createDirectories(workdir);
     cleanupTasks = new ArrayList<>();
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
-    vertx.deployVerticle(new GeneratorVerticle()).onComplete(testContext.succeeding(id -> testContext.completeNow()));
+    vertx.deployVerticle(new GeneratorVerticle(), new DeploymentOptions().setThreadingModel(ThreadingModel.VIRTUAL_THREAD)).await();
   }
 
   @AfterEach
@@ -184,9 +187,9 @@ class GeneratorTest {
   @ParameterizedTest
   @MethodSource("testProjectsJdk17")
   @Tag("generator-17")
-  void testProjectJdk17(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+  void testProjectJdk17(VertxProject project, Vertx vertx) throws IOException {
     assumeThat(java17Home).isNotNull();
-    testProject(project, vertx, java17Home, testContext);
+    testProject(project, vertx, java17Home);
   }
 
   static Stream<VertxProject> testProjectsJdk17() throws IOException {
@@ -196,9 +199,9 @@ class GeneratorTest {
   @ParameterizedTest
   @MethodSource("testProjectsJdk21")
   @Tag("generator-21")
-  void testProjectJdk21(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+  void testProjectJdk21(VertxProject project, Vertx vertx) throws IOException {
     assumeThat(java21Home).isNotNull();
-    testProject(project, vertx, java21Home, testContext);
+    testProject(project, vertx, java21Home);
   }
 
   static Stream<VertxProject> testProjectsJdk21() throws IOException {
@@ -208,9 +211,9 @@ class GeneratorTest {
   @ParameterizedTest
   @MethodSource("testProjectsJdk25")
   @Tag("generator-25")
-  void testProjectJdk25(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+  void testProjectJdk25(VertxProject project, Vertx vertx) throws IOException {
     assumeThat(java25Home).isNotNull();
-    testProject(project, vertx, java25Home, testContext);
+    testProject(project, vertx, java25Home);
   }
 
   static Stream<VertxProject> testProjectsJdk25() throws IOException {
@@ -219,62 +222,48 @@ class GeneratorTest {
       .map(vertxProject -> vertxProject.setJdkVersion(JDK_25));
   }
 
-  private void testProject(VertxProject project, Vertx vertx, String javaHome, VertxTestContext testContext) {
-    vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project).onComplete(testContext.succeeding(msg -> {
-      unpack(vertx, workdir, msg.body(), testContext.succeeding(unpacked -> {
-        testContext.verify(() -> {
+  private void testProject(VertxProject project, Vertx vertx, String javaHome) throws IOException {
+    Message<Buffer> msg = vertx.eventBus().<Buffer>request(Topics.PROJECT_REQUESTED, project).await();
+    unpack(workdir, msg.body());
+    verifyBaseFiles();
 
-          verifyBaseFiles();
+    BuildTool buildTool = project.getBuildTool();
+    Language language = project.getLanguage();
+    if (buildTool == MAVEN) {
+      verifyMavenFiles();
+    } else if (buildTool == GRADLE) {
+      verifyGradleFiles(language);
+    } else {
+      throw new AssertionError(unsupported(buildTool));
+    }
 
-          BuildTool buildTool = project.getBuildTool();
-          Language language = project.getLanguage();
-          if (buildTool == MAVEN) {
-            verifyMavenFiles();
-          } else if (buildTool == GRADLE) {
-            verifyGradleFiles(language);
-          } else {
-            testContext.failNow(unsupported(buildTool));
-            return;
-          }
+    verifySourceFiles(language);
 
-          try {
-            verifySourceFiles(language);
-          } catch (IOException e) {
-            throw new AssertionError(e);
-          }
+    if (Utils.isWindows()) {
+      return;
+    }
 
-          if (Utils.isWindows()) {
-            testContext.completeNow();
-          } else {
+    buildProject(vertx, buildTool, javaHome);
 
-            buildProject(vertx, buildTool, javaHome, testContext.succeeding(projectBuilt -> {
-              testContext.verify(() -> {
+    switch (buildTool) {
+      case MAVEN -> {
+        try {
+          verifyMavenOutputFiles();
+        } catch (IOException e) {
+          throw new AssertionError(e);
+        }
+      }
+      case GRADLE -> {
+        try {
+          verifyGradleOutputFiles();
+        } catch (IOException e) {
+          throw new AssertionError(e);
+        }
+      }
+      default -> throw new AssertionError(unsupported(buildTool));
+    }
 
-                switch (buildTool) {
-                  case MAVEN -> {
-                    try {
-                      verifyMavenOutputFiles();
-                    } catch (IOException e) {
-                      throw new AssertionError(e);
-                    }
-                  }
-                  case GRADLE -> {
-                    try {
-                      verifyGradleOutputFiles();
-                    } catch (IOException e) {
-                      throw new AssertionError(e);
-                    }
-                  }
-                  default -> testContext.failNow(unsupported(buildTool));
-                }
-
-                runDevMode(vertx, buildTool, javaHome, testContext.succeeding(devModeRan -> testContext.completeNow()));
-              });
-            }));
-          }
-        });
-      }));
-    }));
+    runDevMode(vertx, buildTool, javaHome);
   }
 
   private void verifyBaseFiles() {
@@ -333,7 +322,7 @@ class GeneratorTest {
     }
   }
 
-  private void buildProject(Vertx vertx, BuildTool buildTool, String javaHome, Handler<AsyncResult<Void>> handler) {
+  private void buildProject(Vertx vertx, BuildTool buildTool, String javaHome) {
     ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
     processOptions.getEnv().put("JAVA_HOME", javaHome);
 
@@ -359,9 +348,11 @@ class GeneratorTest {
         .build()
         .collect(toList());
     } else {
-      handler.handle(Future.failedFuture(unsupported(buildTool)));
-      return;
+      throw new AssertionError(unsupported(buildTool));
     }
+
+    Promise<Void> completion = Promise.promise();
+
     Process.create(vertx, command, args, processOptions).startHandler(process -> {
       cleanupTasks.add(() -> process.kill(true));
       Buffer buffer = Buffer.buffer();
@@ -369,15 +360,17 @@ class GeneratorTest {
       process.stderr().handler(buffer::appendBuffer);
       process.exitHandler(code -> {
         if (code == 0) {
-          handler.handle(Future.succeededFuture());
+          completion.complete();
         } else {
-          handler.handle(Future.failedFuture(String.format("Failed to build project%n%s", buffer)));
+          completion.fail(String.format("Failed to build project%n%s", buffer));
         }
       });
     }).start();
+
+    completion.future().await();
   }
 
-  private void runDevMode(Vertx vertx, BuildTool buildTool, String javaHome, Handler<AsyncResult<Void>> handler) {
+  private void runDevMode(Vertx vertx, BuildTool buildTool, String javaHome) {
     ProcessOptions processOptions = new ProcessOptions().setCwd(workdir.toString());
     processOptions.getEnv().put("JAVA_HOME", javaHome);
 
@@ -390,59 +383,57 @@ class GeneratorTest {
       command = "./gradlew";
       args = Arrays.asList("clean", "run");
     } else {
-      handler.handle(Future.failedFuture(unsupported(buildTool)));
-      return;
+      throw new AssertionError(unsupported(buildTool));
     }
+
+    Promise<Void> completion = Promise.promise();
+
     Process.create(vertx, command, args, processOptions).startHandler(process -> {
       cleanupTasks.add(() -> process.kill(true));
-      Promise<Void> promise = Promise.promise();
-      promise.future().onComplete(handler);
       RecordParser parser = RecordParser.newDelimited("\n")
-        .exceptionHandler(promise::tryFail)
+        .exceptionHandler(completion::tryFail)
         .handler(buffer -> {
           String line = buffer.toString().trim();
           if (line.contains("HTTP server started on port 8888")) {
-            promise.tryComplete();
+            completion.tryComplete();
           }
         });
-      process.stdout().exceptionHandler(promise::tryFail).handler(parser);
+      process.stdout().exceptionHandler(completion::tryFail).handler(parser);
     }).start();
+
+    completion.future().await();
   }
 
   @SuppressWarnings("OctalInteger")
-  private void unpack(Vertx vertx, Path workdir, Buffer buffer, Handler<AsyncResult<Void>> handler) {
-    vertx.<Void>executeBlocking(() -> {
-      try (ByteArrayInputStream bais = new ByteArrayInputStream(buffer.getBytes());
-           TarArchiveInputStream ais = new TarArchiveInputStream(new GzipCompressorInputStream(bais))) {
+  private void unpack(Path workdir, Buffer buffer) throws IOException {
+    try (ByteArrayInputStream bais = new ByteArrayInputStream(buffer.getBytes());
+         TarArchiveInputStream ais = new TarArchiveInputStream(new GzipCompressorInputStream(bais))) {
 
-        TarArchiveEntry entry;
-        while ((entry = ais.getNextTarEntry()) != null) {
+      TarArchiveEntry entry;
+      while ((entry = ais.getNextEntry()) != null) {
 
-          if (!ais.canReadEntryData(entry)) {
-            throw new IOException("Can't read entry " + entry.getName());
+        if (!ais.canReadEntryData(entry)) {
+          throw new IOException("Can't read entry " + entry.getName());
+        }
+        File f = workdir.resolve(entry.getName()).toFile();
+        if (entry.isDirectory()) {
+          if (!f.isDirectory() && !f.mkdirs()) {
+            throw new IOException("Failed to create directory " + f);
           }
-          File f = workdir.resolve(entry.getName()).toFile();
-          if (entry.isDirectory()) {
-            if (!f.isDirectory() && !f.mkdirs()) {
-              throw new IOException("Failed to create directory " + f);
-            }
-          } else {
-            File parent = f.getParentFile();
-            if (!parent.isDirectory() && !parent.mkdirs()) {
-              throw new IOException("Failed to create directory " + parent);
-            }
-            try (OutputStream outputStream = Files.newOutputStream(f.toPath())) {
-              IOUtils.copy(ais, outputStream);
-              if (entry.getMode() == 0100744) {
-                f.setExecutable(true);
-              }
+        } else {
+          File parent = f.getParentFile();
+          if (!parent.isDirectory() && !parent.mkdirs()) {
+            throw new IOException("Failed to create directory " + parent);
+          }
+          try (OutputStream outputStream = Files.newOutputStream(f.toPath())) {
+            IOUtils.copy(ais, outputStream);
+            if (entry.getMode() == 0100744) {
+              f.setExecutable(true);
             }
           }
         }
-
-        return null;
       }
-    }, false).onComplete(handler);
+    }
   }
 
   private String unsupported(BuildTool buildTool) {

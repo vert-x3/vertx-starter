@@ -41,15 +41,17 @@ public class AnalyticsService {
   public void onProjectCreated(Message<VertxProject> message) {
     log.debug("Building analytics with on new project created");
     VertxProject project = message.body();
-    JsonObject document = toDocument(project);
-    Path path = analyticsDir.resolve(UUID.randomUUID().toString()).toAbsolutePath();
-    vertx.fileSystem().writeFile(path.toString(), document.toBuffer()).onFailure(t -> {
-      log.error("Failed to write file " + path, t);
-    });
+    var document = toDocument(project);
+    var path = analyticsDir.resolve(UUID.randomUUID().toString()).toAbsolutePath();
+    try {
+      vertx.fileSystem().writeFile(path.toString(), document.toBuffer()).await();
+    } catch (Exception e) {
+      log.error("Failed to write file {}", path, e);
+    }
   }
 
   private JsonObject toDocument(VertxProject project) {
-    JsonObject document = JsonObject.mapFrom(project);
+    var document = JsonObject.mapFrom(project);
     document.remove("id");
     document.remove("groupId");
     document.remove("artifactId");
