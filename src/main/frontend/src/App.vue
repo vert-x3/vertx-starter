@@ -56,6 +56,7 @@ export default {
         project-property="language"
         :values="store.languages"
         capitalize
+        @value-changed="store.onLanguageChanged"
       />
       <ButtonGroup
         form-label="Build"

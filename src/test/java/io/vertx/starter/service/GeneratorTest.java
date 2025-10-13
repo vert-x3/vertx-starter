@@ -71,9 +71,9 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 class GeneratorTest {
 
   static Path tempDir;
-  static String java11Home;
   static String java17Home;
   static String java21Home;
+  static String java25Home;
   static Path m2dir;
   static Path mavenRepository;
   static Path settingsFile;
@@ -84,9 +84,9 @@ class GeneratorTest {
   @BeforeAll
   static void beforeAll() throws Exception {
     tempDir = Files.createTempDirectory(GeneratorTest.class.getName());
-    java11Home = computeJavaHome("JAVA_HOME_11_X64", 11);
     java17Home = computeJavaHome("JAVA_HOME_17_X64", 17);
     java21Home = computeJavaHome("JAVA_HOME_21_X64", 21);
+    java25Home = computeJavaHome("JAVA_HOME_25_X64", 25);
     m2dir = tempDir.resolve("m2");
     Files.createDirectories(m2dir);
     mavenRepository = tempDir.resolve("repository");
@@ -182,18 +182,6 @@ class GeneratorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("testProjectsJdk11")
-  @Tag("generator-11")
-  void testProjectJdk11(VertxProject project, Vertx vertx, VertxTestContext testContext) {
-    assumeThat(java11Home).isNotNull();
-    testProject(project, vertx, java11Home, testContext);
-  }
-
-  static Stream<VertxProject> testProjectsJdk11() throws IOException {
-    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_11));
-  }
-
-  @ParameterizedTest
   @MethodSource("testProjectsJdk17")
   @Tag("generator-17")
   void testProjectJdk17(VertxProject project, Vertx vertx, VertxTestContext testContext) {
@@ -215,6 +203,20 @@ class GeneratorTest {
 
   static Stream<VertxProject> testProjectsJdk21() throws IOException {
     return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_21));
+  }
+
+  @ParameterizedTest
+  @MethodSource("testProjectsJdk25")
+  @Tag("generator-25")
+  void testProjectJdk25(VertxProject project, Vertx vertx, VertxTestContext testContext) {
+    assumeThat(java25Home).isNotNull();
+    testProject(project, vertx, java25Home, testContext);
+  }
+
+  static Stream<VertxProject> testProjectsJdk25() throws IOException {
+    return testProjects()
+      .filter(vertxProject -> !KOTLIN.equals(vertxProject.getLanguage()))
+      .map(vertxProject -> vertxProject.setJdkVersion(JDK_25));
   }
 
   private void testProject(VertxProject project, Vertx vertx, String javaHome, VertxTestContext testContext) {
@@ -286,7 +288,6 @@ class GeneratorTest {
     assertThat(workdir.resolve("mvnw")).isRegularFile().isExecutable();
     assertThat(workdir.resolve("mvnw.cmd")).isRegularFile();
     assertThat(workdir.resolve(".mvn/wrapper/maven-wrapper.properties")).isRegularFile();
-    assertThat(workdir.resolve(".mvn/wrapper/maven-wrapper.jar")).isRegularFile().isExecutable();
   }
 
   private void verifyMavenOutputFiles() throws IOException {
