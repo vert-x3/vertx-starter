@@ -30,6 +30,8 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static io.vertx.starter.config.ProjectConstants.*;
+import static io.vertx.starter.model.JdkVersion.JDK_25;
+import static io.vertx.starter.model.Language.KOTLIN;
 import static java.util.stream.Collectors.*;
 
 /**
@@ -130,6 +132,11 @@ public class ValidationHandler implements Handler<RoutingContext> {
     }
 
     if (!validateAndSetEnum(rc, JDK_VERSION, JdkVersion::fromString, vertxProject::setJdkVersion)) {
+      return;
+    }
+
+    if (KOTLIN.equals(vertxProject.getLanguage()) && JDK_25.equals(vertxProject.getJdkVersion())) {
+      WebVerticle.fail(rc, 400, "You cannot generate a Kotlin project for JDK version 25.");
       return;
     }
 

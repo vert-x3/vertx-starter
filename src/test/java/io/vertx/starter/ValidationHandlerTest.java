@@ -142,6 +142,12 @@ class ValidationHandlerTest {
     expectFailure(vertx, testContext, validator, params, ZIP.getFileExtension());
   }
 
+  @Test
+  void testKotlinAndJdk25(Vertx vertx, VertxTestContext testContext) {
+    MultiMap params = this.params.add(JDK_VERSION, "25").add(LANGUAGE, "kotlin");
+    expectFailure(vertx, testContext, validator, params, ZIP.getFileExtension());
+  }
+
   private void expectSuccess(Vertx vertx, VertxTestContext testContext, ValidationHandler validator, MultiMap params, String extension, VertxProject expected) {
     doTest(vertx, testContext, validator, params, extension, response -> {
       testContext.verify(() -> {
