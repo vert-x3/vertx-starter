@@ -17,23 +17,25 @@
 package io.vertx.starter.service;
 
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.ThreadingModel;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
-import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.AnalyticsVerticle;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
-import org.junit.jupiter.api.AfterEach;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -43,7 +45,8 @@ import static io.vertx.starter.model.ArchiveFormat.ZIP;
 import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.JdkVersion.JDK_17;
 import static io.vertx.starter.model.Language.KOTLIN;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Thomas Segismont
@@ -55,22 +58,17 @@ class AnalyticsTest {
   Path analyticsDir;
 
   @BeforeEach
-  void beforeEach(Vertx vertx, VertxTestContext testContext) {
+  void beforeEach(Vertx vertx) {
     vertx.eventBus().registerDefaultCodec(VertxProject.class, new VertxProjectCodec());
 
-    JsonObject config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
-    DeploymentOptions options = new DeploymentOptions().setConfig(config);
-    vertx.deployVerticle(new AnalyticsVerticle(), options).onComplete(testContext.succeeding(id -> testContext.completeNow()));
-  }
-
-  @AfterEach
-  void afterEach(VertxTestContext testContext) {
-    testContext.completeNow();
+    var config = new JsonObject().put(ANALYTICS_DIR_CONF, analyticsDir.toString());
+    var options = new DeploymentOptions().setConfig(config).setThreadingModel(ThreadingModel.VIRTUAL_THREAD);
+    vertx.deployVerticle(new AnalyticsVerticle(), options).await();
   }
 
   @Test
-  void projectPersisted(Vertx vertx, VertxTestContext testContext) {
-    VertxProject vertxProject = new VertxProject()
+  void projectPersisted(Vertx vertx) throws Exception {
+    var vertxProject = new VertxProject()
       .setId("should-not-persist")
       .setGroupId("should-not-persist")
       .setArtifactId("should-not-persist")
@@ -83,32 +81,32 @@ class AnalyticsTest {
       .setJdkVersion(JDK_17)
       .setOperatingSystem("Other")
       .setCreatedOn(Instant.now());
+
     vertx.eventBus().publish(Topics.PROJECT_CREATED, vertxProject);
-    Checkpoint checkpoint = testContext.laxCheckpoint();
-    vertx.setPeriodic(20, id -> {
-      vertx.fileSystem().readDir(analyticsDir.toString()).onComplete(testContext.succeeding(ls -> {
-        if (ls.isEmpty()) {
-          return;
+
+    Awaitility.with()
+      .pollInterval(Duration.ofMillis(20))
+      .ignoreExceptions()
+      .until(() -> {
+        try (var files = Files.list(analyticsDir)) {
+          return files.findFirst().isPresent();
         }
-        testContext.verify(() -> assertEquals(1, ls.size()));
-        String file = analyticsDir.resolve(ls.get(0)).toString();
-        vertx.fileSystem().readFile(file).onComplete(testContext.succeeding(buffer -> {
-          JsonObject document = new JsonObject(buffer);
-          testContext.verify(() -> {
-            assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-            assertEquals(vertxProject.getLanguage().getName(), document.getString("language"));
-            assertEquals(vertxProject.getBuildTool().getValue(), document.getString("buildTool"));
-            assertEquals(vertxProject.getVertxVersion(), document.getString("vertxVersion"));
-            assertEquals(vertxProject.getVertxDependencies(), Set.copyOf(document.getJsonArray("vertxDependencies").getList()));
-            assertEquals(vertxProject.getArchiveFormat().toString().toLowerCase(Locale.ROOT), document.getString("archiveFormat"));
-            assertEquals(vertxProject.getJdkVersion().getValue(), document.getString("jdkVersion"));
-            assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
-            assertEquals(vertxProject.getCreatedOn(), document.getInstant("createdOn"));
-            assertTrue(vertx.cancelTimer(id));
-            checkpoint.flag();
-          });
-        }));
-      }));
-    });
+      });
+
+    try (var pathStream = Files.list(analyticsDir)) {
+      List<Path> files = pathStream.toList();
+      assertEquals(1, files.size());
+
+      var document = new JsonObject(Files.readString(files.getFirst()));
+      assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
+      assertEquals(vertxProject.getLanguage().getName(), document.getString("language"));
+      assertEquals(vertxProject.getBuildTool().getValue(), document.getString("buildTool"));
+      assertEquals(vertxProject.getVertxVersion(), document.getString("vertxVersion"));
+      assertEquals(vertxProject.getVertxDependencies(), Set.copyOf(document.getJsonArray("vertxDependencies").getList()));
+      assertEquals(vertxProject.getArchiveFormat().toString().toLowerCase(Locale.ROOT), document.getString("archiveFormat"));
+      assertEquals(vertxProject.getJdkVersion().getValue(), document.getString("jdkVersion"));
+      assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
+      assertEquals(vertxProject.getCreatedOn(), document.getInstant("createdOn"));
+    }
   }
 }

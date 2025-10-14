@@ -1,11 +1,11 @@
 package io.vertx.starter.service;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
+
+import static java.util.Comparator.reverseOrder;
 
 public class TempDir implements AutoCloseable {
 
@@ -21,19 +21,9 @@ public class TempDir implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    Files.walkFileTree(path, new SimpleFileVisitor<>() {
-      @Override
-      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        Files.delete(file);
-        return FileVisitResult.CONTINUE;
-      }
-
-      @Override
-      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        Files.delete(dir);
-        return FileVisitResult.CONTINUE;
-      }
-    });
+    try (var pathStream = Files.walk(path)) {
+      pathStream.sorted(reverseOrder()).map(Path::toFile).forEach(File::delete);
+    }
   }
 
   public static TempDir create() throws IOException {
