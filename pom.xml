@@ -208,6 +208,9 @@
           <argLine>
             --enable-native-access=ALL-UNNAMED
           </argLine>
+          <systemPropertyVariables>
+            <net.bytebuddy.safe>true</net.bytebuddy.safe>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
