@@ -21,18 +21,21 @@ import io.vertx.core.ThreadingModel;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
-import io.vertx.junit5.VertxTestContext;
 import io.vertx.starter.AnalyticsVerticle;
 import io.vertx.starter.VertxProjectCodec;
 import io.vertx.starter.config.Topics;
 import io.vertx.starter.model.VertxProject;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -42,7 +45,8 @@ import static io.vertx.starter.model.ArchiveFormat.ZIP;
 import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.JdkVersion.JDK_17;
 import static io.vertx.starter.model.Language.KOTLIN;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Thomas Segismont
@@ -63,7 +67,7 @@ class AnalyticsTest {
   }
 
   @Test
-  void projectPersisted(Vertx vertx, VertxTestContext testContext) {
+  void projectPersisted(Vertx vertx) throws Exception {
     var vertxProject = new VertxProject()
       .setId("should-not-persist")
       .setGroupId("should-not-persist")
@@ -77,32 +81,32 @@ class AnalyticsTest {
       .setJdkVersion(JDK_17)
       .setOperatingSystem("Other")
       .setCreatedOn(Instant.now());
+
     vertx.eventBus().publish(Topics.PROJECT_CREATED, vertxProject);
-    var checkpoint = testContext.laxCheckpoint();
-    vertx.setPeriodic(20, id -> {
-      vertx.fileSystem().readDir(analyticsDir.toString()).onComplete(testContext.succeeding(ls -> {
-        if (ls.isEmpty()) {
-          return;
+
+    Awaitility.with()
+      .pollInterval(Duration.ofMillis(20))
+      .ignoreExceptions()
+      .until(() -> {
+        try (var files = Files.list(analyticsDir)) {
+          return files.findFirst().isPresent();
         }
-        testContext.verify(() -> assertEquals(1, ls.size()));
-        var file = analyticsDir.resolve(ls.get(0)).toString();
-        vertx.fileSystem().readFile(file).onComplete(testContext.succeeding(buffer -> {
-          var document = new JsonObject(buffer);
-          testContext.verify(() -> {
-            assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
-            assertEquals(vertxProject.getLanguage().getName(), document.getString("language"));
-            assertEquals(vertxProject.getBuildTool().getValue(), document.getString("buildTool"));
-            assertEquals(vertxProject.getVertxVersion(), document.getString("vertxVersion"));
-            assertEquals(vertxProject.getVertxDependencies(), Set.copyOf(document.getJsonArray("vertxDependencies").getList()));
-            assertEquals(vertxProject.getArchiveFormat().toString().toLowerCase(Locale.ROOT), document.getString("archiveFormat"));
-            assertEquals(vertxProject.getJdkVersion().getValue(), document.getString("jdkVersion"));
-            assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
-            assertEquals(vertxProject.getCreatedOn(), document.getInstant("createdOn"));
-            assertTrue(vertx.cancelTimer(id));
-            checkpoint.flag();
-          });
-        }));
-      }));
-    });
+      });
+
+    try (var pathStream = Files.list(analyticsDir)) {
+      List<Path> files = pathStream.toList();
+      assertEquals(1, files.size());
+
+      var document = new JsonObject(Files.readString(files.getFirst()));
+      assertFalse(Stream.of("id", "groupId", "artifactId", "packageName").anyMatch(document::containsKey));
+      assertEquals(vertxProject.getLanguage().getName(), document.getString("language"));
+      assertEquals(vertxProject.getBuildTool().getValue(), document.getString("buildTool"));
+      assertEquals(vertxProject.getVertxVersion(), document.getString("vertxVersion"));
+      assertEquals(vertxProject.getVertxDependencies(), Set.copyOf(document.getJsonArray("vertxDependencies").getList()));
+      assertEquals(vertxProject.getArchiveFormat().toString().toLowerCase(Locale.ROOT), document.getString("archiveFormat"));
+      assertEquals(vertxProject.getJdkVersion().getValue(), document.getString("jdkVersion"));
+      assertEquals(vertxProject.getOperatingSystem(), document.getString("operatingSystem"));
+      assertEquals(vertxProject.getCreatedOn(), document.getInstant("createdOn"));
+    }
   }
 }
