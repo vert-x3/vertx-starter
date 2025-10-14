@@ -90,20 +90,12 @@
 </#noparse>
 </#if>
 </#if>
-<#if hasPgClient>
-<#if vertxVersion?starts_with("5.")>
+<#if hasPgClient && vertxVersion?starts_with("4.")>
   <dependency>
     <groupId>com.ongres.scram</groupId>
-    <artifactId>scram-client</artifactId>
-    <version>3.1</version>
+    <artifactId>client</artifactId>
+    <version>2.1</version>
   </dependency>
-<#else>
-  <dependency>
-  <groupId>com.ongres.scram</groupId>
-  <artifactId>client</artifactId>
-  <version>2.1</version>
-  </dependency>
-</#if>
 </#if>
 
 <#if hasVertxJUnit5>
@@ -155,15 +147,9 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
-<#noparse>
-        <version>${kotlin.version}</version>
-</#noparse>
+        <version>2.2.20</version>
         <configuration>
-<#if vertxVersion?starts_with("5.")>
-          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '21' '21', '17')}</jvmTarget>
-<#else>
-          <jvmTarget>${jdkVersion?switch('11', '11', '17' '17', '17')}</jvmTarget>
-</#if>
+          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '25' '25', '17')}</jvmTarget>
         </configuration>
         <executions>
           <execution>

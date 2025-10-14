@@ -15,17 +15,17 @@ jobs:
     name: Run tests
     strategy:
       matrix:
-        profile: [ generator-tests-jdk11,generator-tests-jdk17,generator-tests-jdk21,no-generator-tests ]
+        profile: [ generator-tests-jdk17,generator-tests-jdk21,generator-tests-jdk25,no-generator-tests ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: |
-            11
-            21
             17
+            21
+            25
       - uses: dcarbone/install-jq-action@v2
         with:
           version: '1.7'

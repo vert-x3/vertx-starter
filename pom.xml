@@ -9,10 +9,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
     <!-- vert.x properties -->
     <!-- It is not required to update this property when a new Vert.x version is released -->
-    <vertx.version>5.0.3</vertx.version>
+    <vertx.version>5.0.4</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>2.0.2</vertx-maven-plugin.version>
@@ -23,7 +23,7 @@
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-bom</artifactId>
-        <version>2.25.1</version>
+        <version>2.25.2</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -103,13 +103,13 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.27.4</version>
+      <version>3.27.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.reactiverse</groupId>
-      <artifactId>reactiverse-child-process</artifactId>
-      <version>3.0.0</version>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>4.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -125,7 +125,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.15.1</version>
+        <version>1.15.4</version>
         <configuration>
           <nodeVersion>v22.18.0</nodeVersion>
           <npmVersion>10.9.3</npmVersion>
@@ -198,12 +198,17 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.14.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.4</version>
+        <configuration>
+          <argLine>
+            --enable-native-access=ALL-UNNAMED
+          </argLine>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>io.reactiverse</groupId>
@@ -232,20 +237,6 @@
 
   <profiles>
     <profile>
-      <id>generator-tests-jdk11</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <groups>generator-11</groups>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>generator-tests-jdk17</id>
       <build>
         <plugins>
@@ -268,6 +259,20 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <groups>generator-21</groups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>generator-tests-jdk25</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <groups>generator-25</groups>
             </configuration>
           </plugin>
         </plugins>

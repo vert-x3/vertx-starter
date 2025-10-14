@@ -91,5 +91,15 @@ export const store = {
     if (idx >= 0) {
       store.project.vertxDependencies.splice(idx, 1)
     }
+  },
+  onLanguageChanged() {
+    if (store.project.language === 'kotlin') {
+      if (store.project.jdkVersion === '25') {
+        store.project.jdkVersion = '21'
+      }
+    }
+  },
+  isProjectPropertyDisabled(property, value) {
+    return property === 'jdkVersion' && value === '25' && store.project.language === 'kotlin';
   }
 }
