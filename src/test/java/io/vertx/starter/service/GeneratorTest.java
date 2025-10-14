@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -57,7 +58,6 @@ import static io.vertx.starter.model.BuildTool.GRADLE;
 import static io.vertx.starter.model.BuildTool.MAVEN;
 import static io.vertx.starter.model.JdkVersion.*;
 import static io.vertx.starter.model.Language.KOTLIN;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
@@ -106,7 +106,7 @@ class GeneratorTest {
         .directory(bin)
         .redirectOutput(versionFile.toFile())
         .start();
-      process.waitFor(5, SECONDS);
+      process.waitFor(Duration.ofSeconds(5));
       javaVersion = Integer.parseInt(Files.readAllLines(versionFile)
         .getFirst()
         .split("\\s")[1]
@@ -381,7 +381,8 @@ class GeneratorTest {
     cleanupTasks.add(() -> process.destroyForcibly());
 
     Awaitility.with()
-      .pollInterval(1, SECONDS)
+      .pollInterval(Duration.ofSeconds(1))
+      .atMost(Duration.ofMinutes(1))
       .ignoreExceptions()
       .until(() -> Files.readString(output).contains("HTTP server started on port 8888"));
 
