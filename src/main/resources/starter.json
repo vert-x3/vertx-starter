@@ -27,7 +27,7 @@
       ]
     },
     {
-      "number": "5.0.6-SNAPSHOT",
+      "number": "5.0.7-SNAPSHOT",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
