@@ -5,14 +5,14 @@
 
   <groupId>io.vertx</groupId>
   <artifactId>vertx-starter</artifactId>
-  <version>3.10</version>
+  <version>3.11</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>25</maven.compiler.release>
     <!-- vert.x properties -->
     <!-- It is not required to update this property when a new Vert.x version is released -->
-    <vertx.version>5.0.4</vertx.version>
+    <vertx.version>5.0.7</vertx.version>
     <vertx.verticle>io.vertx.starter.MainVerticle</vertx.verticle>
     <!-- Maven plugins -->
     <vertx-maven-plugin.version>2.0.2</vertx-maven-plugin.version>
@@ -23,7 +23,7 @@
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-bom</artifactId>
-        <version>2.25.2</version>
+        <version>2.25.3</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.13.4</version>
+        <version>6.0.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -115,7 +115,7 @@
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>3.50.3.0</version>
+      <version>3.51.1.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -125,7 +125,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.15.4</version>
+        <version>2.0.0</version>
         <configuration>
           <nodeVersion>v22.18.0</nodeVersion>
           <npmVersion>10.9.3</npmVersion>
@@ -175,7 +175,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>3.4.0</version>
         <executions>
           <execution>
             <id>copy-to-webroot</id>
@@ -208,6 +208,9 @@
           <argLine>
             --enable-native-access=ALL-UNNAMED
           </argLine>
+          <systemPropertyVariables>
+            <net.bytebuddy.safe>true</net.bytebuddy.safe>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
