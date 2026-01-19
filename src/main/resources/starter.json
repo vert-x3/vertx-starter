@@ -4,7 +4,7 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "5.0.6",
+    "vertxVersion": "5.0.7",
     "archiveFormat": "zip",
     "jdkVersion": "17"
   },
