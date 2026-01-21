@@ -18,6 +18,9 @@
     <kotlin.version>1.7.21</kotlin.version>
 </#if>
 
+<#elseif language == "scala">
+    <scala.version>3.5.2</scala.version>
+    <scalatest.version>3.2.19</scalatest.version>
 <#else>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 </#if>
@@ -89,6 +92,20 @@
     </dependency>
 </#noparse>
 </#if>
+
+<#elseif language == "scala">
+<#noparse>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala3-library_3</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-lang-scala_3</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+</#noparse>
 </#if>
 <#if hasPgClient && vertxVersion?starts_with("4.")>
   <dependency>
@@ -98,7 +115,22 @@
   </dependency>
 </#if>
 
-<#if hasVertxJUnit5>
+<#if language == "scala">
+<#noparse>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-lang-scala-test_3</artifactId>
+      <version>${vertx.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_3</artifactId>
+      <version>${scalatest.version}</version>
+      <scope>test</scope>
+    </dependency>
+</#noparse>
+<#elseif hasVertxJUnit5>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-junit5</artifactId>
@@ -141,6 +173,11 @@
       <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
       <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 </#noparse>
+<#elseif language == "scala">
+<#noparse>
+      <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
+      <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
+</#noparse>
 </#if>
     <plugins>
 <#if language == "kotlin">
@@ -162,6 +199,52 @@
             <id>test-compile</id>
             <goals>
               <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+<#elseif language == "scala">
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>4.9.2</version>
+        <configuration>
+          <args>
+            <arg>-feature</arg>
+            <arg>-deprecation</arg>
+          </args>
+        </configuration>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <configuration>
+<#noparse>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+</#noparse>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
             </goals>
           </execution>
         </executions>
@@ -214,6 +297,11 @@
 <#noparse>
         <version>${maven-surefire-plugin.version}</version>
 </#noparse>
+<#if language == "scala">
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+</#if>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

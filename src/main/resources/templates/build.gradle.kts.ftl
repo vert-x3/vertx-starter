@@ -12,6 +12,8 @@ plugins {
 <#else>
   kotlin ("jvm") version "2.0.0"
 </#if>
+<#elseif language == "scala">
+  scala
 <#else>
   java
 </#if>
@@ -66,11 +68,18 @@ dependencies {
 </#list>
 <#if language == "kotlin" && vertxVersion?starts_with("4.")>
   implementation(kotlin("stdlib-jdk8"))
+<#elseif language == "scala">
+  implementation("org.scala-lang:scala3-library_3:3.5.2")
+  implementation("io.vertx:vertx-lang-scala_3:${vertxVersion}")
 </#if>
 <#if hasPgClient && vertxVersion?starts_with("4.")>
   implementation("com.ongres.scram:client:2.1")
 </#if>
-<#if hasVertxJUnit5>
+<#if language == "scala">
+  testImplementation("io.vertx:vertx-lang-scala-test_3:${vertxVersion}")
+  testImplementation("org.scalatest:scalatest_3:3.2.19")
+  testRuntimeOnly("org.scalatestplus:junit-5-11_3:3.2.19.0")
+<#elseif hasVertxJUnit5>
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -109,7 +118,9 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Test> {
-<#if hasVertxJUnit5>
+<#if language == "scala">
+  useJUnitPlatform()
+<#elseif hasVertxJUnit5>
   useJUnitPlatform()
 <#elseif hasVertxUnit>
   useJUnit()
