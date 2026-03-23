@@ -21,7 +21,6 @@ import { CliConstants } from '@/cli'
 import { saveAs } from 'file-saver'
 import ClipboardJS from 'clipboard'
 import { Tooltip } from 'bootstrap'
-import hotkeys from 'hotkeys-js'
 
 const parsedResult = Bowser.parse(window.navigator.userAgent)
 
@@ -141,12 +140,27 @@ export default {
     new ClipboardJS('.btn-clip')
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     tooltipTriggerList.forEach((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl))
-    hotkeys('command+enter,alt+enter', (event) => {
-      event.preventDefault()
-      if (store.invalidFields.value.size === 0) {
-        this.generate()
+
+    // Add keyboard shortcut listener
+    this.handleKeydown = (event) => {
+      const isCommandEnter = (event.metaKey || event.ctrlKey) && event.key === 'Enter'
+      const isAltEnter = event.altKey && event.key === 'Enter'
+
+      if (isCommandEnter || isAltEnter) {
+        event.preventDefault()
+        if (store.invalidFields.value.size === 0) {
+          this.generate()
+        }
       }
-    })
+    }
+
+    window.addEventListener('keydown', this.handleKeydown)
+  },
+  unmounted() {
+    // Clean up event listener
+    if (this.handleKeydown) {
+      window.removeEventListener('keydown', this.handleKeydown)
+    }
   }
 }
 </script>
