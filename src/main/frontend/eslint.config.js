@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import pluginVue from 'eslint-plugin-vue'
 import vuePrettierConfig from '@vue/eslint-config-prettier/skip-formatting'
 import js from '@eslint/js'
+import globals from 'globals'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -25,7 +26,10 @@ export default [
   {
     name: 'app/language-options',
     languageOptions: {
-      ecmaVersion: 'latest'
+      ecmaVersion: 'latest',
+      globals: {
+        ...globals.browser
+      }
     }
   }
 ]
