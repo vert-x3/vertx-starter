@@ -2,12 +2,16 @@ name: "Set versions"
 on:
   workflow_dispatch:
     inputs:
-      stableVersion:
-        description: 'Vert.x stable version, e.g 1.2.3'
+      oldStableVersion:
+        description: 'Vert.x old stable version, e.g. 4.5.24'
         required: true
         type: string
-      stableSnapshotVersion:
-        description: 'Vert.x stable snapshot version, e.g. 1.2.4-SNAPSHOT'
+      currentStableVersion:
+        description: 'Vert.x current stable version, e.g. 5.0.7'
+        required: true
+        type: string
+      snapshotVersion:
+        description: 'Vert.x snapshot version, e.g. 5.0.8-SNAPSHOT'
         required: true
         type: string
 jobs:
@@ -31,10 +35,11 @@ jobs:
           version: '1.7'
           force: true
       - name: Set versions
-        run: bash .gh.set-versions.bash $STABLE_VERSION $STABLE_SNAPSHOT_VERSION
+        run: bash .gh.set-versions.bash $OLD_STABLE_VERSION $CURRENT_STABLE_VERSION $SNAPSHOT_VERSION
         env:
-          STABLE_VERSION: ${{ inputs.stableVersion }}
-          STABLE_SNAPSHOT_VERSION: ${{ inputs.stableSnapshotVersion }}
+          OLD_STABLE_VERSION: ${{ inputs.oldStableVersion }}
+          CURRENT_STABLE_VERSION: ${{ inputs.currentStableVersion }}
+          SNAPSHOT_VERSION: ${{ inputs.snapshotVersion }}
       - name: Run tests
         run: mvn test -P ${{ matrix.profile }}
   Update-repo:
@@ -47,17 +52,19 @@ jobs:
           version: '1.7'
           force: true
       - name: Set versions
-        run: bash .gh.set-versions.bash $STABLE_VERSION $STABLE_SNAPSHOT_VERSION
+        run: bash .gh.set-versions.bash $OLD_STABLE_VERSION $CURRENT_STABLE_VERSION $SNAPSHOT_VERSION
         env:
-          STABLE_VERSION: ${{ inputs.stableVersion }}
-          STABLE_SNAPSHOT_VERSION: ${{ inputs.stableSnapshotVersion }}
+          OLD_STABLE_VERSION: ${{ inputs.oldStableVersion }}
+          CURRENT_STABLE_VERSION: ${{ inputs.currentStableVersion }}
+          SNAPSHOT_VERSION: ${{ inputs.snapshotVersion }}
       - name: Commit and push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add src/main/resources/starter.json
-          git commit -m "Update stable version to $STABLE_VERSION and stable snapshot version to $STABLE_SNAPSHOT_VERSION"
+          git commit -m "Update Vert.x versions to $OLD_STABLE_VERSION, $CURRENT_STABLE_VERSION and $SNAPSHOT_VERSION"
           git push
         env:
-          STABLE_VERSION: ${{ inputs.stableVersion }}
-          STABLE_SNAPSHOT_VERSION: ${{ inputs.stableSnapshotVersion }}
+          OLD_STABLE_VERSION: ${{ inputs.oldStableVersion }}
+          CURRENT_STABLE_VERSION: ${{ inputs.currentStableVersion }}
+          SNAPSHOT_VERSION: ${{ inputs.snapshotVersion }}

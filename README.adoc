@@ -76,7 +76,7 @@ https://start.vertx.io/metadata
 
 === Building fat jar
 
-In order to build it, you will need Java 17.
+In order to build it, you will need Java 25.
 
 [source,shell]
 ----
