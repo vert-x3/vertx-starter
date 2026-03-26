@@ -68,3 +68,10 @@ jobs:
           OLD_STABLE_VERSION: ${{ inputs.oldStableVersion }}
           CURRENT_STABLE_VERSION: ${{ inputs.currentStableVersion }}
           SNAPSHOT_VERSION: ${{ inputs.snapshotVersion }}
+  Deploy:
+    name: Deploy to starter machine
+    if: ${{ github.repository_owner == 'vert-x3' && github.ref == 'refs/heads/prod' }}
+    needs: [Test, Update-repo]
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
