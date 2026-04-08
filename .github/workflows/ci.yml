@@ -32,19 +32,6 @@ jobs:
     name: Deploy to starter machine
     if: ${{ github.repository_owner == 'vert-x3' && github.event_name == 'push' && github.ref == 'refs/heads/prod' }}
     needs: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 25
-      - name: Setup SSH
-        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-host: 13.94.149.21
-      - name: Assemble
-        run: mvn package -DskipTests
-      - name: Run deployment script
-        run: bash .gh.deploy.bash
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

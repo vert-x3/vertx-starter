@@ -10,7 +10,7 @@ plugins {
 <#if vertxVersion?starts_with("5.")>
   kotlin ("jvm") version "2.2.20"
 <#else>
-  kotlin ("jvm") version "2.0.0"
+  kotlin ("jvm") version "2.1.21"
 </#if>
 <#else>
   java
@@ -81,18 +81,34 @@ dependencies {
 }
 
 <#if language == "kotlin">
+<#if vertxVersion?starts_with("5.")>
 kotlin {
   compilerOptions {
-    jvmTarget = JvmTarget.fromTarget("${jdkVersion?switch('17' '17', '21' '21', '25' '25', '17')}")
-<#if vertxVersion?starts_with("5.")>
+    jvmTarget = JvmTarget.fromTarget("${jdkVersion?switch('17' '17', '21' '21', '25' '24', '17')}")
     languageVersion = KotlinVersion.fromVersion("2.0")
     apiVersion = KotlinVersion.fromVersion("2.0")
-  <#else>
-    languageVersion = KotlinVersion.fromVersion("1.7")
-    apiVersion = KotlinVersion.fromVersion("1.7")
-  </#if>
   }
 }
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_${jdkVersion?switch('17' '17', '21' '21', '25' '24', '17')?replace(".", "_")}
+  targetCompatibility = JavaVersion.VERSION_${jdkVersion?switch('17' '17', '21' '21', '25' '24', '17')?replace(".", "_")}
+}
+<#else>
+kotlin {
+  compilerOptions {
+    jvmTarget = JvmTarget.fromTarget("${jdkVersion?switch('17' '17', '21' '21', '25' '21', '17')}")
+    languageVersion = KotlinVersion.fromVersion("1.7")
+    apiVersion = KotlinVersion.fromVersion("1.7")
+  }
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_${jdkVersion?switch('17' '17', '21' '21', '25' '21', '17')?replace(".", "_")}
+  targetCompatibility = JavaVersion.VERSION_${jdkVersion?switch('17' '17', '21' '21', '25' '21', '17')?replace(".", "_")}
+}
+</#if>
+
 <#else>
 java {
   sourceCompatibility = JavaVersion.VERSION_${jdkVersion?replace(".", "_")}

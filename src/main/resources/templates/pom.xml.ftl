@@ -13,9 +13,9 @@
 
 <#if language == "kotlin">
 <#if vertxVersion?starts_with("5.")>
-    <kotlin.version>2.0.0</kotlin.version>
+    <kotlin.version>2.2.20</kotlin.version>
 <#else>
-    <kotlin.version>1.7.21</kotlin.version>
+    <kotlin.version>2.1.21</kotlin.version>
 </#if>
 
 <#else>
@@ -147,9 +147,15 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
-        <version>2.2.20</version>
+<#noparse>
+        <version>${kotlin.version}</version>
+</#noparse>
         <configuration>
-          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '25' '25', '17')}</jvmTarget>
+<#if vertxVersion?starts_with("5.")>
+          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '25' '24', '17')}</jvmTarget>
+<#else>
+          <jvmTarget>${jdkVersion?switch('17' '17', '21' '21', '25' '21', '17')}</jvmTarget>
+</#if>
         </configuration>
         <executions>
           <execution>
