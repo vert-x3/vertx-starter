@@ -72,7 +72,6 @@ export default {
             v-model="store.project[projectProperty]"
             :checked="value === store.project[projectProperty]"
             @change="$emit('valueChanged')"
-            :disabled="store.isProjectPropertyDisabled(projectProperty, value)"
           />
           <label class="btn btn-outline-primary" :for="inputId(i)">{{
             formatRadioLabel(value)
