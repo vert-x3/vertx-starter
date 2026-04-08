@@ -132,8 +132,8 @@ public class GeneratorService {
 
     if (project.getBuildTool() == GRADLE) {
       var gradleFilesBase = switch (jdkVersion) {
-        case JDK_17, JDK_21 -> "files/gradle-8.14.3";
-        default -> "files/gradle-9.1.0";
+        case JDK_17, JDK_21 -> "files/gradle-8.14.4";
+        default -> "files/gradle-9.4.1";
       };
       copy(tempDir, gradleFilesBase, "gradlew");
       copy(tempDir, gradleFilesBase, "gradlew.bat");

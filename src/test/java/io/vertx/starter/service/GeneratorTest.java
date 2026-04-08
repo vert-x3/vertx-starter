@@ -213,9 +213,7 @@ class GeneratorTest {
   }
 
   static Stream<VertxProject> testProjectsJdk25() throws Exception {
-    return testProjects()
-      .filter(vertxProject -> !KOTLIN.equals(vertxProject.getLanguage()))
-      .map(vertxProject -> vertxProject.setJdkVersion(JDK_25));
+    return testProjects().map(vertxProject -> vertxProject.setJdkVersion(JDK_25));
   }
 
   private void testProject(VertxProject project, Vertx vertx, String javaHome) throws Exception {
