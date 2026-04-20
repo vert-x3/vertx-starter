@@ -22,18 +22,14 @@ jobs:
         profile: [ generator-tests-jdk17,generator-tests-jdk21,generator-tests-jdk25,no-generator-tests ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: |
             17
             21
             25
-      - uses: dcarbone/install-jq-action@v2
-        with:
-          version: '1.7'
-          force: true
       - name: Set versions
         run: bash .gh.set-versions.bash $OLD_STABLE_VERSION $CURRENT_STABLE_VERSION $SNAPSHOT_VERSION
         env:
@@ -46,11 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - uses: dcarbone/install-jq-action@v2
-        with:
-          version: '1.7'
-          force: true
+        uses: actions/checkout@v6
       - name: Set versions
         run: bash .gh.set-versions.bash $OLD_STABLE_VERSION $CURRENT_STABLE_VERSION $SNAPSHOT_VERSION
         env:
