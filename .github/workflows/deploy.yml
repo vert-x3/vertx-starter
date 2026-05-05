@@ -1,6 +1,10 @@
 name: Deploy
 on:
   workflow_call:
+    inputs:
+      sha:
+        required: false
+        type: string
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -11,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.sha || github.sha }}
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'

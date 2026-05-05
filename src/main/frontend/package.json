@@ -18,18 +18,18 @@
     "clipboard": "^2.0.11",
     "file-saver": "^2.0.5",
     "lodash": "^4.18.1",
-    "vue": "^3.5.32"
+    "vue": "^3.5.33"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.5",
     "@eslint/js": "^10.0.1",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "eslint": "^10.2.0",
+    "eslint": "^10.3.0",
     "eslint-plugin-vue": "^10.8.0",
-    "globals": "^17.5.0",
+    "globals": "^17.6.0",
     "prettier": "^3.8.3",
     "sass": "^1.99.0",
-    "vite": "^8.0.8"
+    "vite": "^8.0.10"
   }
 }
