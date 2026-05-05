@@ -40,6 +40,8 @@ jobs:
         run: mvn test -P ${{ matrix.profile }}
   Update-repo:
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.push.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -50,12 +52,14 @@ jobs:
           CURRENT_STABLE_VERSION: ${{ inputs.currentStableVersion }}
           SNAPSHOT_VERSION: ${{ inputs.snapshotVersion }}
       - name: Commit and push
+        id: push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add src/main/resources/starter.json
           git commit -m "Update Vert.x versions to $OLD_STABLE_VERSION, $CURRENT_STABLE_VERSION and $SNAPSHOT_VERSION"
           git push
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
         env:
           OLD_STABLE_VERSION: ${{ inputs.oldStableVersion }}
           CURRENT_STABLE_VERSION: ${{ inputs.currentStableVersion }}
@@ -65,5 +69,7 @@ jobs:
     if: ${{ github.repository_owner == 'vert-x3' && github.ref == 'refs/heads/prod' }}
     needs: [Test, Update-repo]
     uses: ./.github/workflows/deploy.yml
+    with:
+      sha: ${{ needs.Update-repo.outputs.sha }}
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
