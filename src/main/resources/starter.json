@@ -10,7 +10,7 @@
   },
   "versions": [
     {
-      "number": "4.5.27",
+      "number": "4.5.28",
       "exclusions": [
         "vertx-auth-webauthn4j",
         "vertx-auth-abac"
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "number": "5.2.0-SNAPSHOT",
+      "number": "5.2.0-SNASPHOT",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
