@@ -4,7 +4,7 @@
     "artifactId": "starter",
     "language": "java",
     "buildTool": "maven",
-    "vertxVersion": "5.1.1",
+    "vertxVersion": "5.1.2",
     "archiveFormat": "zip",
     "jdkVersion": "17"
   },
@@ -17,7 +17,7 @@
       ]
     },
     {
-      "number": "5.1.1",
+      "number": "5.1.2",
       "exclusions": [
         "vertx-web-openapi",
         "vertx-auth-shiro",
