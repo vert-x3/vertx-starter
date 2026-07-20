@@ -10,7 +10,7 @@
   },
   "versions": [
     {
-      "number": "4.5.30",
+      "number": "4.5.31",
       "exclusions": [
         "vertx-auth-webauthn4j",
         "vertx-auth-abac"
