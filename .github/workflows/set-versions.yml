@@ -3,15 +3,15 @@ on:
   workflow_dispatch:
     inputs:
       oldStableVersion:
-        description: 'Vert.x old stable version, e.g. 4.5.24'
+        description: 'Vert.x old stable version, e.g. 4.5.28'
         required: true
         type: string
       currentStableVersion:
-        description: 'Vert.x current stable version, e.g. 5.0.7'
+        description: 'Vert.x current stable version, e.g. 5.1.1'
         required: true
         type: string
       snapshotVersion:
-        description: 'Vert.x snapshot version, e.g. 5.0.8-SNAPSHOT'
+        description: 'Vert.x snapshot version, e.g. 5.2.0-SNAPSHOT'
         required: true
         type: string
 jobs:
@@ -39,6 +39,7 @@ jobs:
       - name: Run tests
         run: mvn test -P ${{ matrix.profile }}
   Update-repo:
+    needs: [Test]
     runs-on: ubuntu-latest
     outputs:
       sha: ${{ steps.push.outputs.sha }}
@@ -67,7 +68,7 @@ jobs:
   Deploy:
     name: Deploy to starter machine
     if: ${{ github.repository_owner == 'vert-x3' && github.ref == 'refs/heads/prod' }}
-    needs: [Test, Update-repo]
+    needs: [Update-repo]
     uses: ./.github/workflows/deploy.yml
     with:
       sha: ${{ needs.Update-repo.outputs.sha }}
