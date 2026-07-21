@@ -17,7 +17,7 @@
 package io.vertx.starter;
 
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.json.jackson.DatabindCodec;
+import io.vertx.core.json.jackson.v3.DatabindCodec;
 
 import java.io.IOException;
 import java.util.Map;
