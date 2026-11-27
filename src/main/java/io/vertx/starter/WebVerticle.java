@@ -84,7 +84,7 @@ public class WebVerticle extends AbstractVerticle {
     var router = Router.router(vertx).allowForward(AllowForwardHeaders.X_FORWARD);
 
     router.route()
-      .handler(HSTSHandler.create())
+      .handler(HSTSHandler.create(31536000, true))
       .handler(XFrameHandler.create(XFrameHandler.DENY))
       .handler(CSPHandler.create()
         .addDirective("style-src", "self")
