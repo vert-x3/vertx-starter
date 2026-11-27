@@ -1,2 +1,4 @@
 *.bat eol=crlf
 *.cmd eol=crlf
+/mvnw.cmd -text
+/mvnw text eol=lf
